@@ -1,0 +1,65 @@
+// https://nuxt.com/docs/api/configuration/nuxt-config
+export default defineNuxtConfig({
+  compatibilityDate: "2025-07-15",
+  devtools: { enabled: true },
+
+  // Dossier source = app/
+  srcDir: "app/",
+
+  modules: [
+    "@nuxtjs/supabase",
+    "@nuxtjs/i18n",
+    "@pinia/nuxt",
+    "@vueuse/nuxt",
+    "@nuxt/image",
+    "@nuxtjs/tailwindcss",
+  ],
+
+  // Supabase
+  supabase: {
+    redirectOptions: {
+      login: "/auth/login",
+      callback: "/auth/callback",
+      exclude: ["/", "/riads", "/riads/*", "/auth/*"],
+    },
+  },
+
+  // i18n – FR + EN
+  // @nuxtjs/i18n v10 résout langDir depuis {rootDir}/i18n/ par défaut
+  i18n: {
+    locales: [
+      { code: "fr", language: "fr-FR", name: "Français", file: "fr.json" },
+      { code: "en", language: "en-US", name: "English", file: "en.json" },
+    ],
+    defaultLocale: "fr",
+    langDir: "../i18n/locales/",
+    strategy: "prefix_except_default",
+    lazy: true,
+  },
+
+  // Variables d'environnement runtime
+  runtimeConfig: {
+    // Côté serveur uniquement
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    resendApiKey: process.env.RESEND_API_KEY,
+    // Côté client
+    public: {
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseKey: process.env.SUPABASE_ANON_KEY,
+      stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+    },
+  },
+
+  // Tailwind CSS
+  tailwindcss: {
+    cssPath: "~/assets/css/main.css",
+    configPath: "tailwind.config.ts",
+  },
+
+  // Images
+  image: {
+    domains: ["your-supabase-project.supabase.co"],
+  },
+});

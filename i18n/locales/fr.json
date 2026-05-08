@@ -1,0 +1,90 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "riads": "Nos Riads",
+    "book": "Réserver",
+    "contact": "Contact",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "account": "Mon espace",
+    "admin": "Administration"
+  },
+  "home": {
+    "hero_title": "Deux joyaux au cœur de Marrakech",
+    "hero_subtitle": "Vivez l'art de vivre marocain dans nos riads d'exception",
+    "cta_book": "Réserver maintenant",
+    "cta_discover": "Découvrir nos riads"
+  },
+  "riads": {
+    "dar_barai": "Dar Baraï",
+    "dar_tanawi": "Dar Tanawi",
+    "guests": "{n} voyageur | {n} voyageurs",
+    "from_price": "À partir de {price} € / nuit",
+    "view_details": "Voir les détails"
+  },
+  "booking": {
+    "title": "Réserver",
+    "check_in": "Arrivée",
+    "check_out": "Départ",
+    "guests": "Voyageurs",
+    "nights": "{n} nuit | {n} nuits",
+    "total": "Total",
+    "special_requests": "Demandes particulières",
+    "special_requests_placeholder": "Allergie, préférence de chambre, heure d'arrivée...",
+    "confirm": "Confirmer et payer",
+    "unavailable": "Ces dates ne sont pas disponibles",
+    "min_stay": "Séjour minimum : {n} nuits"
+  },
+  "auth": {
+    "login_title": "Connexion",
+    "register_title": "Créer un compte",
+    "email": "Adresse email",
+    "password": "Mot de passe",
+    "confirm_password": "Confirmer le mot de passe",
+    "full_name": "Nom complet",
+    "login_btn": "Se connecter",
+    "register_btn": "Créer mon compte",
+    "google_btn": "Continuer avec Google",
+    "forgot_password": "Mot de passe oublié ?",
+    "no_account": "Pas encore de compte ?",
+    "already_account": "Déjà un compte ?"
+  },
+  "account": {
+    "title": "Mon espace",
+    "my_reservations": "Mes réservations",
+    "profile": "Mon profil",
+    "no_reservations": "Vous n'avez pas encore de réservation.",
+    "reservation_ref": "Réf. {id}"
+  },
+  "reservation": {
+    "status_pending": "En attente",
+    "status_confirmed": "Confirmée",
+    "status_cancelled": "Annulée",
+    "status_refunded": "Remboursée"
+  },
+  "admin": {
+    "title": "Administration",
+    "reservations": "Réservations",
+    "riads": "Riads",
+    "availability": "Disponibilités",
+    "newsletter": "Newsletter",
+    "clients": "Clients",
+    "sync_ical": "Synchroniser iCal"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue. Veuillez réessayer.",
+    "unauthorized": "Accès non autorisé.",
+    "not_found": "Page introuvable."
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "loading": "Chargement...",
+    "close": "Fermer",
+    "back": "Retour",
+    "of": "sur",
+    "per_night": "/ nuit"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "nav": {
+    "home": "Home",
+    "riads": "Our Riads",
+    "book": "Book",
+    "contact": "Contact",
+    "login": "Sign in",
+    "logout": "Sign out",
+    "account": "My account",
+    "admin": "Admin"
+  },
+  "home": {
+    "hero_title": "Two gems in the heart of Marrakech",
+    "hero_subtitle": "Experience Moroccan art de vivre in our exceptional riads",
+    "cta_book": "Book now",
+    "cta_discover": "Discover our riads"
+  },
+  "riads": {
+    "dar_barai": "Dar Baraï",
+    "dar_tanawi": "Dar Tanawi",
+    "guests": "{n} guest | {n} guests",
+    "from_price": "From {price} € / night",
+    "view_details": "View details"
+  },
+  "booking": {
+    "title": "Book your stay",
+    "check_in": "Check-in",
+    "check_out": "Check-out",
+    "guests": "Guests",
+    "nights": "{n} night | {n} nights",
+    "total": "Total",
+    "special_requests": "Special requests",
+    "special_requests_placeholder": "Allergies, room preference, arrival time...",
+    "confirm": "Confirm & pay",
+    "unavailable": "These dates are not available",
+    "min_stay": "Minimum stay: {n} nights"
+  },
+  "auth": {
+    "login_title": "Sign in",
+    "register_title": "Create account",
+    "email": "Email address",
+    "password": "Password",
+    "confirm_password": "Confirm password",
+    "full_name": "Full name",
+    "login_btn": "Sign in",
+    "register_btn": "Create account",
+    "google_btn": "Continue with Google",
+    "forgot_password": "Forgot password?",
+    "no_account": "Don't have an account?",
+    "already_account": "Already have an account?"
+  },
+  "account": {
+    "title": "My account",
+    "my_reservations": "My reservations",
+    "profile": "My profile",
+    "no_reservations": "You have no reservations yet.",
+    "reservation_ref": "Ref. {id}"
+  },
+  "reservation": {
+    "status_pending": "Pending",
+    "status_confirmed": "Confirmed",
+    "status_cancelled": "Cancelled",
+    "status_refunded": "Refunded"
+  },
+  "admin": {
+    "title": "Administration",
+    "reservations": "Reservations",
+    "riads": "Riads",
+    "availability": "Availability",
+    "newsletter": "Newsletter",
+    "clients": "Clients",
+    "sync_ical": "Sync iCal"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "unauthorized": "Unauthorized.",
+    "not_found": "Page not found."
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "close": "Close",
+    "back": "Back",
+    "of": "of",
+    "per_night": "/ night"
+  }
+}
