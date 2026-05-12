@@ -48,16 +48,11 @@ export const useAuth = () => {
   const signInWithEmail = (email: string, password: string) =>
     supabase.auth.signInWithPassword({ email, password });
 
-  const signUpWithEmail = (
-    email: string,
-    password: string,
-    fullName: string,
-    birthDate: string,
-  ) =>
+  const signUpWithEmail = (email: string, password: string, fullName: string) =>
     supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName, birth_date: birthDate } },
+      options: { data: { full_name: fullName } },
     });
 
   const signOut = async () => {

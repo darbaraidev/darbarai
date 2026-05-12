@@ -58,7 +58,8 @@
     "combined_description": "Pour les grands groupes ou familles, profitez de l'exclusivité des deux riads en même temps. Les 2 riads sont communiquants via une porte sur la terasse, et permettent de passer de l'un à l'autre en toute discretion",
     "combined_booking_title": "Réserver les deux riads",
     "combined_booking_note": "Pour réserver les deux riads simultanément, effectuez deux réservations distinctes via les boutons ci-dessous.",
-    "book_riad": "Réserver {name}"
+    "book_riad": "Réserver {name}",
+    "availability_title": "Disponibilités"
   },
   "services": {
     "page_title": "Nos Services",
@@ -84,11 +85,28 @@
     "nights": "{n} nuit | {n} nuits",
     "total": "Total",
     "special_requests": "Demandes particulières",
-    "special_requests_placeholder": "Allergie, préférence de chambre, heure d'arrivée...",
+    "special_requests_placeholder": "Allergies, heure d'arrivée...",
     "confirm": "Confirmer et payer",
     "unavailable": "Ces dates ne sont pas disponibles",
     "min_stay": "Séjour minimum : {n} nuits",
-    "no_charge_yet": "Vous ne serez débité qu'après confirmation."
+    "no_charge_yet": "Vous ne serez débité qu'après confirmation.",
+    "calendar_available": "Disponible",
+    "calendar_unavailable": "Indisponible",
+    "hint_pick_arrival": "Cliquez pour choisir votre date d'arrivée",
+    "hint_pick_departure": "Cliquez pour choisir votre date de départ",
+    "recap_title": "Votre réservation",
+    "pay_now": "Payer maintenant",
+    "payment_method": "Mode de paiement",
+    "method_card": "Carte bancaire",
+    "method_card_desc": "Paiement sécurisé en ligne",
+    "method_later": "Payer plus tard",
+    "method_later_desc": "Contacter la gérante",
+    "method_later_info": "Votre demande sera enregistrée en attente. La gérante vous contactera par WhatsApp ou email pour convenir du règlement (virement, espèces...).",
+    "confirm_later": "Confirmer ma réservation",
+    "later_success_title": "Demande enregistrée !",
+    "later_success_desc": "Votre réservation est en attente de confirmation. La gérante va vous contacter prochainement pour convenir du règlement.",
+    "contact_whatsapp": "Contacter sur WhatsApp",
+    "contact_email": "Contacter par email"
   },
   "auth": {
     "login_title": "Connexion",
@@ -97,7 +115,6 @@
     "password": "Mot de passe",
     "confirm_password": "Confirmer le mot de passe",
     "full_name": "Nom complet",
-    "birth_date": "Date de naissance",
     "login_btn": "Se connecter",
     "register_btn": "Créer mon compte",
     "google_btn": "Continuer avec Google",
@@ -124,7 +141,6 @@
     "no_reservations": "Vous n'avez pas encore de réservation.",
     "reservation_ref": "Réf. {id}",
     "phone": "Téléphone",
-    "birth_date": "Date de naissance",
     "newsletter_subscribe": "Recevoir notre newsletter",
     "profile_saved": "Profil mis à jour."
   },
@@ -189,7 +205,15 @@
     "cat_name_fr": "Nom (FR)",
     "cat_name_en": "Nom (EN)",
     "cat_add": "Nouvelle catégorie",
-    "cat_confirm_delete": "Supprimer cette catégorie ?"
+    "cat_confirm_delete": "Supprimer cette catégorie ?",
+    "table_view": "Tableau",
+    "calendar_view": "Calendrier",
+    "external_block": "Période bloquée",
+    "ical_sync_title": "Synchronisation iCal",
+    "ical_sync_description": "Les réservations Airbnb & Booking.com sont récupérées automatiquement à chaque ouverture de cette page.",
+    "ical_syncing": "Synchronisation en cours...",
+    "ical_synced": "{n} créneau(x) importé(s)",
+    "ical_sync_error": "Erreur de synchronisation"
   },
   "seo": {
     "home_title": "Dar Baraï & Dar Tanawi – Riads à Marrakech",

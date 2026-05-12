@@ -6,38 +6,50 @@
 
     <form @submit.prevent="onSubmit" class="space-y-4">
       <!-- Dates -->
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label
-            class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wide"
-          >
-            {{ t("booking.check_in") }}
-          </label>
-          <input
-            v-model="form.checkIn"
-            type="date"
-            required
-            :min="today"
-            class="input-field text-sm"
-            @change="onDateChange"
-          />
-        </div>
-        <div>
-          <label
-            class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wide"
-          >
-            {{ t("booking.check_out") }}
-          </label>
-          <input
-            v-model="form.checkOut"
-            type="date"
-            required
-            :min="minCheckOut"
-            class="input-field text-sm"
-            @change="onDateChange"
-          />
-        </div>
-      </div>
+      <ClientOnly>
+        <BookingCalendarPicker
+          :riad-id="riad.id"
+          :check-in="form.checkIn"
+          :check-out="form.checkOut"
+          :min-nights="riad.min_nights"
+          @update:check-in="onPickerCheckIn"
+          @update:check-out="onPickerCheckOut"
+        />
+        <template #fallback>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label
+                class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wide"
+              >
+                {{ t("booking.check_in") }}
+              </label>
+              <input
+                v-model="form.checkIn"
+                type="date"
+                required
+                :min="today"
+                class="input-field text-sm"
+                @change="onDateChange"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wide"
+              >
+                {{ t("booking.check_out") }}
+              </label>
+              <input
+                v-model="form.checkOut"
+                type="date"
+                required
+                :min="minCheckOut"
+                class="input-field text-sm"
+                @change="onDateChange"
+              />
+            </div>
+          </div>
+        </template>
+      </ClientOnly>
 
       <!-- Voyageurs -->
       <div>
@@ -97,9 +109,9 @@
       <button
         type="submit"
         class="btn-primary w-full text-base py-4"
-        :disabled="loading || unavailable || nights === 0"
+        :disabled="unavailable || nights === 0 || (riad.min_nights > 1 && nights > 0 && nights < riad.min_nights)"
       >
-        {{ loading ? t("common.loading") : t("booking.confirm") }}
+        {{ t("booking.confirm") }}
       </button>
     </form>
 
@@ -112,6 +124,7 @@
 <script setup lang="ts">
 import type { Riad } from "~/types";
 import { addDays, format } from "date-fns";
+
 
 const props = defineProps<{ riad: Riad }>();
 const { t } = useI18n();
@@ -141,7 +154,6 @@ const minCheckOut = computed(() =>
 );
 
 const unavailable = ref(false);
-const loading = ref(false);
 
 const onDateChange = async () => {
   if (!form.checkIn || !form.checkOut || nights.value <= 0) return;
@@ -152,31 +164,34 @@ const onDateChange = async () => {
   ));
 };
 
+const onPickerCheckIn = async (date: string) => {
+  form.checkIn = date;
+  form.checkOut = "";
+  unavailable.value = false;
+};
+
+const onPickerCheckOut = async (date: string) => {
+  form.checkOut = date;
+  if (form.checkIn && date) await onDateChange();
+};
+
 const onSubmit = async () => {
+  const bookingQuery = new URLSearchParams({
+    riadId: props.riad.id,
+    checkIn: form.checkIn,
+    checkOut: form.checkOut,
+    guests: String(form.guests),
+    ...(form.specialRequests ? { specialRequests: form.specialRequests } : {}),
+  }).toString()
+  const bookingPath = localePath("/booking") + "?" + bookingQuery
+
   if (!user.value) {
-    await navigateTo(useLocalePath()("/auth/login"));
-    return;
+    await navigateTo(
+      localePath("/auth/login") + "?redirect=" + encodeURIComponent(bookingPath)
+    )
+    return
   }
-  loading.value = true;
-  const { data, error } = await useFetch("/api/reservations/create", {
-    method: "POST",
-    body: {
-      riadId: props.riad.id,
-      checkIn: form.checkIn,
-      checkOut: form.checkOut,
-      guests: form.guests,
-      specialRequests: form.specialRequests,
-      totalPrice: totalPrice.value,
-    },
-  });
-  loading.value = false;
-  if (error.value) {
-    console.error(error.value);
-    return;
-  }
-  // Redirection vers Stripe Checkout
-  if (data.value?.url) {
-    window.location.href = data.value.url;
-  }
+
+  await navigateTo(bookingPath)
 };
 </script>

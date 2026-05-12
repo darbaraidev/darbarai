@@ -20,7 +20,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: "/auth/login",
       callback: "/auth/callback",
-      exclude: ["/", "/riads", "/riads/*", "/auth/*"],
+      exclude: ["/", "/riads", "/riads/*", "/auth/*", "/booking", "/booking/*"],
     },
   },
 
@@ -49,8 +49,13 @@ export default defineNuxtConfig({
       supabaseKey: process.env.SUPABASE_KEY,
       stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+      contactWhatsapp: process.env.NUXT_PUBLIC_CONTACT_WHATSAPP ?? "",
+      contactEmail: process.env.NUXT_PUBLIC_CONTACT_EMAIL ?? "reservations@darbarai.com",
     },
   },
+
+  // CSS global
+  css: ["flatpickr/dist/flatpickr.css"],
 
   // Tailwind CSS
   tailwindcss: {

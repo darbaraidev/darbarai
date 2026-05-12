@@ -23,17 +23,6 @@
       }}</label>
       <input v-model="form.phone" type="tel" class="input w-full" />
     </div>
-    <div>
-      <label class="block text-sm font-medium text-stone-700 mb-1">{{
-        t("account.birth_date")
-      }}</label>
-      <input
-        :value="form.birth_date"
-        type="date"
-        class="input w-full opacity-60"
-        disabled
-      />
-    </div>
     <div class="flex items-center gap-3">
       <input
         v-model="form.newsletter_subscribed"
@@ -67,7 +56,6 @@ const supabase = useSupabaseClient();
 const form = reactive({
   full_name: props.profile?.full_name ?? "",
   phone: props.profile?.phone ?? "",
-  birth_date: props.profile?.birth_date ?? "",
   newsletter_subscribed: props.profile?.newsletter_subscribed ?? true,
 });
 
@@ -77,7 +65,6 @@ watch(
     if (!p) return;
     form.full_name = p.full_name ?? "";
     form.phone = p.phone ?? "";
-    form.birth_date = p.birth_date ?? "";
     form.newsletter_subscribed = p.newsletter_subscribed;
   },
   { immediate: true },
@@ -96,7 +83,6 @@ const onSubmit = async () => {
     .update({
       full_name: form.full_name,
       phone: form.phone,
-      birth_date: form.birth_date || null,
       newsletter_subscribed: form.newsletter_subscribed,
     })
     .eq("id", props.profile!.id);

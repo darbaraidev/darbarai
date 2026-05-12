@@ -43,6 +43,12 @@ export default defineEventHandler(async (event) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        const rawEvents = Object.values(calData).filter((e) => e.type === "VEVENT");
+        console.log(`[iCal ${source}] ${riad.name} — ${rawEvents.length} événements bruts :`);
+        for (const e of rawEvents) {
+          console.log(`  summary="${(e as any).summary}" | start=${(e as any).start?.toISOString?.()?.slice(0, 10)} | end=${(e as any).end?.toISOString?.()?.slice(0, 10)}`);
+        }
+
         for (const event of Object.values(calData)) {
           if (event.type !== "VEVENT") continue;
           const start = event.start as Date;

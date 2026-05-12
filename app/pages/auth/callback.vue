@@ -19,7 +19,9 @@ onMounted(() => {
     if (event === "PASSWORD_RECOVERY") {
       navigateTo("/auth/reset-password", { replace: true });
     } else {
-      navigateTo("/account", { replace: true });
+      const redirect = localStorage.getItem("auth_redirect") || "/account";
+      localStorage.removeItem("auth_redirect");
+      navigateTo(redirect, { replace: true });
     }
   });
 

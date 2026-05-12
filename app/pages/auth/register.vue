@@ -69,7 +69,7 @@
     <div class="mt-4 text-center text-sm text-stone-500">
       {{ t("auth.already_account") }}
       <NuxtLink
-        to="/auth/login"
+        :to="redirect !== '/account' ? `/auth/login?redirect=${encodeURIComponent(redirect)}` : '/auth/login'"
         class="text-terracotta-600 hover:underline font-medium"
       >
         {{ t("auth.login_btn") }}
@@ -82,17 +82,15 @@
 definePageMeta({ layout: "auth" });
 const { signUpWithEmail } = useAuth();
 const { t } = useI18n();
+const route = useRoute();
+const redirect = (route.query.redirect as string) || "/account";
 
 const form = reactive({
   email: "",
   password: "",
   confirmPassword: "",
   fullName: "",
-  birthDate: "",
 });
-const maxBirthDate = new Date(Date.now() - 18 * 365.25 * 24 * 3600 * 1000)
-  .toISOString()
-  .split("T")[0];
 const error = ref<string | null>(null);
 const loading = ref(false);
 const success = ref(false);
@@ -108,7 +106,6 @@ const onSubmit = async () => {
     form.email,
     form.password,
     form.fullName,
-    form.birthDate,
   );
   loading.value = false;
   if (err) {

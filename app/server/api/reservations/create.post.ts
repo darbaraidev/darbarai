@@ -1,13 +1,14 @@
 import Stripe from "stripe";
-import { serverSupabaseClient, serverSupabaseUser } from "#supabase/server";
+import { serverSupabaseClient } from "#supabase/server";
 
 export default defineEventHandler(async (event) => {
-  // 1. Auth
-  const user = await serverSupabaseUser(event);
-  if (!user)
-    throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
-
   const supabase = await serverSupabaseClient(event);
+
+  // 1. Auth
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user?.id)
+    throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
 
   // 2. Body validation
   const body = await readBody(event);
@@ -36,15 +37,24 @@ export default defineEventHandler(async (event) => {
   if (riadError || !riad)
     throw createError({ statusCode: 404, statusMessage: "Riad not found" });
 
-  // 4. Check availability
-  const { data: blocks } = await supabase
-    .from("availability")
-    .select("start_date, end_date")
-    .eq("riad_id", riad_id)
-    .lte("start_date", check_out)
-    .gte("end_date", check_in);
+  // 4. Check availability: blocked periods AND existing reservations
+  const [{ data: blocks }, { data: existingRes }] = await Promise.all([
+    supabase
+      .from("availability")
+      .select("start_date, end_date")
+      .eq("riad_id", riad_id)
+      .lte("start_date", check_out)
+      .gte("end_date", check_in),
+    supabase
+      .from("reservations")
+      .select("id")
+      .eq("riad_id", riad_id)
+      .in("status", ["pending", "confirmed"])
+      .lt("check_in", check_out)
+      .gt("check_out", check_in),
+  ]);
 
-  if (blocks && blocks.length > 0) {
+  if ((blocks && blocks.length > 0) || (existingRes && existingRes.length > 0)) {
     throw createError({
       statusCode: 409,
       statusMessage: "Dates not available",
@@ -62,6 +72,9 @@ export default defineEventHandler(async (event) => {
   const total_price = riad.base_price_per_night * nights;
 
   // 6. Create reservation in DB (status: pending)
+  const config = useRuntimeConfig();
+  const initialStatus = config.stripeSecretKey ? "pending" : "confirmed";
+
   const { data: reservation, error: resError } = await supabase
     .from("reservations")
     .insert({
@@ -71,7 +84,7 @@ export default defineEventHandler(async (event) => {
       check_out,
       guests,
       total_price,
-      status: "pending",
+      status: initialStatus,
       special_requests: special_requests ?? null,
     })
     .select()
@@ -84,47 +97,28 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // 7. Create Stripe Checkout Session
-  const config = useRuntimeConfig();
-  const stripe = new Stripe(config.stripeSecretKey, {
-    apiVersion: "2025-04-30.basil",
-  });
+  // 7. Stripe PaymentIntent (si clé configurée)
+  if (config.stripeSecretKey) {
+    const stripe = new Stripe(config.stripeSecretKey, {
+      apiVersion: "2025-04-30.basil",
+    });
 
-  const siteUrl = config.public.siteUrl || "http://localhost:3000";
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: total_price,
+      currency: "eur",
+      receipt_email: user.email ?? undefined,
+      metadata: { reservation_id: reservation.id, user_id: user.id },
+      description: `${riad.name} — ${nights} nuit${nights > 1 ? "s" : ""} · ${check_in} → ${check_out}`,
+    });
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    payment_method_types: ["card"],
-    line_items: [
-      {
-        price_data: {
-          currency: "eur",
-          unit_amount: total_price,
-          product_data: {
-            name: `${riad.name} — ${nights} nuit${nights > 1 ? "s" : ""}`,
-            description: `Arrivée ${check_in} · Départ ${check_out}`,
-          },
-        },
-        quantity: 1,
-      },
-    ],
-    metadata: {
-      reservation_id: reservation.id,
-      user_id: user.id,
-    },
-    success_url: `${siteUrl}/account?payment=success&reservation=${reservation.id}`,
-    cancel_url: `${siteUrl}/riads/${riad_id}?payment=cancelled`,
-    customer_email: user.email,
-  });
+    await supabase
+      .from("reservations")
+      .update({ stripe_payment_intent_id: paymentIntent.id })
+      .eq("id", reservation.id);
 
-  // 8. Store stripe session id on reservation
-  await supabase
-    .from("reservations")
-    .update({
-      stripe_payment_intent_id:
-        (session.payment_intent as string) ?? session.id,
-    })
-    .eq("id", reservation.id);
+    return { clientSecret: paymentIntent.client_secret, reservationId: reservation.id };
+  }
 
-  return { url: session.url, reservation_id: reservation.id };
+  // Sans Stripe (dev) : clientSecret null, le frontend redirige directement
+  return { clientSecret: null, reservationId: reservation.id };
 });

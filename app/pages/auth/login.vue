@@ -48,7 +48,7 @@
     <div class="mt-4 text-center text-sm text-stone-500">
       {{ t("auth.no_account") }}
       <NuxtLink
-        to="/auth/register"
+        :to="redirect !== '/account' ? `/auth/register?redirect=${encodeURIComponent(redirect)}` : '/auth/register'"
         class="text-terracotta-600 hover:underline font-medium"
       >
         {{ t("auth.register_btn") }}
@@ -69,6 +69,9 @@
 definePageMeta({ layout: "auth" });
 const { signInWithEmail, signInWithGoogle } = useAuth();
 const { t } = useI18n();
+const route = useRoute();
+
+const redirect = (route.query.redirect as string) || "/account";
 
 const form = reactive({ email: "", password: "" });
 const error = ref<string | null>(null);
@@ -82,11 +85,14 @@ const onSubmit = async () => {
   if (err) {
     error.value = err.message;
   } else {
-    await navigateTo("/account");
+    await navigateTo(redirect);
   }
 };
 
 const onGoogle = async () => {
+  if (redirect !== "/account") {
+    localStorage.setItem("auth_redirect", redirect);
+  }
   await signInWithGoogle();
 };
 </script>
