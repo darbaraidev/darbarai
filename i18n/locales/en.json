@@ -131,7 +131,10 @@
     "new_password": "New password",
     "update_password": "Update password",
     "password_updated": "Password updated! You will be redirected.",
-    "invalid_reset_link": "Invalid or expired reset link."
+    "invalid_reset_link": "Invalid or expired reset link.",
+    "email_not_confirmed": "You need to confirm your email address before signing in. Check your inbox.",
+    "resend_confirmation": "Resend confirmation email",
+    "resend_sent": "Email sent! Check your inbox."
   },
   "account": {
     "title": "My account",

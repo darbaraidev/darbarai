@@ -132,7 +132,10 @@
     "new_password": "Nouveau mot de passe",
     "update_password": "Mettre à jour le mot de passe",
     "password_updated": "Mot de passe mis à jour ! Vous allez être redirigé.",
-    "invalid_reset_link": "Lien de réinitialisation invalide ou expiré."
+    "invalid_reset_link": "Lien de réinitialisation invalide ou expiré.",
+    "email_not_confirmed": "Vous devez confirmer votre adresse email avant de vous connecter. Vérifiez votre boîte de réception.",
+    "resend_confirmation": "Renvoyer l'email de confirmation",
+    "resend_sent": "Email renvoyé ! Vérifiez votre boîte de réception."
   },
   "account": {
     "title": "Mon espace",
