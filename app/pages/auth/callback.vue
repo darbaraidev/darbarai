@@ -11,7 +11,7 @@ onMounted(() => {
   const supabase = useSupabaseClient();
 
   // Supabase émet PASSWORD_RECOVERY quand le lien de reset est utilisé.
-  // Dans tous les autres cas (OAuth, magic link, confirm) → /account.
+  // Dans tous les autres cas (magic link, confirm) → /account.
   const {
     data: { subscription },
   } = supabase.auth.onAuthStateChange((event) => {

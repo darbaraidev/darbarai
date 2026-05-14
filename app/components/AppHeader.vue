@@ -4,75 +4,61 @@
     :class="scrolled ? 'bg-white/95 backdrop-blur shadow-sm' : 'bg-transparent'"
   >
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-      <!-- Logos -->
-      <div class="flex items-center gap-3">
-        <NuxtLink
-          :to="localePath('/')"
-          class="text-sm font-medium transition-colors px-2"
-          :class="
-            scrolled
-              ? 'text-stone-700 hover:text-terracotta-600'
-              : 'text-white/90 hover:text-white'
-          "
-        >
-          {{ t("nav.home") }}
-        </NuxtLink>
-        <NuxtLink
-          :to="localePath('/riads/dar-barai')"
-          class="flex items-center"
-        >
-          <img
-            src="/images/logo_dar_barai.jpg"
-            alt="Dar Baraï"
-            class="h-12 w-auto transition-all duration-300 rounded-lg"
-            :class="scrolled ? '' : 'ring-1 ring-white/20 shadow-md'"
-          />
-        </NuxtLink>
-        <NuxtLink
-          :to="localePath('/riads/dar-tanawi')"
-          class="flex items-center"
-        >
-          <img
-            src="/images/logo_dar_tanawi.jpg"
-            alt="Dar Tanawi"
-            class="h-12 w-auto transition-all duration-300 rounded-lg"
-            :class="scrolled ? '' : 'ring-1 ring-white/20 shadow-md'"
-          />
-        </NuxtLink>
-      </div>
+      <!-- Logo -->
+      <NuxtLink :to="localePath('/')" class="flex items-center">
+        <img
+          src="/images/logo_dar_barai.jpg"
+          alt="Dar Baraï"
+          class="h-12 w-auto transition-all duration-300 rounded-lg"
+          :class="scrolled ? '' : 'ring-1 ring-white/20 shadow-md'"
+        />
+      </NuxtLink>
 
       <!-- Nav desktop -->
       <nav class="hidden md:flex items-center gap-6">
         <NuxtLink
           :to="localePath('/riads')"
-          class="text-sm font-medium transition-colors"
+          class="flex items-center gap-1.5 text-sm font-medium transition-colors"
           :class="
             scrolled
               ? 'text-stone-700 hover:text-terracotta-600'
-              : 'text-white/90 hover:text-white'
+              : 'text-stone-900 hover:text-terracotta-600'
           "
         >
+          <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0">
+            <path fill="currentColor" :d="mdiHome" />
+          </svg>
           {{ t("nav.riads") }}
         </NuxtLink>
         <NuxtLink
           :to="localePath('/services')"
-          class="text-sm font-medium transition-colors"
+          class="flex items-center gap-1.5 text-sm font-medium transition-colors"
           :class="
             scrolled
               ? 'text-stone-700 hover:text-terracotta-600'
-              : 'text-white/90 hover:text-white'
+              : 'text-stone-900 hover:text-terracotta-600'
           "
         >
+          <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0">
+            <path fill="currentColor" :d="mdiFlower" />
+          </svg>
           {{ t("nav.services") }}
         </NuxtLink>
+        <NuxtLink
+          :to="localePath('/gallery')"
+          class="flex items-center gap-1.5 text-sm font-medium transition-colors"
+          :class="
+            scrolled
+              ? 'text-stone-700 hover:text-terracotta-600'
+              : 'text-stone-900 hover:text-terracotta-600'
+          "
+        >
+          <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0">
+            <path fill="currentColor" :d="mdiCamera" />
+          </svg>
+          {{ t("nav.gallery") }}
+        </NuxtLink>
       </nav>
-
-      <!-- Debug isAdmin -->
-      <span
-        class="text-xs font-mono px-2 py-0.5 rounded bg-yellow-100 text-yellow-800 border border-yellow-300"
-      >
-        isAdmin: {{ isAdmin }}
-      </span>
 
       <!-- Actions -->
       <div class="flex items-center gap-3">
@@ -85,7 +71,7 @@
             locale === loc ? 'bg-terracotta-600 text-white' : '',
             scrolled
               ? 'text-stone-600 hover:text-terracotta-600'
-              : 'text-white/80 hover:text-white',
+              : 'text-stone-900 hover:text-terracotta-600',
           ]"
           @click="setLocale(loc)"
         >
@@ -100,7 +86,7 @@
             :class="
               scrolled
                 ? 'text-stone-700 hover:text-terracotta-600'
-                : 'text-white/90 hover:text-white'
+                : 'text-stone-900 hover:text-terracotta-600'
             "
           >
             {{ t("nav.account") }}
@@ -112,7 +98,7 @@
             :class="
               scrolled
                 ? 'border-terracotta-600 text-terracotta-600 hover:bg-terracotta-600 hover:text-white'
-                : 'border-white/70 text-white hover:bg-white/20'
+                : 'border-stone-900 text-stone-900 hover:bg-stone-900/10'
             "
           >
             ⚙ {{ t("nav.admin") }}
@@ -128,16 +114,16 @@
             :class="
               scrolled
                 ? 'text-stone-700 hover:text-terracotta-600'
-                : 'text-white/90 hover:text-white'
+                : 'text-stone-900 hover:text-terracotta-600'
             "
           >
             {{ t("nav.login") }}
           </NuxtLink>
           <NuxtLink
-            :to="localePath('/riads')"
+            :to="localePath('/auth/register')"
             class="btn-primary text-sm px-4 py-2"
           >
-            {{ t("nav.book") }}
+            {{ t("nav.register") }}
           </NuxtLink>
         </template>
 
@@ -146,7 +132,7 @@
           <span class="sr-only">Menu</span>
           <svg
             class="w-5 h-5"
-            :class="scrolled ? 'text-stone-700' : 'text-white'"
+            :class="scrolled ? 'text-stone-700' : 'text-stone-900'"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -186,17 +172,33 @@
         <nav class="flex flex-col px-4 py-4 gap-4">
           <NuxtLink
             :to="localePath('/riads')"
-            class="text-stone-700 font-medium"
+            class="flex items-center gap-2 text-stone-700 font-medium"
             @click="mobileOpen = false"
           >
+            <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0">
+              <path fill="currentColor" :d="mdiHome" />
+            </svg>
             {{ t("nav.riads") }}
           </NuxtLink>
           <NuxtLink
             :to="localePath('/services')"
-            class="text-stone-700 font-medium"
+            class="flex items-center gap-2 text-stone-700 font-medium"
             @click="mobileOpen = false"
           >
+            <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0">
+              <path fill="currentColor" :d="mdiFlower" />
+            </svg>
             {{ t("nav.services") }}
+          </NuxtLink>
+          <NuxtLink
+            :to="localePath('/gallery')"
+            class="flex items-center gap-2 text-stone-700 font-medium"
+            @click="mobileOpen = false"
+          >
+            <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0">
+              <path fill="currentColor" :d="mdiCamera" />
+            </svg>
+            {{ t("nav.gallery") }}
           </NuxtLink>
           <template v-if="user">
             <NuxtLink
@@ -221,6 +223,13 @@
             >
               {{ t("nav.login") }}
             </NuxtLink>
+            <NuxtLink
+              :to="localePath('/auth/register')"
+              class="text-stone-700 font-medium"
+              @click="mobileOpen = false"
+            >
+              {{ t("nav.register") }}
+            </NuxtLink>
           </template>
         </nav>
       </div>
@@ -229,6 +238,8 @@
 </template>
 
 <script setup lang="ts">
+import { mdiHome, mdiFlower, mdiCamera } from "@mdi/js";
+
 const { t, locale, availableLocales, setLocale } = useI18n();
 const localePath = useLocalePath();
 const { user, isAdmin, signOut } = useAuth();

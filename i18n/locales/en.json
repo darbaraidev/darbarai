@@ -8,7 +8,9 @@
     "login": "Sign in",
     "logout": "Sign out",
     "account": "My account",
-    "admin": "Admin"
+    "admin": "Admin",
+    "register": "Sign up",
+    "gallery": "Gallery"
   },
   "home": {
     "hero_title": "Two gems in the heart of Marrakech",
@@ -16,7 +18,9 @@
     "cta_book": "Book now",
     "cta_discover": "Discover our riads",
     "riads_section_title": "Our Riads",
+    "riads_section_subtitle": "Each riad is rented exclusively - you enjoy the entire property and its private spaces, in complete privacy.",
     "location_title": "Location",
+    "location_subtitle": "Both riads are located a 10-minute walk from Jemaa el-Fna square.",
     "experiences_title": "The Moroccan art de vivre",
     "experiences_subtitle": "Pool, hammam, Moroccan breakfast, excursions — we take care of every detail for an unforgettable stay."
   },
@@ -54,10 +58,6 @@
     "amenity_parking": "Parking",
     "amenity_jardin": "Garden",
     "amenity_cheminee": "Fireplace",
-    "combined_title": "Dar Baraï & Dar Tanawi",
-    "combined_description": "For larger groups or families, enjoy exclusive use of both riads at the same time. The two riads are interconnected via a door on the terrace, allowing guests to move between them with complete privacy.",
-    "combined_booking_title": "Book both riads",
-    "combined_booking_note": "To book both riads simultaneously, make two separate reservations using the buttons below.",
     "book_riad": "Book {name}",
     "availability_title": "Availability"
   },
@@ -116,7 +116,6 @@
     "full_name": "Full name",
     "login_btn": "Sign in",
     "register_btn": "Create account",
-    "google_btn": "Continue with Google",
     "forgot_password": "Forgot password?",
     "no_account": "Don't have an account?",
     "already_account": "Already have an account?",
@@ -222,6 +221,13 @@
     "home_description": "Book your stay in our two exceptional riads in the heart of the Marrakech medina.",
     "riads_title": "Our Riads – Dar Baraï & Dar Tanawi",
     "account_title": "My account – Dar Baraï"
+  },
+  "gallery": {
+    "seo_title": "Gallery – Dar Baraï & Dar Tanawi",
+    "title": "Gallery",
+    "subtitle": "Discover our two riads through their spaces, rooms and most secret corners.",
+    "all": "All",
+    "empty": "No photos available yet."
   },
   "legal": {
     "seo_title": "Legal Notice – Dar Baraï",

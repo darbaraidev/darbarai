@@ -4,7 +4,7 @@
     class="relative h-screen min-h-[600px] flex items-center justify-center text-white overflow-hidden"
   >
     <img
-      src="https://images.unsplash.com/photo-1539768942893-daf53e448371?w=1920&q=85"
+      src="~/assets/images/home_bg.jpg"
       :alt="t('home.hero_title')"
       class="absolute inset-0 w-full h-full object-cover"
     />
@@ -29,9 +29,12 @@
 
   <!-- Nos riads -->
   <section class="py-20 px-4 max-w-7xl mx-auto">
-    <h2 class="section-title text-center mb-16">
+    <h2 class="section-title text-center mb-4">
       {{ t("home.riads_section_title") }}
     </h2>
+    <p class="text-center text-stone-500 text-lg max-w-2xl mx-auto mb-16">
+      {{ t("home.riads_section_subtitle") }}
+    </p>
     <div class="grid md:grid-cols-2 gap-10">
       <RiadCard v-for="riad in riads" :key="riad.id" :riad="riad" />
     </div>
@@ -39,9 +42,12 @@
 
   <!-- Localisation -->
   <section class="py-20 px-4 max-w-7xl mx-auto">
-    <h2 class="section-title text-center mb-10">
+    <h2 class="section-title text-center mb-3">
       {{ t("home.location_title") }}
     </h2>
+    <p class="text-center text-stone-500 mb-10">
+      {{ t("home.location_subtitle") }}
+    </p>
     <ClientOnly>
       <div class="h-[420px] rounded-2xl overflow-hidden shadow-lg">
         <MapView

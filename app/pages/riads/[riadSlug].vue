@@ -417,6 +417,13 @@ const openLightbox = (photos: string[], index: number) => {
   lightbox.open = true;
 };
 
+onMounted(async () => {
+  try {
+    await $fetch("/api/ical/sync", { method: "POST" });
+    await refreshNuxtData(`picker-availability:${riad.id}`);
+  } catch {}
+});
+
 const onKeydown = (e: KeyboardEvent) => {
   if (!lightbox.open) {
     return;

@@ -15,12 +15,18 @@ export default defineNuxtConfig({
     "@nuxtjs/tailwindcss",
   ],
 
+  app: {
+    head: {
+      link: [{ rel: "icon", type: "image/png", href: "/images/logo_app.png" }],
+    },
+  },
+
   // Supabase
   supabase: {
     redirectOptions: {
       login: "/auth/login",
       callback: "/auth/callback",
-      exclude: ["/", "/riads", "/riads/*", "/auth/*", "/booking", "/booking/*"],
+      exclude: ["/**"],
     },
   },
 

@@ -39,12 +39,6 @@ export const useAuth = () => {
     });
   }
 
-  const signInWithGoogle = () =>
-    supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
-
   const signInWithEmail = (email: string, password: string) =>
     supabase.auth.signInWithPassword({ email, password });
 
@@ -71,7 +65,6 @@ export const useAuth = () => {
     profile,
     isAdmin,
     fetchProfile,
-    signInWithGoogle,
     signInWithEmail,
     signUpWithEmail,
     signOut,

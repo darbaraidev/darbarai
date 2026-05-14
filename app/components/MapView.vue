@@ -46,20 +46,24 @@ onMounted(async () => {
     const icon = L.divIcon({
       className: "",
       html: `<div style="
-        background:${pin.color ?? "#c0704a"};
-        width:14px;height:14px;
+        background:#dc2626;
+        width:20px;height:20px;
         border-radius:50%;
         border:3px solid white;
-        box-shadow:0 2px 6px rgba(0,0,0,0.4);
+        box-shadow:0 2px 8px rgba(0,0,0,0.5);
       "></div>`,
-      iconSize: [14, 14],
-      iconAnchor: [7, 7],
+      iconSize: [20, 20],
+      iconAnchor: [10, 10],
     });
 
     L.marker([pin.lat, pin.lng], { icon })
       .addTo(map)
-      .bindPopup(`<strong>${pin.label}</strong>`, { closeButton: false })
-      .openPopup();
+      .bindTooltip(`<strong>${pin.label}</strong>`, {
+        permanent: true,
+        direction: "top",
+        offset: [0, -4],
+        className: "map-label",
+      });
   }
 });
 </script>

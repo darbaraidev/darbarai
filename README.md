@@ -40,7 +40,7 @@ Sans `STRIPE_SECRET_KEY`, l'app tourne en **mode dev** : les réservations sont 
 
 ### Supabase
 
-- Authentification email/password + Google OAuth
+- Authentification email/password
 - Base de données (riads, réservations, profils, services)
 - Storage (images riads)
 
@@ -155,7 +155,6 @@ Sur la page de récap, l'utilisateur choisit entre :
 
 - [ ] Connecter `darbarai.com` dans Vercel → Settings → Domains
 - [ ] Ajouter les entrées DNS chez OVH (A + CNAME fournis par Vercel)
-- [ ] Mettre à jour l'URL de callback Google OAuth dans Supabase → Authentication → URL Configuration
 - [ ] Vérifier le domaine `darbarai.com` dans Resend → Domains (ajouter enregistrements DNS)
 - [ ] Configurer le SMTP Supabase avec Resend (voir section Resend ci-dessus)
 - [ ] Configurer le webhook Stripe avec l'URL de prod : `https://darbarai.com/api/stripe/webhook`

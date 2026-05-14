@@ -8,7 +8,9 @@
     "login": "Connexion",
     "logout": "Déconnexion",
     "account": "Mon espace",
-    "admin": "Administration"
+    "admin": "Administration",
+    "register": "S'inscrire",
+    "gallery": "Galerie"
   },
   "home": {
     "hero_title": "Deux joyaux au cœur de Marrakech",
@@ -16,7 +18,9 @@
     "cta_book": "Réserver maintenant",
     "cta_discover": "Découvrir nos riads",
     "riads_section_title": "Nos Riads",
+    "riads_section_subtitle": "Chaque riad est loué en exclusivité totale - vous profitez du logement entier et de ses espaces privatisés en toute intimité",
     "location_title": "Localisation",
+    "location_subtitle": "Nos deux riads sont situés à 10 minutes à pied de la place Jemaa el-Fna.",
     "experiences_title": "L'art de vivre marocain",
     "experiences_subtitle": "Piscine, hammam, petit-déjeuner marocain, excursions — nous prenons soin de chaque détail pour un séjour inoubliable."
   },
@@ -54,10 +58,6 @@
     "amenity_parking": "Parking",
     "amenity_jardin": "Jardin",
     "amenity_cheminee": "Cheminée",
-    "combined_title": "Dar Baraï & Dar Tanawi",
-    "combined_description": "Pour les grands groupes ou familles, profitez de l'exclusivité des deux riads en même temps. Les 2 riads sont communiquants via une porte sur la terasse, et permettent de passer de l'un à l'autre en toute discretion",
-    "combined_booking_title": "Réserver les deux riads",
-    "combined_booking_note": "Pour réserver les deux riads simultanément, effectuez deux réservations distinctes via les boutons ci-dessous.",
     "book_riad": "Réserver {name}",
     "availability_title": "Disponibilités"
   },
@@ -117,7 +117,6 @@
     "full_name": "Nom complet",
     "login_btn": "Se connecter",
     "register_btn": "Créer mon compte",
-    "google_btn": "Continuer avec Google",
     "forgot_password": "Mot de passe oublié ?",
     "no_account": "Pas encore de compte ?",
     "already_account": "Déjà un compte ?",
@@ -223,6 +222,13 @@
     "home_description": "Réservez votre séjour dans nos deux riads d'exception au cœur de la médina de Marrakech.",
     "riads_title": "Nos Riads – Dar Baraï & Dar Tanawi",
     "account_title": "Mon espace – Dar Baraï"
+  },
+  "gallery": {
+    "seo_title": "Galerie – Dar Baraï & Dar Tanawi",
+    "title": "Galerie",
+    "subtitle": "Découvrez nos deux riads à travers leurs espaces, leurs chambres et leurs recoins les plus secrets.",
+    "all": "Tout",
+    "empty": "Aucune photo disponible pour le moment."
   },
   "legal": {
     "seo_title": "Mentions légales – Dar Baraï",
