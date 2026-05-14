@@ -50,6 +50,13 @@
             <td class="py-3 px-4">
               <div class="flex items-center gap-2">
                 <button
+                  v-if="row.data.status === 'pending'"
+                  class="text-xs px-2.5 py-1 rounded-lg border border-green-300 text-green-700 hover:bg-green-50 transition-colors"
+                  @click="confirmReservation(row.data.id)"
+                >
+                  {{ t("admin.reservation_confirm") }}
+                </button>
+                <button
                   v-if="row.data.status === 'pending' || row.data.status === 'confirmed'"
                   class="text-xs px-2.5 py-1 rounded-lg border border-amber-300 text-amber-700 hover:bg-amber-50 transition-colors"
                   @click="cancelReservation(row.data.id)"
@@ -121,6 +128,14 @@
   </div>
 
   <UiConfirmModal
+    v-model="confirmModal.open"
+    :title="t('admin.reservation_confirm_modal')"
+    :confirm-label="t('admin.reservation_confirm')"
+    :danger="false"
+    @confirm="doConfirm"
+  />
+
+  <UiConfirmModal
     v-model="cancelModal.open"
     :title="t('admin.reservation_cancel_confirm')"
     :confirm-label="t('admin.reservation_cancel')"
@@ -187,6 +202,11 @@ function isBlockedPeriod(label: string | null): boolean {
 
 const supabase = useSupabaseClient();
 
+const getToken = async () => {
+  const { data } = await supabase.auth.getSession();
+  return data.session?.access_token ?? "";
+};
+
 const fetchedRows = ref<ReservationRow[]>([]);
 
 const reservationRows = computed(() => {
@@ -228,8 +248,25 @@ if (props.limit && !props.reservations) {
 const formatDate = (d: string) =>
   format(parseISO(d), "dd MMM yyyy", { locale: fr });
 
+const confirmModal = reactive({ open: false, id: "" });
 const cancelModal = reactive({ open: false, id: "" });
 const deleteModal = reactive({ open: false, id: "" });
+
+const confirmReservation = (id: string) => {
+  confirmModal.id = id;
+  confirmModal.open = true;
+};
+
+const doConfirm = async () => {
+  const token = await getToken();
+  await $fetch(`/api/admin/reservations/${confirmModal.id}`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+    body: { status: "confirmed" },
+  });
+  await refetchOwn();
+  emit("refresh");
+};
 
 const cancelReservation = (id: string) => {
   cancelModal.id = id;
@@ -237,10 +274,12 @@ const cancelReservation = (id: string) => {
 };
 
 const doCancel = async () => {
-  await (supabase as any)
-    .from("reservations")
-    .update({ status: "cancelled" })
-    .eq("id", cancelModal.id);
+  const token = await getToken();
+  await $fetch(`/api/admin/reservations/${cancelModal.id}`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+    body: { status: "cancelled" },
+  });
   await refetchOwn();
   emit("refresh");
 };
@@ -251,7 +290,11 @@ const deleteReservation = (id: string) => {
 };
 
 const doDelete = async () => {
-  await (supabase as any).from("reservations").delete().eq("id", deleteModal.id);
+  const token = await getToken();
+  await $fetch(`/api/admin/reservations/${deleteModal.id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
   await refetchOwn();
   emit("refresh");
 };

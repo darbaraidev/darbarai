@@ -220,6 +220,8 @@
     "ical_syncing": "Syncing...",
     "ical_synced": "{n} slot(s) imported",
     "ical_sync_error": "Sync error",
+    "reservation_confirm": "Confirm",
+    "reservation_confirm_modal": "Manually confirm this reservation?",
     "reservation_cancel": "Cancel",
     "reservation_cancel_confirm": "Cancel this reservation?",
     "reservation_delete_confirm": "Permanently delete this reservation from the database?"

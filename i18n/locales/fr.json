@@ -221,6 +221,8 @@
     "ical_syncing": "Synchronisation en cours...",
     "ical_synced": "{n} créneau(x) importé(s)",
     "ical_sync_error": "Erreur de synchronisation",
+    "reservation_confirm": "Confirmer",
+    "reservation_confirm_modal": "Confirmer manuellement cette réservation ?",
     "reservation_cancel": "Annuler",
     "reservation_cancel_confirm": "Annuler cette réservation ?",
     "reservation_delete_confirm": "Supprimer définitivement cette réservation de la base ?"
