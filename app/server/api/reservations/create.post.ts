@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { serverSupabaseClient, serverSupabaseUser } from "#supabase/server";
+import { templates, sendEmail } from "~/server/utils/emailTemplates";
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -153,6 +154,27 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Sans Stripe (ou Stripe en erreur) : clientSecret null, le frontend passe en mode "payer plus tard"
+  // Sans Stripe (ou Stripe en erreur) : email de confirmation + clientSecret null
+  if (config.resendApiKey) {
+    try {
+      const checkInDate2 = new Date(check_in);
+      const checkOutDate2 = new Date(check_out);
+      const nights2 = Math.round((checkOutDate2.getTime() - checkInDate2.getTime()) / 86400000);
+      await sendEmail(config.resendApiKey, user.email!, templates.reservationRequest({
+        clientName: user.user_metadata?.full_name ?? "",
+        clientEmail: user.email!,
+        riadName: riad.name,
+        checkIn: check_in,
+        checkOut: check_out,
+        nights: nights2,
+        guests,
+        totalEur: (total_price / 100).toFixed(2),
+        reservationId: reservation.id,
+      }));
+    } catch (emailErr) {
+      console.error("[create] Email send failed:", emailErr);
+    }
+  }
+
   return { clientSecret: null, reservationId: reservation.id };
 });
