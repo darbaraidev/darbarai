@@ -142,3 +142,33 @@ Sur la page de récap, l'utilisateur choisit entre :
 
 - **Carte bancaire** — paiement Stripe immédiat, réservation confirmée automatiquement via webhook
 - **Payer plus tard** — réservation en `pending`, la gérante contacte le client par WhatsApp/email pour convenir du règlement
+
+---
+
+## Déploiement
+
+- **Hébergeur** : Vercel — déploiement automatique à chaque `git push` sur `main`
+- **Domaine** : `darbarai.com` (OVH)
+- **Repo** : GitHub — compte `darbaraidev`
+
+### Checklist post-déploiement
+
+- [ ] Connecter `darbarai.com` dans Vercel → Settings → Domains
+- [ ] Ajouter les entrées DNS chez OVH (A + CNAME fournis par Vercel)
+- [ ] Mettre à jour l'URL de callback Google OAuth dans Supabase → Authentication → URL Configuration
+- [ ] Vérifier le domaine `darbarai.com` dans Resend → Domains (ajouter enregistrements DNS)
+- [ ] Configurer le SMTP Supabase avec Resend (voir section Resend ci-dessus)
+- [ ] Configurer le webhook Stripe avec l'URL de prod : `https://darbarai.com/api/stripe/webhook`
+- [ ] Renseigner `STRIPE_*` dans les variables d'environnement Vercel
+
+---
+
+## Informations légales
+
+**DAR BARAÏ** — SARL AU (droit marocain)
+- RC : 154065 — Tribunal de commerce de Marrakech
+- ICE : 003577950000075
+- Capital : 10 000 DHS
+- Adresse : Place la Liberté, Angle Av. My Hassan et Av. Mohamed V, Rés. Berdaï, Imm. B, Appt. 2, Marrakech, Maroc
+- Responsable de publication : Nathalie Couderc
+- Contact : contact@darbarai.com
