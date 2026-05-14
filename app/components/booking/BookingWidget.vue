@@ -65,21 +65,6 @@
         </select>
       </div>
 
-      <!-- Demandes particulières -->
-      <div>
-        <label
-          class="block text-xs font-medium text-stone-600 mb-1 uppercase tracking-wide"
-        >
-          {{ t("booking.special_requests") }}
-        </label>
-        <textarea
-          v-model="form.specialRequests"
-          rows="3"
-          :placeholder="t('booking.special_requests_placeholder')"
-          class="input-field text-sm resize-none"
-        />
-      </div>
-
       <!-- Récap prix -->
       <div
         v-if="nights > 0"
@@ -111,7 +96,7 @@
         class="btn-primary w-full text-base py-4"
         :disabled="unavailable || nights === 0 || (riad.min_nights > 1 && nights > 0 && nights < riad.min_nights)"
       >
-        {{ t("booking.confirm") }}
+        {{ t("common.confirm") }}
       </button>
     </form>
 
@@ -124,7 +109,6 @@
 <script setup lang="ts">
 import type { Riad } from "~/types";
 import { addDays, format } from "date-fns";
-
 
 const props = defineProps<{ riad: Riad }>();
 const { t } = useI18n();
@@ -157,11 +141,7 @@ const unavailable = ref(false);
 
 const onDateChange = async () => {
   if (!form.checkIn || !form.checkOut || nights.value <= 0) return;
-  unavailable.value = !(await checkAvailability(
-    props.riad.id,
-    form.checkIn,
-    form.checkOut,
-  ));
+  unavailable.value = !(await checkAvailability(props.riad.id, form.checkIn, form.checkOut));
 };
 
 const onPickerCheckIn = async (date: string) => {
@@ -182,16 +162,14 @@ const onSubmit = async () => {
     checkOut: form.checkOut,
     guests: String(form.guests),
     ...(form.specialRequests ? { specialRequests: form.specialRequests } : {}),
-  }).toString()
-  const bookingPath = localePath("/booking") + "?" + bookingQuery
+  }).toString();
+  const bookingPath = localePath("/booking") + "?" + bookingQuery;
 
   if (!user.value) {
-    await navigateTo(
-      localePath("/auth/login") + "?redirect=" + encodeURIComponent(bookingPath)
-    )
-    return
+    await navigateTo(localePath("/auth/login") + "?redirect=" + encodeURIComponent(bookingPath));
+    return;
   }
 
-  await navigateTo(bookingPath)
+  await navigateTo(bookingPath);
 };
 </script>

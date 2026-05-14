@@ -82,7 +82,7 @@
       <div class="lg:col-span-2 space-y-14">
         <!-- Description -->
         <section>
-          <p class="text-stone-600 text-lg leading-relaxed">
+          <p class="text-stone-600 text-lg leading-relaxed whitespace-pre-wrap">
             {{ description }}
           </p>
         </section>
@@ -132,7 +132,7 @@
             >
               <span class="text-xl">{{ amenityEmoji(amenity) }}</span>
               <span class="text-sm font-medium text-stone-700 capitalize">{{
-                t(`riads.amenity_${amenity.replace(/-/g, "_")}`, amenity)
+                amenityLabel(amenity)
               }}</span>
             </div>
           </div>
@@ -461,21 +461,12 @@ const roomPhotos = (room: { label: string; label_en?: string }) => {
   );
 };
 
-const amenityEmoji = (slug: string): string =>
-  (
-    ({
-      piscine: "🏊",
-      hammam: "♨️",
-      wifi: "📶",
-      climatisation: "❄️",
-      terrasse: "🌅",
-      "petit-dejeuner": "☕",
-      cuisine: "🍽️",
-      parking: "🅿️",
-      jardin: "🌿",
-      cheminee: "🔥",
-    }) as Record<string, string>
-  )[slug] ?? "✓";
+const { getAmenity } = useAmenities();
+const amenityEmoji = (slug: string): string => getAmenity(slug)?.emoji ?? "✓";
+const amenityLabel = (slug: string): string =>
+  locale.value === "fr"
+    ? (getAmenity(slug)?.name_fr ?? slug)
+    : (getAmenity(slug)?.name_en ?? slug);
 
 useSeoMeta({
   title: t("riads.seo_title", { name: riad.name }),

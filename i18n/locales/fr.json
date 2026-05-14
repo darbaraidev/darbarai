@@ -106,7 +106,8 @@
     "later_success_title": "Demande enregistrée !",
     "later_success_desc": "Votre réservation est en attente de confirmation. La gérante va vous contacter prochainement pour convenir du règlement.",
     "contact_whatsapp": "Contacter sur WhatsApp",
-    "contact_email": "Contacter par email"
+    "contact_email": "Contacter par email",
+    "tourist_tax": "Une taxe de séjour obligatoire de 26 Dh (~2,50 €) par nuit et par personne sera à régler directement sur place. Elle est collectée par la ville de Marrakech."
   },
   "auth": {
     "login_title": "Connexion",
@@ -144,7 +145,9 @@
     "reservation_ref": "Réf. {id}",
     "phone": "Téléphone",
     "newsletter_subscribe": "Recevoir notre newsletter",
-    "profile_saved": "Profil mis à jour."
+    "profile_saved": "Profil mis à jour.",
+    "cancel_reservation": "Annuler cette réservation",
+    "cancel_confirm": "Annuler cette réservation ? Cette action est irréversible."
   },
   "reservation": {
     "status_pending": "En attente",
@@ -215,7 +218,10 @@
     "ical_sync_description": "Les réservations Airbnb & Booking.com sont récupérées automatiquement à chaque ouverture de cette page.",
     "ical_syncing": "Synchronisation en cours...",
     "ical_synced": "{n} créneau(x) importé(s)",
-    "ical_sync_error": "Erreur de synchronisation"
+    "ical_sync_error": "Erreur de synchronisation",
+    "reservation_cancel": "Annuler",
+    "reservation_cancel_confirm": "Annuler cette réservation ?",
+    "reservation_delete_confirm": "Supprimer définitivement cette réservation de la base ?"
   },
   "seo": {
     "home_title": "Dar Baraï & Dar Tanawi – Riads à Marrakech",
@@ -265,6 +271,7 @@
     "not_found": "Page introuvable."
   },
   "common": {
+    "confirm": "Confirmer",
     "save": "Enregistrer",
     "cancel": "Annuler",
     "delete": "Supprimer",

@@ -13,6 +13,7 @@
           <th class="px-4 pb-3 pt-1 font-medium text-stone-500">Dates</th>
           <th class="px-4 pb-3 pt-1 font-medium text-stone-500">Total</th>
           <th class="px-4 pb-3 pt-1 font-medium text-stone-500">Statut</th>
+          <th class="px-4 pb-3 pt-1 font-medium text-stone-500">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-stone-100">
@@ -45,6 +46,24 @@
               <span class="badge" :class="statusClass(row.data.status)">
                 {{ t("reservation.status_" + row.data.status) }}
               </span>
+            </td>
+            <td class="py-3 px-4">
+              <div class="flex items-center gap-2">
+                <button
+                  v-if="row.data.status === 'pending' || row.data.status === 'confirmed'"
+                  class="text-xs px-2.5 py-1 rounded-lg border border-amber-300 text-amber-700 hover:bg-amber-50 transition-colors"
+                  @click="cancelReservation(row.data.id)"
+                >
+                  {{ t("admin.reservation_cancel") }}
+                </button>
+                <button
+                  v-if="row.data.status === 'cancelled'"
+                  class="text-xs px-2.5 py-1 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                  @click="deleteReservation(row.data.id)"
+                >
+                  {{ t("common.delete") }}
+                </button>
+              </div>
             </td>
           </tr>
 
@@ -91,6 +110,7 @@
                 </span>
               </template>
             </td>
+            <td class="py-3 px-4" />
           </tr>
         </template>
       </tbody>
@@ -99,6 +119,22 @@
       ⓘ Booking.com exporte réservations et blocages avec le même label — la distinction n'est pas possible depuis le iCal.
     </p>
   </div>
+
+  <UiConfirmModal
+    v-model="cancelModal.open"
+    :title="t('admin.reservation_cancel_confirm')"
+    :confirm-label="t('admin.reservation_cancel')"
+    :danger="false"
+    @confirm="doCancel"
+  />
+
+  <UiConfirmModal
+    v-model="deleteModal.open"
+    :title="t('admin.reservation_delete_confirm')"
+    :confirm-label="t('common.delete')"
+    danger
+    @confirm="doDelete"
+  />
 </template>
 
 <script setup lang="ts">
@@ -172,18 +208,53 @@ const allRows = computed<UnifiedRow[]>(() => {
   return result.sort((a, b) => b.sortDate.localeCompare(a.sortDate));
 });
 
-// Si limit passé sans reservations, on charge les dernières
-if (props.limit && !props.reservations) {
+const refetchOwn = async () => {
+  if (!props.limit) return;
+  console.log("[refetchOwn] re-fetching fetchedRows");
   const { data } = await (supabase as any)
     .from("reservations")
     .select("*, riad:riads(name, slug), profile:profiles(full_name, email)")
     .order("created_at", { ascending: false })
     .limit(props.limit);
   fetchedRows.value = data ?? [];
+  console.log("[refetchOwn] done, length=", fetchedRows.value.length);
+};
+
+// Chargement initial si utilisé en mode "limit" (dashboard)
+if (props.limit && !props.reservations) {
+  await refetchOwn();
 }
 
 const formatDate = (d: string) =>
   format(parseISO(d), "dd MMM yyyy", { locale: fr });
+
+const cancelModal = reactive({ open: false, id: "" });
+const deleteModal = reactive({ open: false, id: "" });
+
+const cancelReservation = (id: string) => {
+  cancelModal.id = id;
+  cancelModal.open = true;
+};
+
+const doCancel = async () => {
+  await (supabase as any)
+    .from("reservations")
+    .update({ status: "cancelled" })
+    .eq("id", cancelModal.id);
+  await refetchOwn();
+  emit("refresh");
+};
+
+const deleteReservation = (id: string) => {
+  deleteModal.id = id;
+  deleteModal.open = true;
+};
+
+const doDelete = async () => {
+  await (supabase as any).from("reservations").delete().eq("id", deleteModal.id);
+  await refetchOwn();
+  emit("refresh");
+};
 
 const statusClass = (status: string) =>
   ({

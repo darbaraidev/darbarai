@@ -97,10 +97,10 @@
       </div>
       <div class="card">
         <AdminReservationsTable
-          :reservations="reservations?.data ?? []"
+          :reservations="reservationsData"
           :external-blocks="status === 'all' ? (externalBlocks ?? []) : []"
-          :loading="!reservations"
-          @refresh="refresh"
+          :loading="reservationsLoading"
+          @refresh="fetchReservations"
         />
       </div>
     </template>
@@ -135,24 +135,29 @@ const syncing = ref(false);
 const syncMessage = ref<string | null>(null);
 const syncError = ref<string | null>(null);
 
-const { data: reservations, refresh } = await useAsyncData(
-  "admin:reservations",
-  async () => {
-    let query = (supabase as any)
-      .from("reservations")
-      .select("*, riad:riads(name, slug), profile:profiles(full_name, email)", {
-        count: "exact",
-      })
-      .order("created_at", { ascending: false })
-      .range((page.value - 1) * pageSize, page.value * pageSize - 1);
+const reservationsData = ref<any[]>([]);
+const reservationsLoading = ref(false);
 
-    if (status.value !== "all") {
-      query = query.eq("status", status.value);
-    }
-    return query;
-  },
-  { watch: [page, status] }
-);
+const fetchReservations = async () => {
+  reservationsLoading.value = true;
+  let query = (supabase as any)
+    .from("reservations")
+    .select("*, riad:riads(name, slug), profile:profiles(full_name, email)", {
+      count: "exact",
+    })
+    .order("created_at", { ascending: false })
+    .range((page.value - 1) * pageSize, page.value * pageSize - 1);
+
+  if (status.value !== "all") {
+    query = query.eq("status", status.value);
+  }
+  const { data } = await query;
+  reservationsData.value = data ?? [];
+  reservationsLoading.value = false;
+};
+
+watch([page, status], fetchReservations);
+await fetchReservations();
 
 const { data: externalBlocks, refresh: refreshBlocks } = await useAsyncData(
   "admin:blocks",

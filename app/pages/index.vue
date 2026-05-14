@@ -18,7 +18,7 @@
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <NuxtLink
-          to="/riads/dar-barai#booking"
+          :to="localePath('/riads')"
           class="btn-primary text-lg px-8 py-4 border-white text-white hover:bg-white/10"
         >
           {{ t("home.cta_book") }}
@@ -53,19 +53,26 @@
         <MapView
           :pins="[
             {
-              lat: 31.6166,
-              lng: -7.9878,
+              lat: 31.61544777164044,
+              lng: -7.989668939966876,
               label: 'Dar Baraï',
-              color: '#c0704a',
+              color: '#dc2626',
             },
             {
-              lat: 31.6172,
-              lng: -7.9885,
+              lat: 31.615308356540233,
+              lng: -7.989629243899648,
               label: 'Dar Tanawi',
-              color: '#6b7c4e',
+              color: '#dc2626',
+            },
+            {
+              lat: 31.625949492067296,
+              lng: -7.989045264913319,
+              label: 'Jemaa el-Fna',
+              color: '#4a7c59',
             },
           ]"
-          :zoom="16"
+          :center="{ lat: 31.61544777164044, lng: -7.989668939966876 }"
+          :zoom="17"
         />
       </div>
       <template #fallback>
@@ -87,6 +94,7 @@
 
 <script setup lang="ts">
 const { t } = useI18n();
+const localePath = useLocalePath();
 const { riads, fetchRiads } = useRiad();
 await useAsyncData("riads-home", () => fetchRiads());
 

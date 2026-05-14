@@ -121,6 +121,10 @@
           <span>{{ t("common.total") }}</span>
           <span>{{ formatPrice(totalPrice) }}</span>
         </div>
+        <div class="flex items-start gap-2 pt-3 border-t border-sand-200">
+          <span class="text-amber-500 shrink-0 mt-0.5">ℹ</span>
+          <p class="text-xs text-stone-500 leading-relaxed">{{ t("booking.tourist_tax") }}</p>
+        </div>
       </div>
 
       <!-- Choix du mode de paiement -->
@@ -268,13 +272,38 @@ const whatsappLink = computed(() => {
 let stripe: Stripe | null = null
 let elements: StripeElements | null = null
 let reservationId = ""
+let accessToken = ""
+const reservationCompleted = ref(false)
+
+const deleteIfAbandoned = () => {
+  if (reservationCompleted.value || !reservationId || !accessToken) return
+  navigator.sendBeacon(
+    `/api/reservations/${reservationId}`,
+    new Blob([JSON.stringify({ token: accessToken })], { type: "application/json" })
+  )
+}
+
+onBeforeUnmount(async () => {
+  if (reservationCompleted.value || !reservationId) return
+  await (supabase as any)
+    .from("reservations")
+    .delete()
+    .eq("id", reservationId)
+    .eq("status", "pending")
+})
 
 onMounted(async () => {
+  window.addEventListener("beforeunload", deleteIfAbandoned)
   try {
+    const { data: { session } } = await supabase.auth.getSession()
+    accessToken = session?.access_token ?? ""
     const data = await $fetch<{ clientSecret: string | null; reservationId: string }>(
       "/api/reservations/create",
       {
         method: "POST",
+        headers: session?.access_token
+          ? { Authorization: `Bearer ${session.access_token}` }
+          : {},
         body: {
           riad_id: riadId,
           check_in: checkIn,
@@ -324,17 +353,23 @@ onMounted(async () => {
   }
 })
 
+onUnmounted(() => {
+  window.removeEventListener("beforeunload", deleteIfAbandoned)
+})
+
 const pay = async () => {
   loading.value = true
   payError.value = false
 
   if (method.value === "later") {
+    reservationCompleted.value = true
     laterSuccess.value = true
     loading.value = false
     return
   }
 
   if (devMode.value) {
+    reservationCompleted.value = true
     await navigateTo(`/account?payment=success&reservation=${reservationId}`)
     return
   }
@@ -356,6 +391,7 @@ const pay = async () => {
     payError.value = error.message ?? t("errors.generic")
     loading.value = false
   } else {
+    reservationCompleted.value = true
     await navigateTo(`/account?payment=success&reservation=${reservationId}`)
   }
 }

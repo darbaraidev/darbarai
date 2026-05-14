@@ -105,7 +105,8 @@
     "later_success_title": "Request registered!",
     "later_success_desc": "Your reservation is pending confirmation. The owner will contact you shortly to arrange payment.",
     "contact_whatsapp": "Contact on WhatsApp",
-    "contact_email": "Contact by email"
+    "contact_email": "Contact by email",
+    "tourist_tax": "A mandatory tourist tax of 26 Dhs (~€2.50) per night per person is payable directly on-site. It is collected by the city of Marrakech."
   },
   "auth": {
     "login_title": "Sign in",
@@ -143,7 +144,9 @@
     "reservation_ref": "Ref. {id}",
     "phone": "Phone",
     "newsletter_subscribe": "Receive our newsletter",
-    "profile_saved": "Profile updated."
+    "profile_saved": "Profile updated.",
+    "cancel_reservation": "Cancel this reservation",
+    "cancel_confirm": "Cancel this reservation? This action cannot be undone."
   },
   "reservation": {
     "status_pending": "Pending",
@@ -214,7 +217,10 @@
     "ical_sync_description": "Airbnb & Booking.com reservations are fetched automatically each time you open this page.",
     "ical_syncing": "Syncing...",
     "ical_synced": "{n} slot(s) imported",
-    "ical_sync_error": "Sync error"
+    "ical_sync_error": "Sync error",
+    "reservation_cancel": "Cancel",
+    "reservation_cancel_confirm": "Cancel this reservation?",
+    "reservation_delete_confirm": "Permanently delete this reservation from the database?"
   },
   "seo": {
     "home_title": "Dar Baraï & Dar Tanawi – Riads in Marrakech",
@@ -264,6 +270,7 @@
     "not_found": "Page not found."
   },
   "common": {
+    "confirm": "Confirm",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",

@@ -1,12 +1,19 @@
 import Stripe from "stripe";
-import { serverSupabaseClient } from "#supabase/server";
+import { serverSupabaseClient, serverSupabaseUser } from "#supabase/server";
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
 
-  // 1. Auth
-  const { data: { session } } = await supabase.auth.getSession();
-  const user = session?.user;
+  // 1. Auth — token via header (Bearer) ou cookie Supabase
+  let user = await serverSupabaseUser(event);
+  if (!user?.id) {
+    const authHeader = getHeader(event, "authorization");
+    const token = authHeader?.replace(/^Bearer\s+/i, "");
+    if (token) {
+      const { data } = await supabase.auth.getUser(token);
+      user = data.user;
+    }
+  }
   if (!user?.id)
     throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
 
@@ -47,18 +54,40 @@ export default defineEventHandler(async (event) => {
       .gte("end_date", check_in),
     supabase
       .from("reservations")
-      .select("id")
+      .select("id, user_id, status")
       .eq("riad_id", riad_id)
       .in("status", ["pending", "confirmed"])
       .lt("check_in", check_out)
       .gt("check_out", check_in),
   ]);
 
-  if ((blocks && blocks.length > 0) || (existingRes && existingRes.length > 0)) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "Dates not available",
-    });
+  if (blocks && blocks.length > 0) {
+    throw createError({ statusCode: 409, statusMessage: "Dates not available" });
+  }
+
+  if (existingRes && existingRes.length > 0) {
+    // Si le conflit est une réservation pending de cet user, la réutiliser
+    const ownPending = existingRes.find(r => r.user_id === user!.id && r.status === "pending");
+    if (!ownPending) {
+      throw createError({ statusCode: 409, statusMessage: "Dates not available" });
+    }
+    // Réutiliser la réservation existante — recréer le PaymentIntent si Stripe configuré
+    const config = useRuntimeConfig();
+    if (config.stripeSecretKey) {
+      const stripe = new Stripe(config.stripeSecretKey, { apiVersion: "2025-04-30.basil" });
+      const nights = Math.round((new Date(check_out).getTime() - new Date(check_in).getTime()) / 86400000);
+      const total_price = riad.base_price_per_night * nights;
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: total_price,
+        currency: "eur",
+        receipt_email: user!.email ?? undefined,
+        metadata: { reservation_id: ownPending.id, user_id: user!.id },
+        description: `${riad.name} — ${nights} nuit${nights > 1 ? "s" : ""} · ${check_in} → ${check_out}`,
+      });
+      await supabase.from("reservations").update({ stripe_payment_intent_id: paymentIntent.id }).eq("id", ownPending.id);
+      return { clientSecret: paymentIntent.client_secret, reservationId: ownPending.id };
+    }
+    return { clientSecret: null, reservationId: ownPending.id };
   }
 
   // 5. Calculate total (centimes)
@@ -99,26 +128,31 @@ export default defineEventHandler(async (event) => {
 
   // 7. Stripe PaymentIntent (si clé configurée)
   if (config.stripeSecretKey) {
-    const stripe = new Stripe(config.stripeSecretKey, {
-      apiVersion: "2025-04-30.basil",
-    });
+    try {
+      const stripe = new Stripe(config.stripeSecretKey, {
+        apiVersion: "2025-04-30.basil",
+      });
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: total_price,
-      currency: "eur",
-      receipt_email: user.email ?? undefined,
-      metadata: { reservation_id: reservation.id, user_id: user.id },
-      description: `${riad.name} — ${nights} nuit${nights > 1 ? "s" : ""} · ${check_in} → ${check_out}`,
-    });
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: total_price,
+        currency: "eur",
+        receipt_email: user.email ?? undefined,
+        metadata: { reservation_id: reservation.id, user_id: user.id },
+        description: `${riad.name} — ${nights} nuit${nights > 1 ? "s" : ""} · ${check_in} → ${check_out}`,
+      });
 
-    await supabase
-      .from("reservations")
-      .update({ stripe_payment_intent_id: paymentIntent.id })
-      .eq("id", reservation.id);
+      await supabase
+        .from("reservations")
+        .update({ stripe_payment_intent_id: paymentIntent.id })
+        .eq("id", reservation.id);
 
-    return { clientSecret: paymentIntent.client_secret, reservationId: reservation.id };
+      return { clientSecret: paymentIntent.client_secret, reservationId: reservation.id };
+    } catch (stripeErr: any) {
+      console.error("[create] Stripe error:", stripeErr?.message);
+      // Stripe mal configuré → fallback sans paiement en ligne
+    }
   }
 
-  // Sans Stripe (dev) : clientSecret null, le frontend redirige directement
+  // Sans Stripe (ou Stripe en erreur) : clientSecret null, le frontend passe en mode "payer plus tard"
   return { clientSecret: null, reservationId: reservation.id };
 });

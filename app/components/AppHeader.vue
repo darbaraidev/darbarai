@@ -66,7 +66,7 @@
         <button
           v-for="loc in availableLocales"
           :key="loc"
-          class="text-xs font-medium uppercase px-2 py-1 rounded transition-colors"
+          class="text-xs font-medium uppercase px-2 py-1 rounded transition-colors flex items-center gap-1.5"
           :class="[
             locale === loc ? 'bg-terracotta-600 text-white' : '',
             scrolled
@@ -75,7 +75,12 @@
           ]"
           @click="setLocale(loc)"
         >
-          {{ loc }}
+          <img
+            :src="`https://flagcdn.com/16x12/${localeFlagCodes[loc]}.png`"
+            :alt="loc"
+            class="w-4 rounded-sm"
+          />
+          <span>{{ loc }}</span>
         </button>
 
         <!-- Auth -->
@@ -241,6 +246,7 @@
 import { mdiHome, mdiFlower, mdiCamera } from "@mdi/js";
 
 const { t, locale, availableLocales, setLocale } = useI18n();
+const localeFlagCodes: Record<string, string> = { fr: "fr", en: "gb" };
 const localePath = useLocalePath();
 const { user, isAdmin, signOut } = useAuth();
 

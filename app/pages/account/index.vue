@@ -32,6 +32,7 @@
           v-for="res in reservations"
           :key="res.id"
           :reservation="res"
+          @cancelled="onCancelled(res.id)"
         />
       </div>
     </div>
@@ -56,6 +57,11 @@ const tabs = [
   { id: "profile", label: t("account.profile") },
   { id: "reservations", label: t("account.my_reservations") },
 ];
+
+const onCancelled = (id: string) => {
+  const res = reservations.value.find((r) => r.id === id);
+  if (res) res.status = "cancelled";
+};
 
 onMounted(async () => {
   await fetchProfile();

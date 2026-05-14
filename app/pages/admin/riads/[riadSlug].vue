@@ -274,7 +274,7 @@
         <h2 class="admin-section-title">Équipements</h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
           <label
-            v-for="a in ALL_AMENITIES"
+            v-for="a in (allAmenities ?? [])"
             :key="a.slug"
             class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-stone-50 border border-transparent hover:border-stone-200 transition-colors"
           >
@@ -284,7 +284,7 @@
               v-model="form.amenities"
               class="accent-terracotta-600"
             />
-            <span class="text-sm">{{ a.emoji }} {{ a.label }}</span>
+            <span class="text-sm">{{ a.emoji }} {{ a.name_fr }}</span>
           </label>
         </div>
       </section>
@@ -694,18 +694,7 @@ const route = useRoute();
 const supabase = useSupabaseClient();
 const riadSlug = route.params.riadSlug as string;
 
-const ALL_AMENITIES = [
-  { slug: "piscine", label: "Piscine", emoji: "🏊" },
-  { slug: "hammam", label: "Hammam", emoji: "♨️" },
-  { slug: "wifi", label: "Wi-Fi", emoji: "📶" },
-  { slug: "climatisation", label: "Climatisation", emoji: "❄️" },
-  { slug: "terrasse", label: "Terrasse", emoji: "🌅" },
-  { slug: "petit-dejeuner", label: "Petit-déjeuner", emoji: "☕" },
-  { slug: "cuisine", label: "Cuisine", emoji: "🍽️" },
-  { slug: "parking", label: "Parking", emoji: "🅿️" },
-  { slug: "jardin", label: "Jardin", emoji: "🌿" },
-  { slug: "cheminee", label: "Cheminée", emoji: "🔥" },
-];
+const { amenities: allAmenities } = useAmenities();
 
 interface ServiceForm {
   name: string;

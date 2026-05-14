@@ -68,8 +68,25 @@
           formatPrice(reservation.total_price)
         }}</span>
       </div>
+
+      <div v-if="reservation.status === 'pending'" class="mt-4">
+        <button
+          class="text-xs text-red-500 hover:text-red-700 underline underline-offset-2 transition-colors"
+          @click="confirmModal = true"
+        >
+          {{ t("account.cancel_reservation") }}
+        </button>
+      </div>
     </div>
   </div>
+
+  <UiConfirmModal
+    v-model="confirmModal"
+    :title="t('account.cancel_confirm')"
+    :confirm-label="t('common.confirm')"
+    :danger="true"
+    @confirm="doCancel"
+  />
 </template>
 
 <script setup lang="ts">
@@ -78,8 +95,20 @@ import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 
 const props = defineProps<{ reservation: Reservation }>();
+const emit = defineEmits<{ cancelled: [] }>();
 const { t } = useI18n();
 const { formatPrice } = useRiad();
+const supabase = useSupabaseClient();
+
+const confirmModal = ref(false);
+
+const doCancel = async () => {
+  await supabase
+    .from("reservations")
+    .update({ status: "cancelled" })
+    .eq("id", props.reservation.id);
+  emit("cancelled");
+};
 
 const formatDate = (d: string) =>
   format(parseISO(d), "dd MMM yyyy", { locale: fr });

@@ -13,6 +13,7 @@ interface MapPin {
 const props = defineProps<{
   pins: MapPin[];
   zoom?: number;
+  center?: { lat: number; lng: number };
 }>();
 
 const mapContainer = ref<HTMLElement | null>(null);
@@ -25,11 +26,8 @@ onMounted(async () => {
   const L = (await import("leaflet")).default;
   await import("leaflet/dist/leaflet.css");
 
-  // Centre automatiquement entre les pins
-  const centerLat =
-    props.pins.reduce((s, p) => s + p.lat, 0) / props.pins.length;
-  const centerLng =
-    props.pins.reduce((s, p) => s + p.lng, 0) / props.pins.length;
+  const centerLat = props.center?.lat ?? props.pins.reduce((s, p) => s + p.lat, 0) / props.pins.length;
+  const centerLng = props.center?.lng ?? props.pins.reduce((s, p) => s + p.lng, 0) / props.pins.length;
 
   const map = L.map(mapContainer.value).setView(
     [centerLat, centerLng],
@@ -46,7 +44,7 @@ onMounted(async () => {
     const icon = L.divIcon({
       className: "",
       html: `<div style="
-        background:#dc2626;
+        background:${pin.color ?? '#dc2626'};
         width:20px;height:20px;
         border-radius:50%;
         border:3px solid white;
