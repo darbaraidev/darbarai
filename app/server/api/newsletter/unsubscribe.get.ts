@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const supabase = serverSupabaseServiceRole(event);
-  await supabase
+  await (supabase as any)
     .from("profiles")
     .update({ newsletter_subscribed: false })
     .eq("email", email);

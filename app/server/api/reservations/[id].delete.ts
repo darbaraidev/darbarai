@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   if (!user?.id) throw createError({ statusCode: 401 });
 
   // Supprime uniquement les réservations pending appartenant à l'user
-  await supabase
+  await (supabase as any)
     .from("reservations")
     .delete()
     .eq("id", id)

@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const stripe = new Stripe(config.stripeSecretKey, {
-    apiVersion: "2025-04-30.basil",
+    apiVersion: "2026-04-22.dahlia",
   });
 
   const rawBody = await readRawBody(event);

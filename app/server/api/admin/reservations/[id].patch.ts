@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const { data: { user } } = await supabase.auth.getUser(token);
   if (!user?.id) throw createError({ statusCode: 401 });
 
-  const { data: profile } = await supabase
+  const { data: profile } = await (supabase as any)
     .from("profiles")
     .select("role")
     .eq("id", user.id)
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const admin = serverSupabaseServiceRole(event);
-  const { data: reservation, error } = await admin
+  const { data: reservation, error } = await (admin as any)
     .from("reservations")
     .update({ status: body.status })
     .eq("id", id)

@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
   const supabase = serverSupabaseServiceRole(event);
 
-  const { data: profile } = await supabase
+  const { data: profile } = await (supabase as any)
     .from("profiles")
     .select("role")
     .eq("id", user.id)

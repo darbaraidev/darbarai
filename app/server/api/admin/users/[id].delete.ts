@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.user) throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
 
-  const { data: profile } = await supabase
+  const { data: profile } = await (supabase as any)
     .from("profiles")
     .select("role")
     .eq("id", session.user.id)

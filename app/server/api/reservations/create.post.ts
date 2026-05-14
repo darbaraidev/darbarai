@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     const token = authHeader?.replace(/^Bearer\s+/i, "");
     if (token) {
       const { data } = await supabase.auth.getUser(token);
-      user = data.user;
+      user = data.user as any;
     }
   }
   if (!user?.id)
@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // 3. Fetch riad
-  const { data: riad, error: riadError } = await supabase
+  const { data: riad, error: riadError } = await (supabase as any)
     .from("riads")
     .select("id, name, base_price_per_night")
     .eq("id", riad_id)
@@ -47,13 +47,13 @@ export default defineEventHandler(async (event) => {
 
   // 4. Check availability: blocked periods AND existing reservations
   const [{ data: blocks }, { data: existingRes }] = await Promise.all([
-    supabase
+    (supabase as any)
       .from("availability")
       .select("start_date, end_date")
       .eq("riad_id", riad_id)
       .lte("start_date", check_out)
       .gte("end_date", check_in),
-    supabase
+    (supabase as any)
       .from("reservations")
       .select("id, user_id, status")
       .eq("riad_id", riad_id)
@@ -68,14 +68,14 @@ export default defineEventHandler(async (event) => {
 
   if (existingRes && existingRes.length > 0) {
     // Si le conflit est une réservation pending de cet user, la réutiliser
-    const ownPending = existingRes.find(r => r.user_id === user!.id && r.status === "pending");
+    const ownPending = existingRes.find((r: any) => r.user_id === user!.id && r.status === "pending");
     if (!ownPending) {
       throw createError({ statusCode: 409, statusMessage: "Dates not available" });
     }
     // Réutiliser la réservation existante — recréer le PaymentIntent si Stripe configuré
     const config = useRuntimeConfig();
     if (config.stripeSecretKey) {
-      const stripe = new Stripe(config.stripeSecretKey, { apiVersion: "2025-04-30.basil" });
+      const stripe = new Stripe(config.stripeSecretKey, { apiVersion: "2026-04-22.dahlia" });
       const nights = Math.round((new Date(check_out).getTime() - new Date(check_in).getTime()) / 86400000);
       const total_price = riad.base_price_per_night * nights;
       const paymentIntent = await stripe.paymentIntents.create({
@@ -85,7 +85,7 @@ export default defineEventHandler(async (event) => {
         metadata: { reservation_id: ownPending.id, user_id: user!.id },
         description: `${riad.name} — ${nights} nuit${nights > 1 ? "s" : ""} · ${check_in} → ${check_out}`,
       });
-      await supabase.from("reservations").update({ stripe_payment_intent_id: paymentIntent.id }).eq("id", ownPending.id);
+      await (supabase as any).from("reservations").update({ stripe_payment_intent_id: paymentIntent.id }).eq("id", ownPending.id);
       return { clientSecret: paymentIntent.client_secret, reservationId: ownPending.id };
     }
     return { clientSecret: null, reservationId: ownPending.id };
@@ -105,7 +105,7 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const initialStatus = "pending";
 
-  const { data: reservation, error: resError } = await supabase
+  const { data: reservation, error: resError } = await (supabase as any)
     .from("reservations")
     .insert({
       riad_id,
@@ -131,7 +131,7 @@ export default defineEventHandler(async (event) => {
   if (config.stripeSecretKey) {
     try {
       const stripe = new Stripe(config.stripeSecretKey, {
-        apiVersion: "2025-04-30.basil",
+        apiVersion: "2026-04-22.dahlia",
       });
 
       const paymentIntent = await stripe.paymentIntents.create({
@@ -142,7 +142,7 @@ export default defineEventHandler(async (event) => {
         description: `${riad.name} — ${nights} nuit${nights > 1 ? "s" : ""} · ${check_in} → ${check_out}`,
       });
 
-      await supabase
+      await (supabase as any)
         .from("reservations")
         .update({ stripe_payment_intent_id: paymentIntent.id })
         .eq("id", reservation.id);

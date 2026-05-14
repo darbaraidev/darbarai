@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Fetch reservation + riad + profile before updating
-  const { data: reservation, error } = await supabase
+  const { data: reservation, error } = await (supabase as any)
     .from("reservations")
     .select("*, riad:riads(name), profile:profiles(full_name, email)")
     .eq("id", id)
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "Reservation not found" });
   }
 
-  await supabase
+  await (supabase as any)
     .from("reservations")
     .update({ status: "cancelled" })
     .eq("id", id);

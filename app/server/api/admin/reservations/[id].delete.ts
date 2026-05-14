@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   const { data: { user } } = await supabase.auth.getUser(token);
   if (!user?.id) throw createError({ statusCode: 401 });
 
-  const { data: profile } = await supabase
+  const { data: profile } = await (supabase as any)
     .from("profiles")
     .select("role")
     .eq("id", user.id)
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   if (!id) throw createError({ statusCode: 400, statusMessage: "Missing id" });
 
   const admin = serverSupabaseServiceRole(event);
-  const { error } = await admin.from("reservations").delete().eq("id", id);
+  const { error } = await (admin as any).from("reservations").delete().eq("id", id);
   if (error) throw createError({ statusCode: 500, statusMessage: error.message });
 
   return { ok: true };

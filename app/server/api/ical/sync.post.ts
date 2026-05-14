@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   const supabase = serverSupabaseServiceRole(event);
 
   // Fetch all riads with ical URLs
-  const { data: riads, error: riadsError } = await supabase
+  const { data: riads, error: riadsError } = await (supabase as any)
     .from("riads")
     .select("id, name, ical_airbnb_url, ical_booking_url");
 
@@ -71,14 +71,14 @@ export default defineEventHandler(async (event) => {
         }
 
         // Delete existing blocks from this source for this riad, then re-insert
-        await supabase
+        await (supabase as any)
           .from("availability")
           .delete()
           .eq("riad_id", riad.id)
           .eq("source", source);
 
         if (blocks.length > 0) {
-          const { error: insertError } = await supabase
+          const { error: insertError } = await (supabase as any)
             .from("availability")
             .insert(blocks);
           if (insertError) throw new Error(insertError.message);

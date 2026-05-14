@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
   const supabase = serverSupabaseServiceRole(event);
 
-  const { data: profile } = await supabase
+  const { data: profile } = await (supabase as any)
     .from("profiles")
     .select("role")
     .eq("id", user.id)
@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
     });
 
   // Fetch subscribers
-  const { data: subscribers, error: subError } = await supabase
+  const { data: subscribers, error: subError } = await (supabase as any)
     .from("profiles")
     .select("email, full_name")
     .eq("newsletter_subscribed", true);
@@ -53,7 +53,7 @@ export default defineEventHandler(async (event) => {
   for (let i = 0; i < subscribers.length; i += BATCH) {
     const batch = subscribers.slice(i, i + BATCH);
     await Promise.all(
-      batch.map((sub) => {
+      batch.map((sub: any) => {
         const { html } = templates.newsletter(
           content_html,
           unsubscribeUrl(sub.email, config.resendApiKey ?? "fallback"),
@@ -65,7 +65,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Log to newsletters_sent
-  await supabase.from("newsletters_sent").insert({
+  await (supabase as any).from("newsletters_sent").insert({
     subject,
     subject_en: subject_en ?? null,
     content_html,
