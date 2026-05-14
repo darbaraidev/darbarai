@@ -118,7 +118,11 @@ const onSubmit = async () => {
 
 const resendConfirmation = async () => {
   resendLoading.value = true;
-  await supabase.auth.resend({ type: "signup", email: form.email });
+  await supabase.auth.resend({
+    type: "signup",
+    email: form.email,
+    options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+  });
   resendLoading.value = false;
   resendSent.value = true;
 };
