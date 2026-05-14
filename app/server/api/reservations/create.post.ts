@@ -103,7 +103,7 @@ export default defineEventHandler(async (event) => {
 
   // 6. Create reservation in DB (status: pending)
   const config = useRuntimeConfig();
-  const initialStatus = config.stripeSecretKey ? "pending" : "confirmed";
+  const initialStatus = "pending";
 
   const { data: reservation, error: resError } = await supabase
     .from("reservations")
