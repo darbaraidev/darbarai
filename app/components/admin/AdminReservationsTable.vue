@@ -30,10 +30,10 @@
               {{ row.data.id.slice(0, 8) }}
             </td>
             <td class="py-3 px-4">
-              <p class="font-medium text-stone-700">
-                {{ row.data.profile?.full_name || "—" }}
-              </p>
+              <p class="font-medium text-stone-700">{{ row.data.profile?.full_name || "—" }}</p>
               <p class="text-xs text-stone-400">{{ row.data.profile?.email }}</p>
+              <p v-if="row.data.profile?.phone" class="text-xs text-stone-400">{{ row.data.profile.phone }}</p>
+              <p v-if="row.data.profile?.birth_date" class="text-xs text-stone-400">{{ formatDate(row.data.profile.birth_date) }}</p>
             </td>
             <td class="py-3 px-4 text-stone-600">{{ row.data.riad?.name }}</td>
             <td class="py-3 px-4 text-stone-600 whitespace-nowrap">
@@ -169,7 +169,7 @@ interface ExternalBlock {
 
 type ReservationRow = Reservation & {
   riad?: { name: string; slug: string };
-  profile?: { full_name: string; email: string };
+  profile?: { full_name: string; email: string; phone?: string | null; birth_date?: string | null };
 };
 
 type UnifiedRow =
@@ -233,7 +233,7 @@ const refetchOwn = async () => {
   console.log("[refetchOwn] re-fetching fetchedRows");
   const { data } = await (supabase as any)
     .from("reservations")
-    .select("*, riad:riads(name, slug), profile:profiles(full_name, email)")
+    .select("*, riad:riads(name, slug), profile:profiles(full_name, email, phone, birth_date)")
     .order("created_at", { ascending: false })
     .limit(props.limit);
   fetchedRows.value = data ?? [];

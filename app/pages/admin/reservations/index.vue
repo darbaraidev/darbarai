@@ -142,7 +142,7 @@ const fetchReservations = async () => {
   reservationsLoading.value = true;
   let query = (supabase as any)
     .from("reservations")
-    .select("*, riad:riads(name, slug), profile:profiles(full_name, email)", {
+    .select("*, riad:riads(name, slug), profile:profiles(full_name, email, phone, birth_date)", {
       count: "exact",
     })
     .order("created_at", { ascending: false })
