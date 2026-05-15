@@ -49,7 +49,7 @@
       {{ t("home.location_subtitle") }}
     </p>
     <ClientOnly>
-      <div class="h-[420px] rounded-2xl overflow-hidden shadow-lg">
+      <div class="h-[420px] rounded-2xl overflow-hidden shadow-lg isolate">
         <MapView
           :pins="[
             {

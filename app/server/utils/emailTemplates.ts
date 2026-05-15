@@ -53,6 +53,9 @@ export interface ReservationEmailData {
 const FROM = `${process.env.RESEND_FROM_NAME ?? "Dar Barai"} <${process.env.RESEND_FROM_EMAIL ?? "contact@darbarai.com"}>`;
 const SITE_URL = process.env.NUXT_PUBLIC_SITE_URL ?? "https://www.darbarai.com";
 const LOGO_URL = `${SITE_URL}/images/logo_app.png`;
+const WHATSAPP_NUMBER = process.env.NUXT_PUBLIC_CONTACT_WHATSAPP ?? "";
+const WHATSAPP_LINK = WHATSAPP_NUMBER ? `https://wa.me/${WHATSAPP_NUMBER}` : null;
+const WHATSAPP_DISPLAY = WHATSAPP_NUMBER ? `+${WHATSAPP_NUMBER}` : null;
 
 // Token HMAC pour unsubscribe sans connexion
 export const unsubscribeToken = (email: string, secret: string) =>
@@ -99,6 +102,7 @@ const layout = (content: string, opts?: { unsubscribeUrl?: string }) => `
         <p style="margin:0 0 6px;font-size:12px;color:#a8a29e;text-align:center">
           Dar Baraï · Marrakech, Maroc ·
           <a href="mailto:contact@darbarai.com" style="color:#a8a29e;text-decoration:none">contact@darbarai.com</a>
+          ${WHATSAPP_LINK ? `· <a href="${WHATSAPP_LINK}" style="color:#a8a29e;text-decoration:none">WhatsApp ${WHATSAPP_DISPLAY}</a>` : ""}
         </p>
         <p style="margin:0 0 6px;font-size:11px;color:#c7c3be;text-align:center">
           Cet email est envoyé automatiquement, merci de ne pas y répondre directement.
@@ -125,7 +129,7 @@ export const templates = {
       <p>Bonjour ${d.clientName},</p>
       <p>Votre paiement a bien été reçu. Votre réservation au <strong>${d.riadName}</strong> est confirmée.</p>
       ${reservationTable(d)}
-      <p>Nous avons hâte de vous accueillir à Marrakech. N'hésitez pas à nous contacter pour toute question à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>.</p>
+      <p>Nous avons hâte de vous accueillir à Marrakech. N'hésitez pas à nous contacter à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>${WHATSAPP_LINK ? ` ou sur <a href="${WHATSAPP_LINK}" style="color:#b45309">WhatsApp (${WHATSAPP_DISPLAY})</a>` : ""}.</p>
     `),
   }),
 
@@ -136,7 +140,7 @@ export const templates = {
       <p>Bonjour ${d.clientName},</p>
       <p>Nous avons bien reçu votre demande de réservation au <strong>${d.riadName}</strong>.</p>
       ${reservationTable(d)}
-      <p>Nous allons vous contacter prochainement par WhatsApp ou email pour convenir du règlement.</p>
+      <p>Nous allons vous contacter prochainement ${WHATSAPP_LINK ? `par <a href="${WHATSAPP_LINK}" style="color:#b45309">WhatsApp (${WHATSAPP_DISPLAY})</a> ou` : "par"} email pour convenir du règlement.</p>
       <p style="font-size:13px;color:#78716c">Réf. ${d.reservationId.slice(0, 8)}</p>
     `),
   }),
@@ -197,7 +201,7 @@ export const templates = {
       <h1 style="margin:0 0 8px;font-size:24px;color:#dc2626">Réservation annulée</h1>
       <p>Bonjour ${d.clientName},</p>
       <p>Votre réservation au <strong>${d.riadName}</strong> (${d.checkIn} → ${d.checkOut}) a bien été annulée.</p>
-      <p>Si vous avez des questions, contactez-nous à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>.</p>
+      <p>Si vous avez des questions, contactez-nous à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>${WHATSAPP_LINK ? ` ou sur <a href="${WHATSAPP_LINK}" style="color:#b45309">WhatsApp (${WHATSAPP_DISPLAY})</a>` : ""}.</p>
       <p style="font-size:13px;color:#78716c">Réf. ${d.reservationId.slice(0, 8)}</p>
     `),
   }),
@@ -208,7 +212,7 @@ export const templates = {
       <h1 style="margin:0 0 8px;font-size:24px;color:#dc2626">Réservation annulée</h1>
       <p>Bonjour ${d.clientName},</p>
       <p><strong>${d.riadName}</strong> a annulé votre réservation du ${d.checkIn} au ${d.checkOut}.</p>
-      <p>Nous sommes désolés pour la gêne occasionnée. N'hésitez pas à nous contacter pour toute question à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>.</p>
+      <p>Nous sommes désolés pour la gêne occasionnée. N'hésitez pas à nous contacter à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>${WHATSAPP_LINK ? ` ou sur <a href="${WHATSAPP_LINK}" style="color:#b45309">WhatsApp (${WHATSAPP_DISPLAY})</a>` : ""}.</p>
       <p style="font-size:13px;color:#78716c">Réf. ${d.reservationId.slice(0, 8)}</p>
     `),
   }),
