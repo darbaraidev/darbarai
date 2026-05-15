@@ -3,6 +3,7 @@ import { templates, sendEmail, sendToAdmins } from "~/server/utils/emailTemplate
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
+  const admin = serverSupabaseServiceRole(event);
   const id = getRouterParam(event, "id");
   const config = useRuntimeConfig();
 
@@ -18,10 +19,10 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "Only cancellation is supported" });
   }
 
-  // Fetch reservation + riad + profile before updating
-  const { data: reservation, error } = await (supabase as any)
+  // Use service role to bypass RLS on profile join
+  const { data: reservation, error } = await (admin as any)
     .from("reservations")
-    .select("*, riad:riads(name), profile:profiles(full_name, email)")
+    .select("*, riad:riads(name), profile:profiles(full_name, email, phone)")
     .eq("id", id)
     .eq("user_id", user.id)
     .eq("status", "pending")
@@ -31,7 +32,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "Reservation not found" });
   }
 
-  await (supabase as any)
+  await (admin as any)
     .from("reservations")
     .update({ status: "cancelled" })
     .eq("id", id);
@@ -39,31 +40,44 @@ export default defineEventHandler(async (event) => {
   // Emails
   if (config.resendApiKey) {
     const riad = reservation.riad as { name: string };
-    const profile = reservation.profile as { full_name: string; email: string };
-    const nights = Math.round(
-      (new Date(reservation.check_out).getTime() - new Date(reservation.check_in).getTime()) / 86400000
-    );
-    const emailData = {
-      clientName: profile.full_name ?? "",
-      clientEmail: profile.email,
-      riadName: riad.name,
-      checkIn: reservation.check_in,
-      checkOut: reservation.check_out,
-      nights,
-      guests: reservation.guests,
-      totalEur: (reservation.total_price / 100).toFixed(2),
-      reservationId: reservation.id,
-    };
+    const profile = reservation.profile as { full_name: string; email: string | null; phone?: string | null };
 
-    try {
-      // Email client
-      await sendEmail(config.resendApiKey, profile.email, templates.reservationCancelled(emailData));
-    } catch (e) { console.error("[patch] client email failed", e); }
+    // Fallback: profiles.email may be null if trigger didn't sync it
+    let clientEmail = profile.email;
+    if (!clientEmail) {
+      try {
+        const { data: authData } = await (admin as any).auth.admin.getUserById(user.id);
+        clientEmail = authData?.user?.email ?? null;
+      } catch {}
+    }
 
-    try {
-      const adminSupabase = serverSupabaseServiceRole(event);
-      await sendToAdmins(adminSupabase, config.resendApiKey, templates.adminReservationCancelled(emailData));
-    } catch (e) { console.error("[patch] admin email failed", e); }
+    if (!clientEmail) {
+      console.error("[patch] cannot send emails: no client email for user", user.id);
+    } else {
+      const nights = Math.round(
+        (new Date(reservation.check_out).getTime() - new Date(reservation.check_in).getTime()) / 86400000
+      );
+      const emailData = {
+        clientName: profile.full_name ?? "",
+        clientEmail,
+        clientPhone: profile.phone ?? null,
+        riadName: riad.name,
+        checkIn: reservation.check_in,
+        checkOut: reservation.check_out,
+        nights,
+        guests: reservation.guests,
+        totalEur: (reservation.total_price / 100).toFixed(2),
+        reservationId: reservation.id,
+      };
+
+      try {
+        await sendEmail(config.resendApiKey, clientEmail, templates.reservationCancelled(emailData));
+      } catch (e) { console.error("[patch] client email failed", e); }
+
+      try {
+        await sendToAdmins(admin, config.resendApiKey, templates.adminReservationCancelled(emailData));
+      } catch (e) { console.error("[patch] admin email failed", e); }
+    }
   }
 
   return { ok: true };

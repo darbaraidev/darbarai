@@ -199,14 +199,29 @@ export const templates = {
     `),
   }),
 
+  reservationCancelledByAdmin: (d: Pick<ReservationEmailData, "clientName" | "riadName" | "checkIn" | "checkOut" | "reservationId">) => ({
+    subject: `Annulation de votre réservation – ${d.riadName}`,
+    html: layout(`
+      <h1 style="margin:0 0 8px;font-size:24px;color:#dc2626">Réservation annulée</h1>
+      <p>Bonjour ${d.clientName},</p>
+      <p><strong>${d.riadName}</strong> a annulé votre réservation du ${d.checkIn} au ${d.checkOut}.</p>
+      <p>Nous sommes désolés pour la gêne occasionnée. N'hésitez pas à nous contacter pour toute question à <a href="mailto:reservations@darbarai.com" style="color:#b45309">reservations@darbarai.com</a>.</p>
+      <p style="font-size:13px;color:#78716c">Réf. ${d.reservationId.slice(0, 8)}</p>
+    `),
+  }),
+
   adminReservationCancelled: (d: ReservationEmailData) => ({
     subject: `Annulation – ${d.clientName} · ${d.riadName}`,
     html: layout(`
       <h1 style="margin:0 0 8px;font-size:24px;color:#dc2626">Réservation annulée</h1>
       <p>Un client a annulé sa réservation.</p>
       ${reservationTable(d)}
-      <p><strong>Client :</strong> ${d.clientName} — <a href="mailto:${d.clientEmail}" style="color:#b45309">${d.clientEmail}</a></p>
-      <p style="font-size:13px;color:#78716c">Réf. ${d.reservationId}</p>
+      <p><strong>Client :</strong> ${d.clientName}</p>
+      <p style="margin:4px 0">
+        📧 <a href="mailto:${d.clientEmail}" style="color:#b45309">${d.clientEmail}</a>
+        ${d.clientPhone ? `&nbsp;·&nbsp; 📞 <a href="tel:${d.clientPhone}" style="color:#b45309">${d.clientPhone}</a>` : ""}
+      </p>
+      <p style="font-size:13px;color:#78716c;margin-top:16px">Réf. ${d.reservationId}</p>
     `),
   }),
 

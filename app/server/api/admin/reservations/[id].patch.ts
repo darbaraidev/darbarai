@@ -35,27 +35,40 @@ export default defineEventHandler(async (event) => {
 
   if (error || !reservation) throw createError({ statusCode: 500, statusMessage: error?.message ?? "Update failed" });
 
-  // Email uniquement pour la confirmation manuelle
   const config = useRuntimeConfig();
-  if (body.status === "confirmed" && config.resendApiKey) {
+  if (config.resendApiKey) {
     try {
       const riad = reservation.riad as { name: string };
-      const clientProfile = reservation.profile as { full_name: string; email: string };
-      const nights = Math.round(
-        (new Date(reservation.check_out).getTime() - new Date(reservation.check_in).getTime()) / 86400000
-      );
-      const emailData = {
-        clientName: clientProfile.full_name ?? "",
-        clientEmail: clientProfile.email,
-        riadName: riad.name,
-        checkIn: reservation.check_in,
-        checkOut: reservation.check_out,
-        nights,
-        guests: reservation.guests,
-        totalEur: (reservation.total_price / 100).toFixed(2),
-        reservationId: reservation.id,
-      };
-      await sendEmail(config.resendApiKey, clientProfile.email, templates.reservationConfirmed(emailData));
+      const clientProfile = reservation.profile as { full_name: string; email: string | null };
+
+      let clientEmail = clientProfile.email;
+      if (!clientEmail) {
+        const { data: authData } = await (admin as any).auth.admin.getUserById(reservation.user_id);
+        clientEmail = authData?.user?.email ?? null;
+      }
+
+      if (clientEmail) {
+        const nights = Math.round(
+          (new Date(reservation.check_out).getTime() - new Date(reservation.check_in).getTime()) / 86400000
+        );
+        const emailData = {
+          clientName: clientProfile.full_name ?? "",
+          clientEmail,
+          riadName: riad.name,
+          checkIn: reservation.check_in,
+          checkOut: reservation.check_out,
+          nights,
+          guests: reservation.guests,
+          totalEur: (reservation.total_price / 100).toFixed(2),
+          reservationId: reservation.id,
+        };
+
+        if (body.status === "confirmed") {
+          await sendEmail(config.resendApiKey, clientEmail, templates.reservationConfirmed(emailData));
+        } else if (body.status === "cancelled") {
+          await sendEmail(config.resendApiKey, clientEmail, templates.reservationCancelledByAdmin(emailData));
+        }
+      }
     } catch (e) {
       console.error("[admin patch] email failed", e);
     }
