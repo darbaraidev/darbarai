@@ -49,7 +49,7 @@ export interface ReservationEmailData {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const FROM = `${process.env.RESEND_FROM_NAME ?? "Dar Baraï"} <${process.env.RESEND_FROM_EMAIL ?? "reservations@darbarai.com"}>`;
+const FROM = `${process.env.RESEND_FROM_NAME ?? "Dar Barai"} <${process.env.RESEND_FROM_EMAIL ?? "reservations@darbarai.com"}>`;
 const SITE_URL = process.env.NUXT_PUBLIC_SITE_URL ?? "https://www.darbarai.com";
 const LOGO_URL = `${SITE_URL}/images/logo_app.png`;
 
