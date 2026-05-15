@@ -1,5 +1,17 @@
 <template>
   <div class="space-y-6">
+    <!-- Nom expéditeur -->
+    <div>
+      <label class="block text-sm font-medium text-stone-700 mb-1">Nom de l'expéditeur</label>
+      <input
+        v-model="form.from_name"
+        type="text"
+        class="input-field"
+        placeholder="Dar Baraï Marrakech"
+      />
+      <p class="text-xs text-stone-400 mt-1">Apparaît dans la boîte de réception à la place de l'adresse email.</p>
+    </div>
+
     <!-- Champs sujet -->
     <div class="grid md:grid-cols-2 gap-4">
       <div>
@@ -191,8 +203,14 @@ import TextAlign from "@tiptap/extension-text-align";
 const { t } = useI18n();
 const supabase = useSupabaseClient();
 
+const getToken = async () => {
+  const { data } = await supabase.auth.getSession();
+  return data.session?.access_token ?? "";
+};
+
 const activeLang = ref<"fr" | "en">("fr");
 const form = reactive({
+  from_name: "",
   subject: "",
   subject_en: "",
   content_fr: "",
@@ -243,27 +261,38 @@ const sent = ref(false);
 const sendError = ref<string | null>(null);
 
 const onPreview = () => {
+  const combined =
+    form.content_fr +
+    (form.content_en
+      ? `<hr style="border:none;border-top:1px solid #e7e5e4;margin:32px 0"/>
+         <p style="font-size:11px;color:#a8a29e;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 16px">English version</p>
+         ${form.content_en}`
+      : "");
   const w = window.open("", "_blank");
-  if (w) w.document.write(form.content_fr);
+  if (w) w.document.write(combined);
 };
 
 const onSend = async () => {
   sending.value = true;
   sendError.value = null;
-  const { error } = await useFetch("/api/newsletter/send", {
-    method: "POST",
-    body: {
-      subject: form.subject,
-      subject_en: form.subject_en,
-      content_html: form.content_fr,
-      content_html_en: form.content_en,
-    },
-  });
-  sending.value = false;
-  if (error.value) {
-    sendError.value = error.value.message;
-  } else {
+  try {
+    const token = await getToken();
+    await $fetch("/api/newsletter/send", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: {
+        from_name: form.from_name || undefined,
+        subject: form.subject,
+        subject_en: form.subject_en,
+        content_html: form.content_fr,
+        content_html_en: form.content_en,
+      },
+    });
     sent.value = true;
+  } catch (e: any) {
+    sendError.value = e?.data?.message ?? e?.message ?? "Erreur inconnue";
+  } finally {
+    sending.value = false;
   }
 };
 

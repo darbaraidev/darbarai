@@ -265,7 +265,7 @@ const devMode = ref(false)
 const loading = ref(false)
 const payError = ref<string | false>(false)
 
-const contactEmail = (config.public as any).contactEmail || "reservations@darbarai.com"
+const contactEmail = (config.public as any).contactEmail || "contact@darbarai.com"
 const whatsappLink = computed(() => {
   const phone = (config.public as any).contactWhatsapp as string
   if (!phone || !reservationId) return ""
@@ -277,9 +277,15 @@ const whatsappLink = computed(() => {
 
 let stripe: Stripe | null = null
 let elements: StripeElements | null = null
-let reservationId = ""
+let reservationId = (route.query.reservationId as string) || ""
 let accessToken = ""
 const reservationCompleted = ref(false)
+
+// Si on revient sur cette page après avoir confirmé "payer plus tard"
+if (route.query.done === "true" && reservationId) {
+  laterSuccess.value = true
+  reservationCompleted.value = true
+}
 
 const deleteIfAbandoned = () => {
   if (reservationCompleted.value || !reservationId || !accessToken) return
@@ -300,6 +306,13 @@ onBeforeUnmount(async () => {
 
 onMounted(async () => {
   window.addEventListener("beforeunload", deleteIfAbandoned)
+
+  // Déjà complété (redirection après "payer plus tard") — ne pas recréer
+  if (laterSuccess.value) {
+    stripeLoading.value = false
+    return
+  }
+
   try {
     const { data: { session } } = await supabase.auth.getSession()
     accessToken = session?.access_token ?? ""
@@ -377,8 +390,11 @@ const pay = async () => {
     } catch (e) {
       console.error("[booking] notify email failed", e)
     }
-    laterSuccess.value = true
     loading.value = false
+    await navigateTo({
+      path: route.path,
+      query: { ...route.query, done: "true", reservationId },
+    })
     return
   }
 

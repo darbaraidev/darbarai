@@ -57,7 +57,7 @@ export default defineNuxtConfig({
       stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
       contactWhatsapp: process.env.NUXT_PUBLIC_CONTACT_WHATSAPP ?? "",
-      contactEmail: process.env.NUXT_PUBLIC_CONTACT_EMAIL ?? "reservations@darbarai.com",
+      contactEmail: process.env.NUXT_PUBLIC_CONTACT_EMAIL ?? "contact@darbarai.com",
     },
   },
 

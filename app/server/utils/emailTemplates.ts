@@ -50,7 +50,7 @@ export interface ReservationEmailData {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const FROM = `${process.env.RESEND_FROM_NAME ?? "Dar Barai"} <${process.env.RESEND_FROM_EMAIL ?? "reservations@darbarai.com"}>`;
+const FROM = `${process.env.RESEND_FROM_NAME ?? "Dar Barai"} <${process.env.RESEND_FROM_EMAIL ?? "contact@darbarai.com"}>`;
 const SITE_URL = process.env.NUXT_PUBLIC_SITE_URL ?? "https://www.darbarai.com";
 const LOGO_URL = `${SITE_URL}/images/logo_app.png`;
 
@@ -98,7 +98,10 @@ const layout = (content: string, opts?: { unsubscribeUrl?: string }) => `
       <div style="padding:20px 36px;background:#f5f5f4;border-top:1px solid #e7e5e4">
         <p style="margin:0 0 6px;font-size:12px;color:#a8a29e;text-align:center">
           Dar Baraï · Marrakech, Maroc ·
-          <a href="mailto:reservations@darbarai.com" style="color:#a8a29e;text-decoration:none">reservations@darbarai.com</a>
+          <a href="mailto:contact@darbarai.com" style="color:#a8a29e;text-decoration:none">contact@darbarai.com</a>
+        </p>
+        <p style="margin:0 0 6px;font-size:11px;color:#c7c3be;text-align:center">
+          Cet email est envoyé automatiquement, merci de ne pas y répondre directement.
         </p>
         ${opts?.unsubscribeUrl ? `
         <p style="margin:6px 0 0;font-size:11px;color:#c7c3be;text-align:center">
@@ -122,7 +125,7 @@ export const templates = {
       <p>Bonjour ${d.clientName},</p>
       <p>Votre paiement a bien été reçu. Votre réservation au <strong>${d.riadName}</strong> est confirmée.</p>
       ${reservationTable(d)}
-      <p>Nous avons hâte de vous accueillir à Marrakech. N'hésitez pas à nous contacter pour toute question.</p>
+      <p>Nous avons hâte de vous accueillir à Marrakech. N'hésitez pas à nous contacter pour toute question à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>.</p>
     `),
   }),
 
@@ -194,7 +197,7 @@ export const templates = {
       <h1 style="margin:0 0 8px;font-size:24px;color:#dc2626">Réservation annulée</h1>
       <p>Bonjour ${d.clientName},</p>
       <p>Votre réservation au <strong>${d.riadName}</strong> (${d.checkIn} → ${d.checkOut}) a bien été annulée.</p>
-      <p>Si vous avez des questions, contactez-nous à <a href="mailto:reservations@darbarai.com" style="color:#b45309">reservations@darbarai.com</a>.</p>
+      <p>Si vous avez des questions, contactez-nous à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>.</p>
       <p style="font-size:13px;color:#78716c">Réf. ${d.reservationId.slice(0, 8)}</p>
     `),
   }),
@@ -205,7 +208,7 @@ export const templates = {
       <h1 style="margin:0 0 8px;font-size:24px;color:#dc2626">Réservation annulée</h1>
       <p>Bonjour ${d.clientName},</p>
       <p><strong>${d.riadName}</strong> a annulé votre réservation du ${d.checkIn} au ${d.checkOut}.</p>
-      <p>Nous sommes désolés pour la gêne occasionnée. N'hésitez pas à nous contacter pour toute question à <a href="mailto:reservations@darbarai.com" style="color:#b45309">reservations@darbarai.com</a>.</p>
+      <p>Nous sommes désolés pour la gêne occasionnée. N'hésitez pas à nous contacter pour toute question à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>.</p>
       <p style="font-size:13px;color:#78716c">Réf. ${d.reservationId.slice(0, 8)}</p>
     `),
   }),
@@ -225,8 +228,16 @@ export const templates = {
     `),
   }),
 
-  newsletter: (content: string, unsubUrl: string) => ({
-    html: layout(content, { unsubscribeUrl: unsubUrl }),
+  newsletter: (contentFr: string, unsubUrl: string, contentEn?: string) => ({
+    html: layout(
+      contentFr +
+      (contentEn ? `
+        <hr style="border:none;border-top:1px solid #e7e5e4;margin:32px 0"/>
+        <p style="font-size:11px;color:#a8a29e;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 16px">English version</p>
+        ${contentEn}
+      ` : ""),
+      { unsubscribeUrl: unsubUrl },
+    ),
   }),
 };
 
