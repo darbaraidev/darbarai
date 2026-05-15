@@ -42,12 +42,18 @@ export const useAuth = () => {
   const signInWithEmail = (email: string, password: string) =>
     supabase.auth.signInWithPassword({ email, password });
 
-  const signUpWithEmail = (email: string, password: string, fullName: string) =>
+  const signUpWithEmail = (
+    email: string,
+    password: string,
+    fullName: string,
+    phone: string,
+    birthDate: string,
+  ) =>
     supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name: fullName },
+        data: { full_name: fullName, phone, birth_date: birthDate },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });

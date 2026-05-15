@@ -18,10 +18,18 @@
       />
     </div>
     <div>
-      <label class="block text-sm font-medium text-stone-700 mb-1">{{
-        t("account.phone")
-      }}</label>
-      <input v-model="form.phone" type="tel" class="input w-full" />
+      <label class="block text-sm font-medium text-stone-700 mb-1">{{ t("account.phone") }} *</label>
+      <input v-model="form.phone" type="tel" required class="input w-full" autocomplete="tel" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-stone-700 mb-1">{{ t("auth.birth_date") }}</label>
+      <input
+        :value="profile?.birth_date ?? ''"
+        type="date"
+        class="input w-full opacity-60"
+        disabled
+      />
+      <p class="text-xs text-stone-400 mt-1">{{ t("auth.birth_date_readonly") }}</p>
     </div>
     <div class="flex items-center gap-3">
       <input

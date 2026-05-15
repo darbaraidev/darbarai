@@ -124,6 +124,7 @@ export interface Profile {
   email: string;
   full_name: string | null;
   phone: string | null;
+  birth_date: string | null; // YYYY-MM-DD
   avatar_url: string | null;
   role: UserRole;
   newsletter_subscribed: boolean;
