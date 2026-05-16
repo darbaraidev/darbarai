@@ -349,55 +349,50 @@ const formatDate = (d: string) =>
 
 // Payment state
 const method = ref<"card" | "later">("card")
-const laterSuccess = ref(false)
 const devMode = ref(false)
 const loading = ref(false)
 const payError = ref<string | false>(false)
 const cardPhase = ref<"idle" | "loading" | "ready">("idle")
 
+const reservationId = ref((route.query.reservationId as string) || "")
+const laterSuccess = computed(() => route.query.done === "true" && !!reservationId.value)
+
 const contactEmail = (config.public as any).contactEmail || "contact@darbarai.com"
 const whatsappLink = computed(() => {
   const phone = (config.public as any).contactWhatsapp as string
-  if (!phone || !reservationId) return ""
+  if (!phone || !reservationId.value) return ""
   const msg = encodeURIComponent(
-    `Bonjour, j'ai fait une demande de réservation (réf. ${reservationId.slice(0, 8).toUpperCase()}) au ${riadName.value} du ${checkIn} au ${checkOut}. Je souhaite convenir du règlement.`
+    `Bonjour, j'ai fait une demande de réservation (réf. ${reservationId.value.slice(0, 8).toUpperCase()}) au ${riadName.value} du ${checkIn} au ${checkOut}. Je souhaite convenir du règlement.`
   )
   return `https://wa.me/${phone}?text=${msg}`
 })
 
 let stripe: Stripe | null = null
 let elements: StripeElements | null = null
-let reservationId = (route.query.reservationId as string) || ""
 let accessToken = ""
-const reservationCompleted = ref(false)
-
-// Returning after "pay later" redirect
-if (route.query.done === "true" && reservationId) {
-  laterSuccess.value = true
-  reservationCompleted.value = true
-}
+const reservationCompleted = ref(route.query.done === "true")
 
 const deleteIfAbandoned = () => {
-  if (reservationCompleted.value || !reservationId || !accessToken) return
+  if (reservationCompleted.value || !reservationId.value || !accessToken) return
   navigator.sendBeacon(
-    `/api/reservations/${reservationId}`,
+    `/api/reservations/${reservationId.value}`,
     new Blob([JSON.stringify({ token: accessToken })], { type: "application/json" })
   )
 }
 
 onBeforeUnmount(async () => {
-  if (reservationCompleted.value || !reservationId) return
+  if (reservationCompleted.value || !reservationId.value) return
   await (supabase as any)
     .from("reservations")
     .delete()
-    .eq("id", reservationId)
+    .eq("id", reservationId.value)
     .eq("status", "pending")
 })
 
 onMounted(async () => {
   window.addEventListener("beforeunload", deleteIfAbandoned)
 
-  if (laterSuccess.value) return
+  if (laterSuccess.value || reservationCompleted.value) return
 
   try {
     const { data: { session } } = await supabase.auth.getSession()
@@ -443,7 +438,7 @@ async function createReservation() {
     }
   )
 
-  reservationId = data.reservationId
+  reservationId.value = data.reservationId
   return data
 }
 
@@ -454,10 +449,10 @@ const pay = async () => {
   // "Pay later" flow
   if (method.value === "later") {
     try {
-      if (!reservationId) await createReservation()
+      if (!reservationId.value) await createReservation()
       reservationCompleted.value = true
       try {
-        await $fetch(`/api/reservations/notify/${reservationId}`, {
+        await $fetch(`/api/reservations/notify/${reservationId.value}`, {
           method: "POST",
           headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
         })
@@ -467,7 +462,7 @@ const pay = async () => {
       loading.value = false
       await navigateTo({
         path: route.path,
-        query: { ...route.query, done: "true", reservationId },
+        query: { ...route.query, done: "true", reservationId: reservationId.value },
       })
     } catch (err: any) {
       payError.value = err.data?.statusMessage || t("errors.generic")
@@ -524,7 +519,7 @@ const pay = async () => {
   // Dev mode: skip Stripe
   if (devMode.value) {
     reservationCompleted.value = true
-    await navigateTo(`/account?payment=success&reservation=${reservationId}`)
+    await navigateTo(`/account?payment=success&reservation=${reservationId.value}`)
     return
   }
 
@@ -537,7 +532,7 @@ const pay = async () => {
   const { error } = await stripe.confirmPayment({
     elements,
     confirmParams: {
-      return_url: `${window.location.origin}/account?payment=success&reservation=${reservationId}`,
+      return_url: `${window.location.origin}/account?payment=success&reservation=${reservationId.value}`,
     },
     redirect: "if_required",
   })
@@ -547,7 +542,7 @@ const pay = async () => {
     loading.value = false
   } else {
     reservationCompleted.value = true
-    await navigateTo(`/account?payment=success&reservation=${reservationId}`)
+    await navigateTo(`/account?payment=success&reservation=${reservationId.value}`)
   }
 }
 
