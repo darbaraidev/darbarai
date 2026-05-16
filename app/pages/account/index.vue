@@ -59,8 +59,7 @@ const tabs = [
 ];
 
 const onCancelled = (id: string) => {
-  const res = reservations.value.find((r) => r.id === id);
-  if (res) res.status = "cancelled";
+  reservations.value = reservations.value.filter((r) => r.id !== id);
 };
 
 onMounted(async () => {

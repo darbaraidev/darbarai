@@ -74,6 +74,7 @@ export const useBooking = () => {
     const { data } = await supabase
       .from("reservations")
       .select("*, riad:riads(name, slug, cover_image)")
+      .neq("status", "cancelled")
       .order("created_at", { ascending: false });
     return data ?? [];
   };
