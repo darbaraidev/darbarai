@@ -27,11 +27,11 @@
 
     <!-- Cards contact -->
     <section class="py-20 px-4 bg-stone-50">
-      <div class="max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="max-w-3xl mx-auto grid sm:grid-cols-3 gap-6 justify-items-center">
         <!-- Email -->
         <a
           href="mailto:contact@darbarai.com"
-          class="bg-white rounded-2xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow group"
+          class="w-full bg-white rounded-2xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow group"
         >
           <div
             class="w-14 h-14 rounded-full bg-terracotta-50 flex items-center justify-center mb-5 group-hover:bg-terracotta-100 transition-colors"
@@ -56,7 +56,7 @@
           href="https://wa.me/33676847685"
           target="_blank"
           rel="noopener"
-          class="bg-white rounded-2xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow group"
+          class="w-full bg-white rounded-2xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow group"
         >
           <div
             class="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-5 group-hover:bg-green-100 transition-colors"
@@ -70,7 +70,7 @@
           >
             WhatsApp
           </p>
-          <p class="font-serif text-stone-800 text-lg mb-1">+33750992975</p>
+          <p class="font-serif text-stone-800 text-lg mb-1">+33750996975</p>
           <p class="text-stone-400 text-sm">{{ t("contact.phone_desc") }}</p>
         </a>
 
@@ -79,7 +79,7 @@
           href="https://www.instagram.com/dar.barai/"
           target="_blank"
           rel="noopener"
-          class="bg-white rounded-2xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow group"
+          class="w-full bg-white rounded-2xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow group"
         >
           <div
             class="w-14 h-14 rounded-full bg-pink-50 flex items-center justify-center mb-5 group-hover:bg-pink-100 transition-colors"
@@ -126,7 +126,7 @@
     </section>
 
     <!-- Adresse + carte -->
-    <section class="py-16 px-4 max-w-3xl mx-auto text-center">
+    <section class="py-16 px-4 max-w-5xl mx-auto text-center">
       <p
         class="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-3"
       >
@@ -160,6 +160,13 @@
           <div class="h-[380px] rounded-2xl bg-sand-100 animate-pulse" />
         </template>
       </ClientOnly>
+
+      <!-- Image entrees/entrances selon la langue -->
+      <img
+        :src="locale === 'fr' ? locationImageFr : locationImageEn"
+        :alt="t('contact.address_value')"
+        class="w-full h-auto rounded-2xl shadow-lg mt-6"
+      />
     </section>
   </div>
 </template>
@@ -167,8 +174,10 @@
 <script setup lang="ts">
 import { mdiEmail, mdiPhone, mdiWhatsapp, mdiInstagram } from "@mdi/js";
 import heroBg from "~/assets/images/home_bg.jpg";
+import locationImageFr from "~/assets/images/entrees.jpg";
+import locationImageEn from "~/assets/images/entrances.jpg";
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 useSeoMeta({
   title: t("contact.seo_title"),

@@ -164,6 +164,23 @@
           </select>
         </div>
         <div>
+          <label class="block text-sm font-medium text-stone-600 mb-2">{{ t("admin.service_riads") }}</label>
+          <div class="flex gap-2 flex-wrap">
+            <button
+              v-for="opt in riadOptions"
+              :key="opt.value"
+              type="button"
+              class="px-3 py-1.5 rounded-full text-sm border transition-colors"
+              :class="selectedRiadKey === opt.value
+                ? 'bg-terracotta-600 text-white border-terracotta-600'
+                : 'border-stone-200 text-stone-600 hover:border-terracotta-300'"
+              @click="applyRiadOption(opt.value)"
+            >
+              {{ opt.label }}
+            </button>
+          </div>
+        </div>
+        <div>
           <label class="block text-sm font-medium text-stone-600 mb-1"
             >{{ t("admin.service_icon") }} (emoji)</label
           >
@@ -283,9 +300,16 @@
           service.icon ?? "✨"
         }}</span>
         <div class="flex-1 min-w-0">
-          <div class="font-medium text-stone-800 flex items-center gap-2">
+          <div class="font-medium text-stone-800 flex items-center gap-2 flex-wrap">
             {{ service.name }}
             <span class="text-xs font-mono text-stone-400">{{ service.slug }}</span>
+            <span
+              v-if="service.riad_slugs?.length === 1"
+              class="text-xs px-2 py-0.5 rounded-full font-medium"
+              :class="service.riad_slugs[0] === 'dar-barai' ? 'bg-terracotta-50 text-terracotta-700' : 'bg-blue-50 text-blue-700'"
+            >
+              {{ service.riad_slugs[0] === 'dar-barai' ? 'Dar Baraï' : 'Dar Tanawi' }}
+            </span>
             <span
               class="text-xs px-2 py-0.5 rounded-full bg-stone-100 text-stone-500"
             >
@@ -313,19 +337,6 @@
           }}
         </div>
         <div class="flex items-center gap-2 shrink-0">
-          <!-- Toggle en avant -->
-          <button
-            class="text-xs px-2 py-1 rounded border transition-colors"
-            :class="
-              service.featured
-                ? 'border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100'
-                : 'border-stone-200 text-stone-400 hover:border-amber-300 hover:text-amber-600'
-            "
-            :title="service.featured ? 'Retirer de la page d\'accueil' : 'Mettre en avant sur la page d\'accueil'"
-            @click="toggleFeatured(service)"
-          >
-            {{ service.featured ? "★ En avant" : "☆ Mettre en avant" }}
-          </button>
           <!-- Toggle actif -->
           <button
             class="text-xs px-2 py-1 rounded border transition-colors"
@@ -451,6 +462,19 @@ const editingId = ref<string | null>(null);
 const saving = ref(false);
 const saveError = ref<string | null>(null);
 
+const riadOptions = [
+  { value: "all", label: t("admin.service_riads_all") },
+  { value: "dar-barai", label: "Dar Baraï uniquement" },
+  { value: "dar-tanawi", label: "Dar Tanawi uniquement" },
+];
+
+const selectedRiadKey = ref<"all" | "dar-barai" | "dar-tanawi">("all");
+
+const applyRiadOption = (val: "all" | "dar-barai" | "dar-tanawi") => {
+  selectedRiadKey.value = val;
+  (form as any).riad_slugs = val === "all" ? [] : [val];
+};
+
 const emptyForm = () => ({
   slug: "",
   name: "",
@@ -463,8 +487,8 @@ const emptyForm = () => ({
   price_cents: null as number | null,
   icon: null as string | null,
   category: "other" as ServiceCategory,
+  riad_slugs: [] as string[],
   active: true,
-  featured: false,
   sort_order: allServices.value.length,
 });
 
@@ -478,6 +502,7 @@ watch(priceEur, (v) => {
 const openNew = () => {
   Object.assign(form, emptyForm());
   priceEur.value = 0;
+  selectedRiadKey.value = "all";
   editingId.value = null;
   editing.value = true;
 };
@@ -485,6 +510,8 @@ const openNew = () => {
 const openEdit = (service: Service) => {
   Object.assign(form, { ...service });
   priceEur.value = service.price_cents ? service.price_cents / 100 : 0;
+  const slugs = service.riad_slugs ?? [];
+  selectedRiadKey.value = slugs.length === 1 ? (slugs[0] as "dar-barai" | "dar-tanawi") : "all";
   editingId.value = service.id;
   editing.value = true;
   saveError.value = null;
@@ -567,10 +594,6 @@ const toggleActive = async (service: Service) => {
   await loadServices();
 };
 
-const toggleFeatured = async (service: Service) => {
-  await updateService(service.id, { featured: !service.featured });
-  await loadServices();
-};
 
 const remove = async (id: string) => {
   if (!confirm(t("admin.service_confirm_delete"))) {

@@ -102,6 +102,8 @@
             :key="card.key"
             class="flex flex-col group"
             :class="i === 1 ? 'md:mt-16' : ''"
+            @mouseenter="hoveredService = i"
+            @mouseleave="hoveredService = null"
           >
             <!-- Image portrait -->
             <div
@@ -121,6 +123,21 @@
             <p class="text-stone-500 leading-relaxed text-center">
               {{ card.description }}
             </p>
+
+            <!-- Animation -->
+            <ClientOnly v-if="card.lottie">
+              <LottieIcon
+                :animation-data="card.lottie"
+                :playing="hoveredService === i"
+                class="w-20 h-20 mx-auto"
+              />
+            </ClientOnly>
+            <img
+              v-else-if="card.image"
+              :src="card.image"
+              :alt="card.title"
+              class="w-20 h-20 mx-auto mt-4 object-contain"
+            />
           </div>
         </div>
 
@@ -140,44 +157,53 @@
   </section>
 
   <!-- Localisation -->
-  <section class="py-20 px-4 max-w-3xl mx-auto">
+  <section class="py-20 px-4 max-w-6xl mx-auto">
     <h2 class="section-title text-center mb-3">
       {{ t("home.location_title") }}
     </h2>
     <p class="text-center text-stone-500 mb-10">
       {{ t("home.location_subtitle") }}
     </p>
-    <ClientOnly>
-      <div class="h-[420px] rounded-2xl overflow-hidden shadow-lg isolate">
-        <MapView
-          :pins="[
-            {
-              lat: 31.61544777164044,
-              lng: -7.989668939966876,
-              label: 'Dar Baraï',
-              color: '#dc2626',
-            },
-            {
-              lat: 31.615308356540233,
-              lng: -7.989629243899648,
-              label: 'Dar Tanawi',
-              color: '#dc2626',
-            },
-            {
-              lat: 31.625949492067296,
-              lng: -7.989045264913319,
-              label: 'Jemaa el-Fna',
-              color: '#4a7c59',
-            },
-          ]"
-          :center="{ lat: 31.61544777164044, lng: -7.989668939966876 }"
-          :zoom="17"
-        />
-      </div>
-      <template #fallback>
-        <div class="h-[420px] rounded-2xl bg-sand-100 animate-pulse" />
-      </template>
-    </ClientOnly>
+    <div class="grid md:grid-cols-[2fr_3fr] gap-6 items-start">
+      <ClientOnly>
+        <div class="h-[420px] rounded-2xl overflow-hidden shadow-lg isolate">
+          <MapView
+            :pins="[
+              {
+                lat: 31.61544777164044,
+                lng: -7.989668939966876,
+                label: 'Dar Baraï',
+                color: '#dc2626',
+              },
+              {
+                lat: 31.615308356540233,
+                lng: -7.989629243899648,
+                label: 'Dar Tanawi',
+                color: '#dc2626',
+              },
+              {
+                lat: 31.625949492067296,
+                lng: -7.989045264913319,
+                label: 'Jemaa el-Fna',
+                color: '#4a7c59',
+              },
+            ]"
+            :center="{ lat: 31.61544777164044, lng: -7.989668939966876 }"
+            :zoom="17"
+          />
+        </div>
+        <template #fallback>
+          <div class="h-[420px] rounded-2xl bg-sand-100 animate-pulse" />
+        </template>
+      </ClientOnly>
+
+      <!-- Image entrees -->
+      <img
+        :src="locale === 'fr' ? locationImageFr : locationImageEn"
+        :alt="t('home.location_title')"
+        class="w-full h-auto rounded-2xl shadow-lg"
+      />
+    </div>
   </section>
 
   <!-- Expériences -->
@@ -196,13 +222,19 @@ import { mdiPlus } from "@mdi/js";
 import heroBg from "~/assets/images/home_bg.jpg";
 import homePresentation1 from "~/assets/images/home_presentation_1.jpg";
 import homePresentation2 from "~/assets/images/home_presentation_2.jpg";
+import locationImageFr from "~/assets/images/entrees.jpg";
+import locationImageEn from "~/assets/images/entrances.jpg";
 import serviceHammam from "~/assets/images/service_hammam.jpg";
 import serviceExcursions from "~/assets/images/service_excursions.jpg";
 import serviceVisites from "~/assets/images/service_visites.jpg";
+import animMassage from "~/assets/animations/massage.json";
+import animExcursion from "~/assets/animations/excursion-desert.json";
+import imgMontgolfiere from "~/assets/animations/montgolfiere.png";
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const localePath = useLocalePath();
 const { riads, fetchRiads } = useRiad();
+const hoveredService = ref<number | null>(null);
 
 await useAsyncData("riads-home", () => fetchRiads());
 
@@ -212,18 +244,24 @@ const serviceCards = computed(() => [
     photo: serviceHammam,
     title: t("home.service_hammam_title"),
     description: t("home.service_hammam_desc"),
+    lottie: animMassage,
+    image: null,
   },
   {
     key: "excursions",
     photo: serviceExcursions,
     title: t("home.service_excursions_title"),
     description: t("home.service_excursions_desc"),
+    lottie: animExcursion,
+    image: null,
   },
   {
     key: "visites",
     photo: serviceVisites,
     title: t("home.service_visites_title"),
     description: t("home.service_visites_desc"),
+    lottie: null,
+    image: imgMontgolfiere,
   },
 ]);
 

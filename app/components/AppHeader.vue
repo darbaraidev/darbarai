@@ -32,12 +32,7 @@
         </NuxtLink>
         <NuxtLink
           :to="localePath('/riads')"
-          class="flex items-center gap-1.5 text-sm font-medium transition-colors"
-          :class="
-            scrolled
-              ? 'text-stone-700 hover:text-terracotta-600'
-              : 'text-stone-900 hover:text-terracotta-600'
-          "
+          class="btn-primary text-sm px-4 py-2 flex items-center gap-1.5"
         >
           <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0">
             <path fill="currentColor" :d="mdiBed" />
@@ -249,7 +244,7 @@
           </NuxtLink>
           <NuxtLink
             :to="localePath('/riads')"
-            class="flex items-center gap-2 text-stone-700 font-medium"
+            class="btn-primary text-sm px-4 py-2 flex items-center gap-2 self-start"
             @click="mobileOpen = false"
           >
             <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0">

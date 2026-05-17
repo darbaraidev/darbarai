@@ -18,8 +18,8 @@ export interface Service {
   price_cents: number | null; // null = sur demande
   icon: string | null; // emoji
   category: ServiceCategory;
+  riad_slugs: string[]; // [] = tous les riads, sinon slugs spécifiques
   active: boolean;
-  featured: boolean;
   sort_order: number;
   created_at: string;
 }
@@ -170,6 +170,24 @@ export interface PaginatedResponse<T> {
 export interface CheckoutSession {
   sessionId: string;
   url: string;
+}
+
+// --- Carte des bonnes adresses ---------------------------------
+export interface Place {
+  id: string;
+  name: string;
+  description: string | null;
+  address: string | null;
+  lat: number;
+  lng: number;
+  categories: string[];
+  price_level: '€' | '€€' | '€€€' | null;
+  maps_url: string | null;
+  website_url: string | null;
+  photo_main: string | null;
+  photos: string[];
+  active: boolean;
+  created_at: string;
 }
 
 // --- Boutique --------------------------------------------------

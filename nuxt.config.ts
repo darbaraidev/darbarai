@@ -82,6 +82,9 @@ export default defineNuxtConfig({
   nitro: {
     routeRules: {
       "/api/upload/**": { bodySize: "10mb" },
+      // Page privée avec Leaflet : désactive le SSR pour éviter le mismatch d'hydratation
+      "/carte": { ssr: false },
+      "/en/carte": { ssr: false },
     },
   },
 });

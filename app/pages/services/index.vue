@@ -11,8 +11,13 @@
       </p>
     </div>
 
+    <!-- Note riads spécifiques -->
+    <div class="max-w-3xl mx-auto px-4 pt-8 pb-2 text-center">
+      <p class="text-stone-400 text-sm">{{ t("services.riad_specific_note") }}</p>
+    </div>
+
     <!-- Contenu -->
-    <div class="max-w-7xl mx-auto px-4 py-16">
+    <div class="max-w-7xl mx-auto px-4 py-12">
       <template v-if="servicesByCategory.length">
         <div
           v-for="cat in servicesByCategory"
@@ -50,13 +55,22 @@
                   </template>
                 </ClientOnly>
                 <div>
-                  <h3 class="font-serif text-xl text-stone-800">
-                    {{
-                      locale === "fr"
-                        ? service.name
-                        : service.name_en || service.name
-                    }}
-                  </h3>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="font-serif text-xl text-stone-800">
+                      {{
+                        locale === "fr"
+                          ? service.name
+                          : service.name_en || service.name
+                      }}
+                    </h3>
+                    <span
+                      v-if="service.riad_slugs?.length === 1"
+                      class="text-xs px-2 py-0.5 rounded-full font-medium shrink-0"
+                      :class="service.riad_slugs[0] === 'dar-barai' ? 'bg-terracotta-50 text-terracotta-700' : 'bg-blue-50 text-blue-700'"
+                    >
+                      {{ service.riad_slugs[0] === 'dar-barai' ? 'Dar Baraï' : 'Dar Tanawi' }}
+                    </span>
+                  </div>
                   <p class="text-sm font-medium text-terracotta-600 mt-0.5">
                     <template v-if="!service.price_cents">
                       {{ t("services.on_request") }}
