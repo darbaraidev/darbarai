@@ -6,9 +6,9 @@ export const MAP_CATEGORY_GROUPS = [
     icon: "🍽️",
     color: "#dc2626",
     categories: [
-      { slug: "restaurant",  labelFr: "Restaurant",  labelEn: "Restaurant" },
-      { slug: "fast-food",   labelFr: "Fast Food",   labelEn: "Fast Food"  },
-      { slug: "pizzeria",    labelFr: "Pizzeria",    labelEn: "Pizzeria"   },
+      { slug: "restaurant",  labelFr: "Restaurant",  labelEn: "Restaurant", icon: "🍽️" },
+      { slug: "fast-food",   labelFr: "Fast Food",   labelEn: "Fast Food",  icon: "🌮" },
+      { slug: "pizzeria",    labelFr: "Pizzeria",    labelEn: "Pizzeria",   icon: "🍕" },
     ],
   },
   {
@@ -18,9 +18,9 @@ export const MAP_CATEGORY_GROUPS = [
     icon: "🍸",
     color: "#7c3aed",
     categories: [
-      { slug: "bar",          labelFr: "Bar",          labelEn: "Bar"          },
-      { slug: "bar-dansant",  labelFr: "Bar dansant",  labelEn: "Dancing bar"  },
-      { slug: "club",         labelFr: "Club",         labelEn: "Club"         },
+      { slug: "bar",          labelFr: "Bar",          labelEn: "Bar",          icon: "🍸" },
+      { slug: "bar-dansant",  labelFr: "Bar dansant",  labelEn: "Dancing bar",  icon: "💃" },
+      { slug: "club",         labelFr: "Club",         labelEn: "Club",         icon: "🎧" },
     ],
   },
   {
@@ -30,10 +30,10 @@ export const MAP_CATEGORY_GROUPS = [
     icon: "☕",
     color: "#92400e",
     categories: [
-      { slug: "cafe",         labelFr: "Café",         labelEn: "Café"        },
-      { slug: "boulangerie",  labelFr: "Boulangerie",  labelEn: "Bakery"      },
-      { slug: "patisserie",   labelFr: "Pâtisserie",   labelEn: "Pastry shop" },
-      { slug: "glacier",      labelFr: "Glacier",      labelEn: "Ice cream"   },
+      { slug: "cafe",         labelFr: "Café",         labelEn: "Café",         icon: "☕" },
+      { slug: "boulangerie",  labelFr: "Boulangerie",  labelEn: "Bakery",       icon: "🥐" },
+      { slug: "patisserie",   labelFr: "Pâtisserie",   labelEn: "Pastry shop",  icon: "🍰" },
+      { slug: "glacier",      labelFr: "Glacier",      labelEn: "Ice cream",    icon: "🍦" },
     ],
   },
   {
@@ -43,10 +43,10 @@ export const MAP_CATEGORY_GROUPS = [
     icon: "🏛️",
     color: "#0369a1",
     categories: [
-      { slug: "lieu-interet", labelFr: "Lieu d'intérêt", labelEn: "Point of interest" },
-      { slug: "musee",        labelFr: "Musée",           labelEn: "Museum"            },
-      { slug: "parc",         labelFr: "Parc",            labelEn: "Park"              },
-      { slug: "site-naturel", labelFr: "Site naturel",    labelEn: "Natural site"      },
+      { slug: "lieu-interet", labelFr: "Lieu d'intérêt", labelEn: "Point of interest", icon: "🏛️" },
+      { slug: "musee",        labelFr: "Musée",           labelEn: "Museum",            icon: "🖼️" },
+      { slug: "parc",         labelFr: "Parc",            labelEn: "Park",              icon: "🌳" },
+      { slug: "site-naturel", labelFr: "Site naturel",    labelEn: "Natural site",      icon: "🏔️" },
     ],
   },
   {
@@ -56,8 +56,9 @@ export const MAP_CATEGORY_GROUPS = [
     icon: "🛁",
     color: "#0891b2",
     categories: [
-      { slug: "spa",    labelFr: "Spa",    labelEn: "Spa"   },
-      { slug: "plage",  labelFr: "Plage",  labelEn: "Beach" },
+      { slug: "spa",     labelFr: "Spa",     labelEn: "Spa",    icon: "🧖" },
+      { slug: "piscine", labelFr: "Piscine", labelEn: "Pool",   icon: "🏊" },
+      { slug: "plage",   labelFr: "Plage",   labelEn: "Beach",  icon: "🏖️" },
     ],
   },
   {
@@ -67,8 +68,8 @@ export const MAP_CATEGORY_GROUPS = [
     icon: "🏨",
     color: "#059669",
     categories: [
-      { slug: "hotel",    labelFr: "Hôtel",                labelEn: "Hotel"    },
-      { slug: "auberge",  labelFr: "Auberge de jeunesse",  labelEn: "Hostel"   },
+      { slug: "hotel",    labelFr: "Hôtel",               labelEn: "Hotel",   icon: "🏨" },
+      { slug: "auberge",  labelFr: "Auberge de jeunesse", labelEn: "Hostel",  icon: "🛏️" },
     ],
   },
   {
@@ -78,7 +79,7 @@ export const MAP_CATEGORY_GROUPS = [
     icon: "🛍️",
     color: "#be185d",
     categories: [
-      { slug: "magasin", labelFr: "Magasin", labelEn: "Shop" },
+      { slug: "magasin", labelFr: "Magasin", labelEn: "Shop", icon: "🛍️" },
     ],
   },
 ] as const;

@@ -290,6 +290,7 @@
     "place_website_url": "Website",
     "place_activate": "Activate",
     "place_deactivate": "Deactivate",
+    "place_highlights": "Highlights",
     "place_confirm_delete": "Delete this address?",
     "place_empty": "No addresses registered.",
     "map_password": "Map access password",

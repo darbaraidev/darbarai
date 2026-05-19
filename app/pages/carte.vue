@@ -63,33 +63,33 @@
 
           <div class="border-t border-stone-100 pt-2 mt-1" />
 
-          <!-- Groupes -->
+          <!-- Groupes + sous-catégories toujours visibles -->
           <template v-for="group in MAP_CATEGORY_GROUPS" :key="group.slug">
+            <!-- En-tête de groupe -->
             <button
-              class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-              :class="selectedGroup === group.slug ? 'text-white' : 'text-stone-600 hover:bg-stone-100'"
-              :style="selectedGroup === group.slug ? `background:${group.color}` : ''"
+              class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wide transition-colors flex items-center gap-1.5 mt-2"
+              :class="selectedGroup === group.slug && !selectedCategory ? 'text-white' : 'text-stone-400 hover:bg-stone-100'"
+              :style="selectedGroup === group.slug && !selectedCategory ? `background:${group.color}` : ''"
               @click="toggleGroup(group.slug)"
             >
               <span>{{ group.icon }}</span>
               <span class="flex-1 truncate">{{ locale === "fr" ? group.labelFr : group.labelEn }}</span>
-              <span class="text-xs opacity-60 shrink-0">{{ countByGroup(group.slug) }}</span>
+              <span class="opacity-60 font-normal normal-case tracking-normal">{{ countByGroup(group.slug) }}</span>
             </button>
 
-            <!-- Sous-catégories -->
-            <template v-if="selectedGroup === group.slug">
-              <button
-                v-for="cat in group.categories"
-                :key="cat.slug"
-                class="w-full text-left pl-8 pr-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center justify-between"
-                :class="selectedCategory === cat.slug ? 'text-white' : 'text-stone-500 hover:bg-stone-100'"
-                :style="selectedCategory === cat.slug ? `background:${group.color}` : ''"
-                @click="selectedCategory = selectedCategory === cat.slug ? null : cat.slug"
-              >
-                <span>{{ locale === "fr" ? cat.labelFr : cat.labelEn }}</span>
-                <span class="opacity-60">{{ countByCategory(cat.slug) }}</span>
-              </button>
-            </template>
+            <!-- Sous-catégories toujours affichées -->
+            <button
+              v-for="cat in group.categories"
+              :key="cat.slug"
+              class="w-full text-left pl-5 pr-3 py-1 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5"
+              :class="selectedCategory === cat.slug ? 'text-white' : 'text-stone-500 hover:bg-stone-100'"
+              :style="selectedCategory === cat.slug ? `background:${group.color}` : ''"
+              @click="selectCategory(cat.slug, group.slug)"
+            >
+              <span class="shrink-0">{{ cat.icon }}</span>
+              <span class="flex-1">{{ locale === "fr" ? cat.labelFr : cat.labelEn }}</span>
+              <span class="opacity-60">{{ countByCategory(cat.slug) }}</span>
+            </button>
           </template>
         </div>
       </div>
@@ -224,6 +224,18 @@
               </a>
             </div>
 
+            <!-- Points forts -->
+            <div v-if="selectedPlace.highlights.length" class="flex flex-wrap gap-1.5 mb-4">
+              <span
+                v-for="slug in selectedPlace.highlights"
+                :key="slug"
+                class="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-stone-100 text-stone-600 font-medium"
+              >
+                <span>{{ getHighlightMeta(slug)?.icon }}</span>
+                <span>{{ locale === "fr" ? getHighlightMeta(slug)?.labelFr : getHighlightMeta(slug)?.labelEn }}</span>
+              </span>
+            </div>
+
             <!-- Photos secondaires -->
             <div v-if="selectedPlace.photos.length" class="grid grid-cols-2 gap-2">
               <button
@@ -297,28 +309,27 @@
               </button>
               <template v-for="group in MAP_CATEGORY_GROUPS" :key="group.slug">
                 <button
-                  class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-                  :class="selectedGroup === group.slug ? 'text-white' : 'text-stone-600 hover:bg-stone-100'"
-                  :style="selectedGroup === group.slug ? `background:${group.color}` : ''"
+                  class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wide transition-colors flex items-center gap-1.5 mt-2"
+                  :class="selectedGroup === group.slug && !selectedCategory ? 'text-white' : 'text-stone-400 hover:bg-stone-100'"
+                  :style="selectedGroup === group.slug && !selectedCategory ? `background:${group.color}` : ''"
                   @click="toggleGroup(group.slug)"
                 >
                   <span>{{ group.icon }}</span>
                   <span class="flex-1">{{ locale === "fr" ? group.labelFr : group.labelEn }}</span>
-                  <span class="text-xs opacity-60">{{ countByGroup(group.slug) }}</span>
+                  <span class="opacity-60 font-normal normal-case tracking-normal">{{ countByGroup(group.slug) }}</span>
                 </button>
-                <template v-if="selectedGroup === group.slug">
-                  <button
-                    v-for="cat in group.categories"
-                    :key="cat.slug"
-                    class="w-full text-left pl-10 pr-3 py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-between"
-                    :class="selectedCategory === cat.slug ? 'text-white' : 'text-stone-500 hover:bg-stone-100'"
-                    :style="selectedCategory === cat.slug ? `background:${group.color}` : ''"
-                    @click="() => { selectedCategory = selectedCategory === cat.slug ? null : cat.slug; mobileFiltersOpen = false; }"
-                  >
-                    <span>{{ locale === "fr" ? cat.labelFr : cat.labelEn }}</span>
-                    <span class="opacity-60">{{ countByCategory(cat.slug) }}</span>
-                  </button>
-                </template>
+                <button
+                  v-for="cat in group.categories"
+                  :key="cat.slug"
+                  class="w-full text-left pl-6 pr-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5"
+                  :class="selectedCategory === cat.slug ? 'text-white' : 'text-stone-500 hover:bg-stone-100'"
+                  :style="selectedCategory === cat.slug ? `background:${group.color}` : ''"
+                  @click="() => { selectCategory(cat.slug, group.slug); mobileFiltersOpen = false; }"
+                >
+                  <span class="shrink-0">{{ cat.icon }}</span>
+                  <span class="flex-1">{{ locale === "fr" ? cat.labelFr : cat.labelEn }}</span>
+                  <span class="opacity-60">{{ countByCategory(cat.slug) }}</span>
+                </button>
               </template>
             </div>
           </div>
@@ -461,6 +472,7 @@
 <script setup lang="ts">
 import type { Place } from "~/types";
 import { MAP_CATEGORY_GROUPS, getCategoryMeta, getGroupColor } from "~/utils/mapCategories";
+import { PLACE_HIGHLIGHTS, getHighlightMeta } from "~/utils/placeHighlights";
 
 definePageMeta({ layout: "default" });
 
@@ -525,12 +537,21 @@ const selectedCategory = ref<string | null>(null);
 const selectedPriceLevel = ref<PriceLevel | null>(null);
 
 const toggleGroup = (slug: string) => {
-  if (selectedGroup.value === slug) {
+  if (selectedGroup.value === slug && !selectedCategory.value) {
     selectedGroup.value = null;
-    selectedCategory.value = null;
   } else {
     selectedGroup.value = slug;
     selectedCategory.value = null;
+  }
+};
+
+const selectCategory = (catSlug: string, groupSlug: string) => {
+  if (selectedCategory.value === catSlug) {
+    selectedCategory.value = null;
+    selectedGroup.value = null;
+  } else {
+    selectedCategory.value = catSlug;
+    selectedGroup.value = groupSlug;
   }
 };
 

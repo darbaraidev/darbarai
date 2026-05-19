@@ -164,6 +164,25 @@
           </div>
         </div>
 
+        <!-- Points forts -->
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-medium text-stone-600 mb-2">{{ t("admin.place_highlights") }}</label>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="h in PLACE_HIGHLIGHTS"
+              :key="h.slug"
+              class="px-3 py-1.5 rounded-full text-xs font-medium border transition-colors flex items-center gap-1"
+              :class="form.highlights.includes(h.slug)
+                ? 'bg-stone-800 text-white border-stone-800'
+                : 'border-stone-200 text-stone-600 hover:border-stone-400'"
+              @click="toggleHighlight(h.slug)"
+            >
+              <span>{{ h.icon }}</span>
+              <span>{{ h.labelFr }}</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Categories -->
         <div class="sm:col-span-2">
           <label class="block text-sm font-medium text-stone-600 mb-2">{{ t("admin.place_categories") }}</label>
@@ -216,7 +235,7 @@
             class="w-full h-full object-cover"
           />
           <div v-else class="w-full h-full flex items-center justify-center text-xl">
-            {{ getCategoryEmoji(place.categories[0]) }}
+            {{ getCategoryEmoji(place.categories[0] ?? "") }}
           </div>
         </div>
 
@@ -274,6 +293,7 @@
 <script setup lang="ts">
 import type { Place } from "~/types";
 import { MAP_CATEGORY_GROUPS, getCategoryMeta, getGroupColor } from "~/utils/mapCategories";
+import { PLACE_HIGHLIGHTS } from "~/utils/placeHighlights";
 
 definePageMeta({ layout: "admin", middleware: "admin" });
 
@@ -342,6 +362,7 @@ const emptyForm = (): Omit<Place, "id" | "created_at"> => ({
   website_url: null,
   photo_main: null,
   photos: [],
+  highlights: [],
   active: true,
 });
 
@@ -351,6 +372,12 @@ const toggleCategory = (slug: string) => {
   const idx = form.categories.indexOf(slug);
   if (idx >= 0) form.categories.splice(idx, 1);
   else form.categories.push(slug);
+};
+
+const toggleHighlight = (slug: string) => {
+  const idx = form.highlights.indexOf(slug);
+  if (idx >= 0) form.highlights.splice(idx, 1);
+  else form.highlights.push(slug);
 };
 
 const openNew = () => {
@@ -382,8 +409,9 @@ const save = async () => {
   saving.value = true;
   saveError.value = null;
 
+  const { id: _id, created_at: _ca, ...formRest } = form as any;
   const payload = {
-    ...form,
+    ...formRest,
     name: form.name.trim(),
     description: form.description?.trim() || null,
     address: form.address?.trim() || null,

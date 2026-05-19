@@ -186,6 +186,7 @@ export interface Place {
   website_url: string | null;
   photo_main: string | null;
   photos: string[];
+  highlights: string[];
   active: boolean;
   created_at: string;
 }

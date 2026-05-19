@@ -6,6 +6,8 @@
 import type { Place } from "~/types";
 import { getCategoryMeta, getGroupColor } from "~/utils/mapCategories";
 
+const { locale } = useI18n();
+
 const props = defineProps<{
   places: Place[];
   selectedId: string | null;
@@ -26,7 +28,7 @@ const markerMap = new Map<string, LeafletMarker>();
 const makeIcon = (place: Place, selected = false) => {
   if (!L) return null;
   const cat = place.categories[0];
-  const emoji = getCategoryMeta(cat)?.groupIcon ?? "📍";
+  const emoji = getCategoryMeta(cat)?.icon ?? getCategoryMeta(cat)?.groupIcon ?? "📍";
   const color = cat ? getGroupColor(cat) : "#6b7280";
   const size = selected ? 38 : 30;
 
@@ -38,6 +40,23 @@ const makeIcon = (place: Place, selected = false) => {
   });
 };
 
+const makeTooltipHtml = (place: Place) => {
+  const labels = place.categories.map((slug) => {
+    const meta = getCategoryMeta(slug);
+    return meta ? (locale.value === "fr" ? meta.labelFr : meta.labelEn) : slug;
+  });
+  const badges = labels
+    .map((l) => `<span style="font-size:10px;padding:1px 7px;border-radius:999px;background:#f5f5f4;color:#57534e;white-space:nowrap">${l}</span>`)
+    .join("");
+  const price = place.price_level
+    ? `<span style="font-size:11px;color:#a8a29e;margin-left:5px;font-weight:400">${place.price_level}</span>`
+    : "";
+  return `<div style="font-family:system-ui,sans-serif;padding:5px 2px;min-width:120px">
+    <div style="font-weight:600;font-size:13px;color:#1c1917;margin-bottom:4px;line-height:1.3">${place.name}${price}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:3px">${badges}</div>
+  </div>`;
+};
+
 const rebuildMarkers = () => {
   if (!L || !map) return;
   markerMap.forEach((m) => m.remove());
@@ -46,6 +65,12 @@ const rebuildMarkers = () => {
     const icon = makeIcon(place, place.id === props.selectedId);
     if (!icon) continue;
     const marker = L.marker([place.lat, place.lng], { icon }).addTo(map);
+    marker.bindTooltip(makeTooltipHtml(place), {
+      direction: "top",
+      offset: [0, -20],
+      opacity: 1,
+      className: "places-map-tooltip",
+    });
     marker.on("click", () => emit("select", place));
     markerMap.set(place.id, marker);
   }
@@ -91,3 +116,19 @@ onUnmounted(() => {
   markerMap.clear();
 });
 </script>
+
+<style>
+.leaflet-tooltip.places-map-tooltip {
+  background: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 6px 10px;
+  max-width: 220px;
+  white-space: normal !important;
+  word-break: break-word;
+}
+.leaflet-tooltip.places-map-tooltip::before {
+  border-top-color: white !important;
+}
+</style>
