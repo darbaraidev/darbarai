@@ -5,24 +5,121 @@
       <p class="text-center text-stone-500">{{ t("riads.page_subtitle") }}</p>
     </div>
 
-    <!-- Gouvernante pleine largeur -->
-    <div class="bg-sand-50 px-4 py-12 text-center mb-12">
-      <div class="max-w-2xl mx-auto">
-        <h2 class="font-serif text-2xl text-stone-800 mb-3">{{ t("riads.gouvernante_title") }}</h2>
-        <p class="text-stone-500 leading-relaxed mb-6">{{ t("riads.gouvernante_text") }}</p>
-        <NuxtLink :to="localePath('/contact')" class="btn-primary px-6 py-2.5 text-sm inline-flex items-center gap-2">
-          {{ t("riads.gouvernante_menu_cta") }} →
-        </NuxtLink>
+    <div class="grid md:grid-cols-2 gap-10 max-w-7xl mx-auto px-4 pb-16">
+      <RiadCard v-for="riad in riads" :key="riad.id" :riad="riad" />
+    </div>
+
+    <!-- Gouvernante -->
+    <div class="bg-sand-50 py-12 pl-8 md:pl-20 lg:pl-32 pr-4">
+      <div class="max-w-4xl flex items-center gap-10">
+        <div class="flex-1">
+          <h2 class="font-serif text-2xl text-stone-800 mb-3">{{ t("riads.gouvernante_title") }}</h2>
+          <p class="text-stone-500 leading-relaxed mb-6">{{ t("riads.gouvernante_text") }}</p>
+        </div>
+        <img
+          :src="gouvernantesImg"
+          alt="Gouvernantes"
+          class="w-48 h-48 object-cover rounded-2xl shrink-0 shadow-md"
+        />
       </div>
     </div>
 
-    <div class="flex flex-col gap-10 max-w-2xl mx-auto px-4 pb-16">
-      <RiadCard v-for="riad in riads" :key="riad.id" :riad="riad" />
+    <!-- Petit-déjeuner -->
+    <div class="bg-sand-50 py-12 pr-8 md:pr-20 lg:pr-32 pl-4 mt-12 mb-12">
+      <div class="max-w-4xl ml-auto flex items-start gap-10">
+        <div class="w-96 shrink-0 grid grid-cols-3 gap-2">
+          <img
+            v-for="(src, i) in petitDejImages"
+            :key="i"
+            :src="src"
+            :alt="`Petit-déjeuner ${i + 1}`"
+            class="aspect-square object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+            @click="openBreakfastLightbox(i)"
+          />
+        </div>
+        <div class="flex-1">
+          <h2 class="font-serif text-2xl text-stone-800 mb-3">{{ t("riads.breakfast_title") }}</h2>
+          <p class="text-stone-500 leading-relaxed mb-4">{{ t("riads.breakfast_subtitle") }}</p>
+          <p class="text-stone-700 font-medium mb-2">{{ t("riads.breakfast_menu_title") }}</p>
+          <ul class="text-stone-500 space-y-1.5 text-sm">
+            <li v-for="i in 6" :key="i" class="flex items-start gap-2">
+              <span class="text-terracotta-400 shrink-0 mt-0.5">-</span>
+              <span>{{ t(`riads.breakfast_menu_${i}`) }}</span>
+            </li>
+          </ul>
+          <p class="text-stone-400 text-xs italic mt-4 leading-relaxed">
+            {{ t("riads.breakfast_note") }}
+          </p>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Lightbox photos petit-déjeuner -->
+  <Teleport to="body">
+    <Transition name="lb-fade">
+      <div
+        v-if="lbOpen"
+        class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center"
+        @click.self="lbOpen = false"
+      >
+        <button
+          class="absolute top-4 right-4 text-white/60 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
+          @click="lbOpen = false"
+        >
+          <svg viewBox="0 0 24 24" class="w-7 h-7"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+        <button
+          class="absolute left-4 text-white/60 hover:text-white p-3 rounded-full hover:bg-white/10 transition-colors disabled:opacity-20"
+          :disabled="lbIdx === 0"
+          @click="lbIdx--"
+        >
+          <svg viewBox="0 0 24 24" class="w-8 h-8"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <img
+          :src="petitDejImages[lbIdx]"
+          :alt="`Petit-déjeuner ${lbIdx + 1}`"
+          class="max-h-[85vh] max-w-[90vw] object-contain rounded-lg shadow-2xl"
+        />
+        <button
+          class="absolute right-4 text-white/60 hover:text-white p-3 rounded-full hover:bg-white/10 transition-colors disabled:opacity-20"
+          :disabled="lbIdx === petitDejImages.length - 1"
+          @click="lbIdx++"
+        >
+          <svg viewBox="0 0 24 24" class="w-8 h-8"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
+import gouvernantesImg from "~/assets/images/gouvernantes.jpg";
+
+const petitDejRaw = import.meta.glob<{ default: string }>(
+  "../../assets/images/petit_dej/*.{jpg,jpeg,png,webp}",
+  { eager: true }
+);
+const petitDejImages = Object.values(petitDejRaw).map((m) => m.default);
+
+const lbOpen = ref(false);
+const lbIdx = ref(0);
+
+function openBreakfastLightbox(i: number) {
+  lbIdx.value = i;
+  lbOpen.value = true;
+}
+
+function handleLbKey(e: KeyboardEvent) {
+  if (!lbOpen.value) return;
+  if (e.key === "ArrowRight" && lbIdx.value < petitDejImages.length - 1) lbIdx.value++;
+  if (e.key === "ArrowLeft" && lbIdx.value > 0) lbIdx.value--;
+  if (e.key === "Escape") lbOpen.value = false;
+}
+
+onMounted(() => window.addEventListener("keydown", handleLbKey));
+onUnmounted(() => window.removeEventListener("keydown", handleLbKey));
+
 const { t } = useI18n();
 const localePath = useLocalePath();
 const { riads, fetchRiads } = useRiad();
@@ -30,3 +127,14 @@ await useAsyncData("riads-list", () => fetchRiads());
 
 useSeoMeta({ title: t("seo.riads_title") });
 </script>
+
+<style scoped>
+.lb-fade-enter-active,
+.lb-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.lb-fade-enter-from,
+.lb-fade-leave-to {
+  opacity: 0;
+}
+</style>

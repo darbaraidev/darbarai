@@ -25,7 +25,7 @@
       </button>
     </div>
 
-    <!-- Gallery grid -->
+    <!-- Gallery -->
     <div class="max-w-7xl mx-auto px-4">
       <p
         v-if="filteredPhotos.length === 0"
@@ -33,31 +33,56 @@
       >
         {{ t("gallery.empty") }}
       </p>
-      <div v-else class="columns-2 md:columns-3 lg:columns-4 gap-3">
+
+      <template v-else>
+        <!-- Skeleton pendant le chargement -->
         <div
-          v-for="(item, idx) in filteredPhotos"
-          :key="item.photo + idx"
-          class="break-inside-avoid mb-3 cursor-pointer group relative overflow-hidden rounded-xl"
-          @click="openLightbox(idx)"
+          v-if="!allLoaded"
+          class="columns-2 md:columns-3 lg:columns-4 gap-3"
         >
-          <img
-            :src="item.photo"
-            :alt="`${item.riadName} – ${item.groupLabel}`"
-            class="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-          />
           <div
-            class="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors duration-300 rounded-xl"
+            v-for="(item, i) in filteredPhotos.slice(0, 16)"
+            :key="'sk-' + i"
+            class="break-inside-avoid mb-3 rounded-xl bg-stone-200 animate-pulse"
+            :style="{ height: skeletonHeights[i % skeletonHeights.length] + 'px' }"
           />
+        </div>
+
+        <!-- Grille révélée une fois tout chargé -->
+        <div
+          v-else
+          class="columns-2 md:columns-3 lg:columns-4 gap-3"
+        >
           <div
-            class="absolute bottom-0 left-0 right-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300"
+            v-for="(item, idx) in filteredPhotos"
+            :key="item.photo + idx"
+            class="gallery-item break-inside-avoid mb-3 cursor-pointer group relative overflow-hidden rounded-xl isolate"
+            :style="{ '--i': idx % 20 }"
+            @click="openLightbox(idx)"
           >
-            <span class="text-white text-xs font-semibold drop-shadow-md">
-              {{ item.riadName }} · {{ item.groupLabel }}
-            </span>
+            <img
+              :src="item.photo"
+              :alt="`${item.riadName} – ${item.groupLabel}`"
+              class="w-full object-cover transition-transform duration-700 ease-out will-change-transform group-hover:scale-110"
+            />
+
+            <!-- Overlay gradient au hover -->
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            />
+
+            <!-- Label au hover -->
+            <div
+              class="absolute bottom-0 left-0 right-0 p-4 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500"
+            >
+              <p class="text-white text-sm font-semibold drop-shadow-lg">
+                {{ item.riadName }}
+              </p>
+              <p class="text-white/70 text-xs mt-0.5">{{ item.groupLabel }}</p>
+            </div>
           </div>
         </div>
-      </div>
+      </template>
     </div>
 
     <!-- Lightbox -->
@@ -150,6 +175,9 @@ const activeFilter = ref<string>("all");
 const lightboxOpen = ref(false);
 const lightboxIdx = ref(0);
 const lightboxEl = ref<HTMLElement | null>(null);
+const loadedCount = ref(0);
+
+const skeletonHeights = [220, 280, 190, 310, 240, 260, 200, 290];
 
 const allPhotos = computed<FlatPhoto[]>(() => {
   const result: FlatPhoto[] = [];
@@ -179,6 +207,25 @@ const filteredPhotos = computed<FlatPhoto[]>(() => {
   if (activeFilter.value === "all") return allPhotos.value;
   return allPhotos.value.filter((p) => p.riadSlug === activeFilter.value);
 });
+
+const allLoaded = computed(
+  () =>
+    filteredPhotos.value.length > 0 &&
+    loadedCount.value >= filteredPhotos.value.length
+);
+
+function preloadImages(photos: FlatPhoto[]) {
+  loadedCount.value = 0;
+  if (photos.length === 0 || !import.meta.client) return;
+  photos.forEach((item) => {
+    const img = new Image();
+    img.onload = () => loadedCount.value++;
+    img.onerror = () => loadedCount.value++;
+    img.src = item.photo;
+  });
+}
+
+watch(filteredPhotos, (photos) => preloadImages(photos), { immediate: true });
 
 watch(activeFilter, () => {
   lightboxOpen.value = false;
@@ -214,6 +261,20 @@ onUnmounted(() => window.removeEventListener("keydown", handleKey));
 </script>
 
 <style scoped>
+.gallery-item {
+  opacity: 0;
+  transform: translateY(22px);
+  animation: galleryReveal 0.55s ease forwards;
+  animation-delay: calc(var(--i) * 55ms);
+}
+
+@keyframes galleryReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s ease;
