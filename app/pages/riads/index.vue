@@ -25,7 +25,7 @@
     </div>
 
     <!-- Petit-déjeuner -->
-    <div id="petit-dejeuner" class="bg-sand-50 py-12 pr-8 md:pr-20 lg:pr-32 pl-4 mt-12 mb-12">
+    <div id="petit-dejeuner" class="bg-sand-50 py-12 pr-8 md:pr-20 lg:pr-32 pl-4 mt-12">
       <div class="max-w-4xl ml-auto flex items-start gap-10">
         <div class="w-96 shrink-0 grid grid-cols-3 gap-2">
           <img
@@ -50,6 +50,55 @@
           <p class="text-stone-400 text-xs italic mt-4 leading-relaxed">
             {{ t("riads.breakfast_note") }}
           </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Repas -->
+    <div id="repas" class="bg-sand-50 py-12 pl-8 md:pl-20 lg:pl-32 pr-4 mt-12 mb-12">
+      <div class="max-w-4xl flex items-start gap-10">
+        <div class="flex-1">
+          <h2 class="font-serif text-2xl text-stone-800 mb-3">{{ t("riads.meals_title") }}</h2>
+          <p class="text-stone-500 leading-relaxed mb-6">{{ t("riads.meals_subtitle") }}</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <p class="text-stone-700 font-medium mb-2">{{ t("riads.meals_entrees_title") }}</p>
+              <ul class="text-stone-500 space-y-1.5 text-sm">
+                <li v-for="i in 10" :key="i" class="flex items-start gap-2">
+                  <span class="text-terracotta-400 shrink-0 mt-0.5">-</span>
+                  <span>{{ t(`riads.meals_entrees_${i}`) }}</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <p class="text-stone-700 font-medium mb-2">{{ t("riads.meals_plats_title") }}</p>
+              <ul class="text-stone-500 space-y-1.5 text-sm">
+                <li v-for="i in 6" :key="i" class="flex items-start gap-2">
+                  <span class="text-terracotta-400 shrink-0 mt-0.5">-</span>
+                  <span>{{ t(`riads.meals_plats_${i}`) }}</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <p class="text-stone-700 font-medium mb-2">{{ t("riads.meals_desserts_title") }}</p>
+              <ul class="text-stone-500 space-y-1.5 text-sm">
+                <li v-for="i in 5" :key="i" class="flex items-start gap-2">
+                  <span class="text-terracotta-400 shrink-0 mt-0.5">-</span>
+                  <span>{{ t(`riads.meals_desserts_${i}`) }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div v-if="repasImages.length" class="w-72 shrink-0 grid grid-cols-3 gap-2">
+          <img
+            v-for="(src, i) in repasImages"
+            :key="i"
+            :src="src"
+            :alt="`Repas ${i + 1}`"
+            class="aspect-square object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+            @click="openRepasLightbox(i)"
+          />
         </div>
       </div>
     </div>
@@ -91,6 +140,43 @@
       </div>
     </Transition>
   </Teleport>
+
+  <!-- Lightbox photos repas -->
+  <Teleport to="body">
+    <Transition name="lb-fade">
+      <div
+        v-if="repasLbOpen"
+        class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center"
+        @click.self="repasLbOpen = false"
+      >
+        <button
+          class="absolute top-4 right-4 text-white/60 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
+          @click="repasLbOpen = false"
+        >
+          <svg viewBox="0 0 24 24" class="w-7 h-7"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+        <button
+          class="absolute left-4 text-white/60 hover:text-white p-3 rounded-full hover:bg-white/10 transition-colors disabled:opacity-20"
+          :disabled="repasLbIdx === 0"
+          @click="repasLbIdx--"
+        >
+          <svg viewBox="0 0 24 24" class="w-8 h-8"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <img
+          :src="repasImages[repasLbIdx]"
+          :alt="`Repas ${repasLbIdx + 1}`"
+          class="max-h-[85vh] max-w-[90vw] object-contain rounded-lg shadow-2xl"
+        />
+        <button
+          class="absolute right-4 text-white/60 hover:text-white p-3 rounded-full hover:bg-white/10 transition-colors disabled:opacity-20"
+          :disabled="repasLbIdx === repasImages.length - 1"
+          @click="repasLbIdx++"
+        >
+          <svg viewBox="0 0 24 24" class="w-8 h-8"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -102,19 +188,37 @@ const petitDejRaw = import.meta.glob<{ default: string }>(
 );
 const petitDejImages = Object.values(petitDejRaw).map((m) => m.default);
 
+const repasRaw = import.meta.glob<{ default: string }>(
+  "../../assets/images/repas/*.{jpg,jpeg,png,webp}",
+  { eager: true }
+);
+const repasImages = Object.values(repasRaw).map((m) => m.default);
+
 const lbOpen = ref(false);
 const lbIdx = ref(0);
+const repasLbOpen = ref(false);
+const repasLbIdx = ref(0);
 
 function openBreakfastLightbox(i: number) {
   lbIdx.value = i;
   lbOpen.value = true;
 }
 
+function openRepasLightbox(i: number) {
+  repasLbIdx.value = i;
+  repasLbOpen.value = true;
+}
+
 function handleLbKey(e: KeyboardEvent) {
-  if (!lbOpen.value) return;
-  if (e.key === "ArrowRight" && lbIdx.value < petitDejImages.length - 1) lbIdx.value++;
-  if (e.key === "ArrowLeft" && lbIdx.value > 0) lbIdx.value--;
-  if (e.key === "Escape") lbOpen.value = false;
+  if (lbOpen.value) {
+    if (e.key === "ArrowRight" && lbIdx.value < petitDejImages.length - 1) lbIdx.value++;
+    if (e.key === "ArrowLeft" && lbIdx.value > 0) lbIdx.value--;
+    if (e.key === "Escape") lbOpen.value = false;
+  } else if (repasLbOpen.value) {
+    if (e.key === "ArrowRight" && repasLbIdx.value < repasImages.length - 1) repasLbIdx.value++;
+    if (e.key === "ArrowLeft" && repasLbIdx.value > 0) repasLbIdx.value--;
+    if (e.key === "Escape") repasLbOpen.value = false;
+  }
 }
 
 onMounted(() => window.addEventListener("keydown", handleLbKey));
