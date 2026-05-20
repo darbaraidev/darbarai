@@ -160,8 +160,11 @@
     <h2 class="section-title text-center mb-4">
       {{ t("home.riads_section_title") }}
     </h2>
-    <p class="text-center text-stone-500 text-lg max-w-2xl mx-auto mb-16">
+    <p class="text-center text-stone-500 text-lg max-w-2xl mx-auto mb-2">
       {{ t("home.riads_section_subtitle") }}
+    </p>
+    <p class="text-center text-stone-400 text-sm max-w-xl mx-auto mb-16 italic">
+      {{ t("home.riads_section_note") }}
     </p>
     <div class="grid md:grid-cols-2 gap-10">
       <RiadCard v-for="riad in riads" :key="riad.id" :riad="riad" />
