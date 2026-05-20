@@ -489,7 +489,7 @@ const highlights = computed(() => [
     image: getCardImage("breakfast"),
     title: t("home.hl_breakfast_title"),
     desc: t("home.hl_breakfast_desc"),
-    action: () => navigateTo(localePath("/riads")),
+    action: () => navigateTo(localePath("/riads") + "#petit-dejeuner"),
   },
   {
     key: "visits",

@@ -25,7 +25,7 @@
     </div>
 
     <!-- Petit-déjeuner -->
-    <div class="bg-sand-50 py-12 pr-8 md:pr-20 lg:pr-32 pl-4 mt-12 mb-12">
+    <div id="petit-dejeuner" class="bg-sand-50 py-12 pr-8 md:pr-20 lg:pr-32 pl-4 mt-12 mb-12">
       <div class="max-w-4xl ml-auto flex items-start gap-10">
         <div class="w-96 shrink-0 grid grid-cols-3 gap-2">
           <img
