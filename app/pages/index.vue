@@ -335,7 +335,7 @@
   </div>
 
   <!-- FAQ -->
-  <section class="py-20 px-4 bg-white">
+  <section v-if="faqCategories.length > 0" class="py-20 px-4 bg-white">
     <div class="max-w-3xl mx-auto">
       <div class="text-center mb-14">
         <p class="text-terracotta-400 text-xs font-semibold uppercase tracking-widest mb-3">
@@ -505,10 +505,10 @@ const faqOpen = ref<Record<string, boolean>>({});
 function toggleFaq(key: string) {
   faqOpen.value[key] = !faqOpen.value[key];
 }
-const { faqData, fetchFaq } = useFaq();
-await useAsyncData("faq-home", () => fetchFaq(true));
+const { fetchFaq } = useFaq();
+const { data: faqRawData } = await useAsyncData("faq-home", () => fetchFaq(true));
 const faqCategories = computed(() =>
-  faqData.value
+  (faqRawData.value ?? [])
     .filter((cat) => (cat.items?.length ?? 0) > 0)
     .map((cat) => ({
       key: cat.id,
