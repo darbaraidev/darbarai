@@ -164,54 +164,125 @@
           </Transition>
         </div>
 
-        <!-- Auth -->
-        <template v-if="user">
-          <NuxtLink
-            :to="localePath('/account')"
-            class="text-sm font-medium transition-colors"
-            :class="
-              scrolled
-                ? 'text-stone-700 hover:text-terracotta-600'
-                : 'text-stone-900 hover:text-terracotta-600'
-            "
+        <!-- Auth dropdown -->
+        <div class="relative profile-dropdown">
+          <!-- Bouton connecté -->
+          <button
+            v-if="user"
+            class="flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-full border transition-colors"
+            :class="scrolled
+              ? 'border-stone-300 text-stone-700 hover:border-terracotta-500 hover:text-terracotta-600'
+              : 'border-white/40 text-stone-900 hover:border-white hover:text-terracotta-600'"
+            @click="profileOpen = !profileOpen"
           >
+            <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0" fill="currentColor">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            </svg>
             {{ t("nav.account") }}
-          </NuxtLink>
-          <NuxtLink
-            v-if="isAdmin"
-            :to="localePath('/admin')"
-            class="text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors"
-            :class="
-              scrolled
-                ? 'border-terracotta-600 text-terracotta-600 hover:bg-terracotta-600 hover:text-white'
-                : 'border-stone-900 text-stone-900 hover:bg-stone-900/10'
-            "
-          >
-            ⚙ {{ t("nav.admin") }}
-          </NuxtLink>
-          <button class="btn-primary text-sm px-4 py-2" @click="signOut">
-            {{ t("nav.logout") }}
+            <svg class="w-3 h-3 transition-transform" :class="profileOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
           </button>
-        </template>
-        <template v-else>
-          <NuxtLink
-            :to="localePath('/auth/login')"
-            class="text-sm font-medium transition-colors"
-            :class="
-              scrolled
-                ? 'text-stone-700 hover:text-terracotta-600'
-                : 'text-stone-900 hover:text-terracotta-600'
-            "
+
+          <!-- Bouton déconnecté -->
+          <button
+            v-else
+            class="flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-full border transition-colors"
+            :class="scrolled
+              ? 'border-stone-300 text-stone-700 hover:border-terracotta-500 hover:text-terracotta-600'
+              : 'border-white/40 text-stone-900 hover:border-white hover:text-terracotta-600'"
+            @click="profileOpen = !profileOpen"
           >
+            <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0" fill="currentColor">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            </svg>
             {{ t("nav.login") }}
-          </NuxtLink>
-          <NuxtLink
-            :to="localePath('/auth/register')"
-            class="btn-primary text-sm px-4 py-2"
+            <svg class="w-3 h-3 transition-transform" :class="profileOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+
+          <!-- Dropdown -->
+          <Transition
+            enter-active-class="transition duration-100 ease-out"
+            enter-from-class="opacity-0 scale-95 -translate-y-1"
+            enter-to-class="opacity-100 scale-100 translate-y-0"
+            leave-active-class="transition duration-75 ease-in"
+            leave-from-class="opacity-100 scale-100 translate-y-0"
+            leave-to-class="opacity-0 scale-95 -translate-y-1"
           >
-            {{ t("nav.register") }}
-          </NuxtLink>
-        </template>
+            <div
+              v-if="profileOpen"
+              class="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-stone-100 overflow-hidden z-50 min-w-[180px]"
+            >
+              <template v-if="user">
+                <NuxtLink
+                  :to="localePath('/account')"
+                  class="flex items-center gap-2.5 px-4 py-3 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                  @click="profileOpen = false"
+                >
+                  <svg viewBox="0 0 24 24" class="w-4 h-4 text-stone-400" fill="currentColor">
+                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                  </svg>
+                  Mon profil
+                </NuxtLink>
+                <NuxtLink
+                  :to="localePath('/account')"
+                  class="flex items-center gap-2.5 px-4 py-3 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                  @click="profileOpen = false"
+                >
+                  <svg viewBox="0 0 24 24" class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                  Mes réservations
+                </NuxtLink>
+                <NuxtLink
+                  v-if="isAdmin"
+                  :to="localePath('/admin')"
+                  class="flex items-center gap-2.5 px-4 py-3 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                  @click="profileOpen = false"
+                >
+                  <svg viewBox="0 0 24 24" class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  Administration
+                </NuxtLink>
+                <div class="border-t border-stone-100" />
+                <button
+                  class="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                  @click="signOut(); profileOpen = false"
+                >
+                  <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                  </svg>
+                  Déconnexion
+                </button>
+              </template>
+              <template v-else>
+                <NuxtLink
+                  :to="localePath('/auth/login')"
+                  class="flex items-center gap-2.5 px-4 py-3 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                  @click="profileOpen = false"
+                >
+                  <svg viewBox="0 0 24 24" class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                  </svg>
+                  Se connecter
+                </NuxtLink>
+                <NuxtLink
+                  :to="localePath('/auth/register')"
+                  class="flex items-center gap-2.5 px-4 py-3 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                  @click="profileOpen = false"
+                >
+                  <svg viewBox="0 0 24 24" class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                  </svg>
+                  S'inscrire
+                </NuxtLink>
+              </template>
+            </div>
+          </Transition>
+        </div>
 
         <!-- Menu burger mobile -->
         <button class="md:hidden p-2" @click="mobileOpen = !mobileOpen">
@@ -371,10 +442,12 @@ const { user, isAdmin, signOut } = useAuth();
 const scrolled = ref(false);
 const mobileOpen = ref(false);
 const langOpen = ref(false);
+const profileOpen = ref(false);
 
 onMounted(() => {
   const close = (e: MouseEvent) => {
     if (!(e.target as HTMLElement).closest(".relative")) langOpen.value = false;
+    if (!(e.target as HTMLElement).closest(".profile-dropdown")) profileOpen.value = false;
   };
   document.addEventListener("click", close);
   onUnmounted(() => document.removeEventListener("click", close));
