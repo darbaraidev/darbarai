@@ -17,8 +17,7 @@
         <div
           v-for="cat in servicesByCategory"
           :key="cat.category"
-          :id="cat.category"
-          class="mb-20"
+class="mb-20"
         >
           <div class="w-full bg-terracotta-100 px-8 py-8 mb-8 text-center">
             <h2 class="font-serif text-3xl text-terracotta-800 mb-1">{{ cat.name }}</h2>
@@ -424,22 +423,7 @@ const onKeydown = (e: KeyboardEvent) => {
     modal.open = false;
   }
 };
-onMounted(() => {
-  window.addEventListener("keydown", onKeydown);
-  const hash = useRoute().hash;
-  if (hash) {
-    const unwatch = watch(servicesByCategory, (val) => {
-      if (val.length > 0) {
-        unwatch();
-        nextTick(() => {
-          setTimeout(() => {
-            document.querySelector(hash)?.scrollIntoView({ behavior: "smooth", block: "start" });
-          }, 100);
-        });
-      }
-    }, { immediate: true });
-  }
-});
+onMounted(() => window.addEventListener("keydown", onKeydown));
 onUnmounted(() => window.removeEventListener("keydown", onKeydown));
 
 useSeoMeta({

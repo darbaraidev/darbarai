@@ -243,7 +243,7 @@
             :class="i === 1 ? 'md:mt-16' : ''"
             @mouseenter="hoveredService = i"
             @mouseleave="hoveredService = null"
-            @click="navigateTo({ path: localePath('/services'), hash: '#' + card.key })"
+            @click="navigateTo(localePath('/services'))"
           >
             <!-- Image portrait -->
             <div
