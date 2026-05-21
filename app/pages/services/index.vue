@@ -24,9 +24,9 @@
           :key="cat.category"
           class="mb-20"
         >
-          <h2 class="text-sm font-semibold uppercase tracking-widest text-terracotta-600 mb-8">
-            {{ cat.name }}
-          </h2>
+          <h2 class="font-serif text-3xl text-stone-800 mb-1">{{ cat.name }}</h2>
+          <p v-if="cat.description" class="text-stone-500 text-base mb-8 max-w-xl">{{ cat.description }}</p>
+          <div v-else class="mb-8" />
           <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <div
               v-for="service in cat.items"
@@ -376,6 +376,7 @@ const servicesByCategory = computed(() => {
     .map((cat: ServiceCategoryRecord) => ({
       category: cat.slug,
       name: locale.value === "fr" ? cat.name : cat.name_en || cat.name,
+      description: locale.value === "fr" ? cat.description : cat.description_en || cat.description,
       items: list.filter((s: Service) => s.category === cat.slug),
     }))
     .filter((g) => g.items.length > 0);

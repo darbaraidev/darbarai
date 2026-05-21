@@ -31,73 +31,93 @@
         <div
           v-for="cat in allCategories"
           :key="cat.id"
-          class="flex items-center gap-2"
+          class="space-y-1.5 pb-3 border-b border-stone-100 last:border-0"
         >
-          <input
-            :value="cat.name"
-            class="input flex-1 text-sm"
-            :placeholder="t('admin.cat_name_fr')"
-            @change="
-              updateCat(cat, 'name', ($event.target as HTMLInputElement).value)
-            "
-          />
-          <input
-            :value="cat.name_en"
-            class="input flex-1 text-sm"
-            :placeholder="t('admin.cat_name_en')"
-            @change="
-              updateCat(
-                cat,
-                'name_en',
-                ($event.target as HTMLInputElement).value,
-              )
-            "
-          />
-          <input
-            :value="cat.sort_order"
-            type="number"
-            min="0"
-            class="input w-16 text-sm"
-            @change="
-              updateCat(
-                cat,
-                'sort_order',
-                Number(($event.target as HTMLInputElement).value),
-              )
-            "
-          />
-          <button
-            class="text-xs px-2 py-1 rounded border border-stone-200 text-stone-400 hover:border-red-300 hover:text-red-500 transition-colors"
-            @click="removeCat(cat.id)"
-          >
-            ✕
-          </button>
+          <div class="flex items-center gap-2">
+            <input
+              :value="cat.name"
+              class="input flex-1 text-sm"
+              :placeholder="t('admin.cat_name_fr')"
+              @change="updateCat(cat, 'name', ($event.target as HTMLInputElement).value)"
+            />
+            <input
+              :value="cat.name_en"
+              class="input flex-1 text-sm"
+              :placeholder="t('admin.cat_name_en')"
+              @change="updateCat(cat, 'name_en', ($event.target as HTMLInputElement).value)"
+            />
+            <input
+              :value="cat.sort_order"
+              type="number"
+              min="0"
+              class="input w-16 text-sm"
+              @change="updateCat(cat, 'sort_order', Number(($event.target as HTMLInputElement).value))"
+            />
+            <button
+              class="text-xs px-2 py-1 rounded border border-stone-200 text-stone-400 hover:border-red-300 hover:text-red-500 transition-colors"
+              @click="removeCat(cat.id)"
+            >
+              ✕
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <input
+              :value="cat.description"
+              class="input flex-1 text-sm"
+              placeholder="Description (français)"
+              @change="updateCat(cat, 'description', ($event.target as HTMLInputElement).value)"
+            />
+            <input
+              :value="cat.description_en"
+              class="input flex-1 text-sm"
+              placeholder="Description (anglais)"
+              @change="updateCat(cat, 'description_en', ($event.target as HTMLInputElement).value)"
+            />
+            <div class="w-16 shrink-0" />
+            <div class="w-[3.25rem] shrink-0" />
+          </div>
         </div>
 
         <!-- Nouvelle catégorie -->
         <div
           v-if="newCatForm.open"
-          class="flex items-center gap-2 pt-1 border-t border-stone-100"
+          class="space-y-1.5 pt-1 border-t border-stone-100"
         >
-          <input
-            v-model="newCatForm.name"
-            class="input flex-1 text-sm"
-            :placeholder="t('admin.cat_name_fr')"
-          />
-          <input
-            v-model="newCatForm.name_en"
-            class="input flex-1 text-sm"
-            :placeholder="t('admin.cat_name_en')"
-          />
-          <button class="btn-primary text-xs px-3" @click="addCat">
-            {{ t("common.save") }}
-          </button>
-          <button
-            class="btn-secondary text-xs px-3"
-            @click="newCatForm.open = false"
-          >
-            {{ t("common.cancel") }}
-          </button>
+          <div class="flex items-center gap-2">
+            <input
+              v-model="newCatForm.name"
+              class="input flex-1 text-sm"
+              :placeholder="t('admin.cat_name_fr')"
+            />
+            <input
+              v-model="newCatForm.name_en"
+              class="input flex-1 text-sm"
+              :placeholder="t('admin.cat_name_en')"
+            />
+          </div>
+          <div class="flex items-center gap-2">
+            <input
+              v-model="newCatForm.description"
+              class="input flex-1 text-sm"
+              placeholder="Description (français)"
+            />
+            <input
+              v-model="newCatForm.description_en"
+              class="input flex-1 text-sm"
+              placeholder="Description (anglais)"
+            />
+          </div>
+          <div class="flex gap-2">
+            <button class="btn-primary text-xs px-3" @click="addCat">
+              {{ t("common.save") }}
+            </button>
+            <button
+              class="btn-secondary text-xs px-3"
+              @click="newCatForm.open = false"
+            >
+              {{ t("common.cancel") }}
+            </button>
+          </div>
         </div>
         <div v-else>
           <button
@@ -392,7 +412,7 @@ const { formatPrice } = useRiad();
 const allCategories = ref<ServiceCategoryRecord[]>([]);
 const showCatPanel = ref(false);
 const catError = ref<string | null>(null);
-const newCatForm = reactive({ open: false, name: "", name_en: "" });
+const newCatForm = reactive({ open: false, name: "", name_en: "", description: "", description_en: "" });
 
 const loadCategories = async () => {
   const { data } = await fetchCategories();
@@ -411,6 +431,8 @@ const addCat = async () => {
     slug,
     name: newCatForm.name.trim(),
     name_en: newCatForm.name_en.trim() || null,
+    description: newCatForm.description.trim() || null,
+    description_en: newCatForm.description_en.trim() || null,
     sort_order: allCategories.value.length,
   });
   if (error) {
