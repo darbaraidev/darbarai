@@ -3,19 +3,19 @@
     class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
     :class="scrolled ? 'bg-white/95 backdrop-blur shadow-sm' : 'bg-transparent'"
   >
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center gap-4">
       <!-- Logo -->
-      <NuxtLink :to="localePath('/')" class="flex items-center">
+      <NuxtLink :to="localePath('/')" class="flex items-center flex-shrink-0">
         <img
-          src="/images/logo_dar_barai.jpg"
+          src="/images/logo_app.jpg"
           alt="Dar Baraï"
           class="h-12 w-auto transition-all duration-300 rounded-lg"
           :class="scrolled ? '' : 'ring-1 ring-white/20 shadow-md'"
         />
       </NuxtLink>
 
-      <!-- Nav desktop -->
-      <nav class="hidden md:flex items-center gap-6">
+      <!-- Nav desktop - centré -->
+      <nav class="hidden md:flex items-center gap-7 flex-1 justify-center">
         <NuxtLink
           :to="localePath('/')"
           class="flex items-center gap-1.5 text-sm font-medium transition-colors"
@@ -97,13 +97,17 @@
         </NuxtLink>
       </nav>
 
-      <!-- Actions -->
-      <div class="flex items-center gap-3">
+      <!-- Actions - collées à droite -->
+      <div class="flex items-center gap-3 flex-shrink-0 ml-auto">
         <!-- Sélecteur de langue -->
         <div class="relative">
           <button
             class="flex items-center gap-1.5 text-xs font-medium uppercase px-2 py-1 rounded transition-colors"
-            :class="scrolled ? 'text-stone-600 hover:text-terracotta-600' : 'text-stone-900 hover:text-terracotta-600'"
+            :class="
+              scrolled
+                ? 'text-stone-600 hover:text-terracotta-600'
+                : 'text-stone-900 hover:text-terracotta-600'
+            "
             @click="langOpen = !langOpen"
           >
             <img
@@ -112,7 +116,20 @@
               class="w-4 rounded-sm"
             />
             <span>{{ locale }}</span>
-            <svg class="w-3 h-3 transition-transform" :class="langOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            <svg
+              class="w-3 h-3 transition-transform"
+              :class="langOpen ? 'rotate-180' : ''"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
           </button>
           <Transition
             enter-active-class="transition duration-100 ease-out"
@@ -131,9 +148,16 @@
                 :key="loc"
                 class="flex items-center gap-2 w-full px-4 py-2 text-xs font-medium uppercase text-stone-700 hover:bg-stone-50 transition-colors"
                 :class="locale === loc ? 'text-terracotta-600' : ''"
-                @click="setLocale(loc); langOpen = false"
+                @click="
+                  setLocale(loc);
+                  langOpen = false;
+                "
               >
-                <img :src="`https://flagcdn.com/16x12/${localeFlagCodes[loc]}.png`" :alt="loc" class="w-4 rounded-sm" />
+                <img
+                  :src="`https://flagcdn.com/16x12/${localeFlagCodes[loc]}.png`"
+                  :alt="loc"
+                  class="w-4 rounded-sm"
+                />
                 {{ loc }}
               </button>
             </div>
@@ -330,7 +354,14 @@
 </template>
 
 <script setup lang="ts">
-import { mdiHome, mdiFlower, mdiCamera, mdiBed, mdiEmailOutline, mdiStorefront } from "@mdi/js";
+import {
+  mdiHome,
+  mdiFlower,
+  mdiCamera,
+  mdiBed,
+  mdiEmailOutline,
+  mdiStorefront,
+} from "@mdi/js";
 
 const { t, locale, availableLocales, setLocale } = useI18n();
 const localeFlagCodes: Record<string, string> = { fr: "fr", en: "gb" };
