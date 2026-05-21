@@ -59,7 +59,7 @@
         <img
           :src="homePresentation2"
           alt="Dar Baraï"
-          class="w-full aspect-[5/3] object-cover rounded-2xl mt-10"
+          class="w-full aspect-[3/5] object-cover rounded-2xl mt-10"
         />
       </div>
     </div>
