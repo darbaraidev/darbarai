@@ -11,11 +11,6 @@
       </p>
     </div>
 
-    <!-- Note riads spécifiques -->
-    <div class="max-w-3xl mx-auto px-4 pt-8 pb-2 text-center">
-      <p class="text-stone-400 text-sm">{{ t("services.riad_specific_note") }}</p>
-    </div>
-
     <!-- Contenu -->
     <div class="py-12">
       <template v-if="servicesByCategory.length">
