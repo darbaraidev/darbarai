@@ -155,7 +155,7 @@ import type { AmenityDef } from "~/composables/useAmenities";
 
 definePageMeta({ layout: "admin", middleware: "admin" });
 const { t } = useI18n();
-const supabase = useSupabaseClient();
+const supabase = useSupabaseClient() as any;
 
 const loading = ref(true);
 const rows = ref<AmenityDef[]>([]);

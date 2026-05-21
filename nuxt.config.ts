@@ -17,7 +17,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      link: [{ rel: "icon", type: "image/png", href: "/images/logo_app.png" }],
+      link: [{ rel: "icon", type: "image/png", href: "/images/logo_app.jpg" }],
     },
   },
 
@@ -40,7 +40,6 @@ export default defineNuxtConfig({
     defaultLocale: "fr",
     langDir: "../i18n/locales/",
     strategy: "prefix_except_default",
-    lazy: true,
   },
 
   // Variables d'environnement runtime
@@ -57,7 +56,8 @@ export default defineNuxtConfig({
       stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
       contactWhatsapp: process.env.NUXT_PUBLIC_CONTACT_WHATSAPP ?? "",
-      contactEmail: process.env.NUXT_PUBLIC_CONTACT_EMAIL ?? "contact@darbarai.com",
+      contactEmail:
+        process.env.NUXT_PUBLIC_CONTACT_EMAIL ?? "contact@darbarai.com",
     },
   },
 
@@ -78,10 +78,8 @@ export default defineNuxtConfig({
   // Dossier server dans app/ (par défaut Nuxt 4 le cherche à la racine)
   serverDir: "./app/server",
 
-  // Nitro: augmente la limite du body pour les uploads d'images
   nitro: {
     routeRules: {
-      "/api/upload/**": { bodySize: "10mb" },
       // Page privée avec Leaflet : désactive le SSR pour éviter le mismatch d'hydratation
       "/carte": { ssr: false },
       "/en/carte": { ssr: false },

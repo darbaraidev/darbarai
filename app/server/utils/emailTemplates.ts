@@ -2,7 +2,9 @@ import { Resend } from "resend";
 import { createHmac } from "crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export const getAdminEmails = async (supabase: SupabaseClient): Promise<string[]> => {
+export const getAdminEmails = async (
+  supabase: SupabaseClient,
+): Promise<string[]> => {
   const { data } = await (supabase as any)
     .from("profiles")
     .select("id, email")
@@ -16,7 +18,9 @@ export const getAdminEmails = async (supabase: SupabaseClient): Promise<string[]
     } else {
       // profiles.email peut être null si le trigger ne le copie pas — fallback auth
       try {
-        const { data: authData } = await (supabase as any).auth.admin.getUserById(p.id);
+        const { data: authData } = await (
+          supabase as any
+        ).auth.admin.getUserById(p.id);
         if (authData?.user?.email) emails.push(authData.user.email);
       } catch {}
     }
@@ -52,9 +56,11 @@ export interface ReservationEmailData {
 
 const FROM = `${process.env.RESEND_FROM_NAME ?? "Dar Barai"} <${process.env.RESEND_FROM_EMAIL ?? "contact@darbarai.com"}>`;
 const SITE_URL = process.env.NUXT_PUBLIC_SITE_URL ?? "https://www.darbarai.com";
-const LOGO_URL = `${SITE_URL}/images/logo_app.png`;
+const LOGO_URL = `${SITE_URL}/images/logo_app.jpg`;
 const WHATSAPP_NUMBER = process.env.NUXT_PUBLIC_CONTACT_WHATSAPP ?? "";
-const WHATSAPP_LINK = WHATSAPP_NUMBER ? `https://wa.me/${WHATSAPP_NUMBER}` : null;
+const WHATSAPP_LINK = WHATSAPP_NUMBER
+  ? `https://wa.me/${WHATSAPP_NUMBER}`
+  : null;
 const WHATSAPP_DISPLAY = WHATSAPP_NUMBER ? `+${WHATSAPP_NUMBER}` : null;
 
 // Token HMAC pour unsubscribe sans connexion
@@ -107,10 +113,14 @@ const layout = (content: string, opts?: { unsubscribeUrl?: string }) => `
         <p style="margin:0 0 6px;font-size:11px;color:#c7c3be;text-align:center">
           Cet email est envoyé automatiquement, merci de ne pas y répondre directement.
         </p>
-        ${opts?.unsubscribeUrl ? `
+        ${
+          opts?.unsubscribeUrl
+            ? `
         <p style="margin:6px 0 0;font-size:11px;color:#c7c3be;text-align:center">
           <a href="${opts.unsubscribeUrl}" style="color:#c7c3be">Se désabonner de la newsletter</a>
-        </p>` : ""}
+        </p>`
+            : ""
+        }
       </div>
 
     </div>
@@ -121,7 +131,6 @@ const layout = (content: string, opts?: { unsubscribeUrl?: string }) => `
 // ─── Templates ────────────────────────────────────────────────────────────────
 
 export const templates = {
-
   reservationConfirmed: (d: ReservationEmailData) => ({
     subject: `Réservation confirmée – ${d.riadName}`,
     html: layout(`
@@ -146,9 +155,10 @@ export const templates = {
   }),
 
   adminNewReservation: (d: ReservationEmailData, mode: "stripe" | "later") => ({
-    subject: mode === "later"
-      ? `Demande de réservation – ${d.riadName}`
-      : `Nouvelle réservation payée – ${d.riadName}`,
+    subject:
+      mode === "later"
+        ? `Demande de réservation – ${d.riadName}`
+        : `Nouvelle réservation payée – ${d.riadName}`,
     html: layout(`
       <h1 style="margin:0 0 8px;font-size:24px;color:#1c1917">${mode === "later" ? "Demande de réservation" : "Nouvelle réservation"}</h1>
       <p>Mode de paiement : <strong>${mode === "later" ? "à convenir" : "carte bancaire"}</strong></p>
@@ -195,7 +205,12 @@ export const templates = {
     `),
   }),
 
-  reservationCancelled: (d: Pick<ReservationEmailData, "clientName" | "riadName" | "checkIn" | "checkOut" | "reservationId">) => ({
+  reservationCancelled: (
+    d: Pick<
+      ReservationEmailData,
+      "clientName" | "riadName" | "checkIn" | "checkOut" | "reservationId"
+    >,
+  ) => ({
     subject: `Annulation de votre réservation – ${d.riadName}`,
     html: layout(`
       <h1 style="margin:0 0 8px;font-size:24px;color:#dc2626">Réservation annulée</h1>
@@ -206,7 +221,12 @@ export const templates = {
     `),
   }),
 
-  reservationCancelledByAdmin: (d: Pick<ReservationEmailData, "clientName" | "riadName" | "checkIn" | "checkOut" | "reservationId">) => ({
+  reservationCancelledByAdmin: (
+    d: Pick<
+      ReservationEmailData,
+      "clientName" | "riadName" | "checkIn" | "checkOut" | "reservationId"
+    >,
+  ) => ({
     subject: `Annulation de votre réservation – ${d.riadName}`,
     html: layout(`
       <h1 style="margin:0 0 8px;font-size:24px;color:#dc2626">Réservation annulée</h1>
@@ -235,11 +255,13 @@ export const templates = {
   newsletter: (contentFr: string, unsubUrl: string, contentEn?: string) => ({
     html: layout(
       contentFr +
-      (contentEn ? `
+        (contentEn
+          ? `
         <hr style="border:none;border-top:1px solid #e7e5e4;margin:32px 0"/>
         <p style="font-size:11px;color:#a8a29e;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 16px">English version</p>
         ${contentEn}
-      ` : ""),
+      `
+          : ""),
       { unsubscribeUrl: unsubUrl },
     ),
   }),
@@ -253,9 +275,17 @@ export const sendEmail = async (
   template: { subject: string; html: string },
 ) => {
   const resend = new Resend(apiKey);
-  const { data, error } = await resend.emails.send({ from: FROM, to, subject: template.subject, html: template.html });
+  const { data, error } = await resend.emails.send({
+    from: FROM,
+    to,
+    subject: template.subject,
+    html: template.html,
+  });
   if (error) {
-    console.error(`[sendEmail] Resend error → to=${to} subject="${template.subject}":`, JSON.stringify(error));
+    console.error(
+      `[sendEmail] Resend error → to=${to} subject="${template.subject}":`,
+      JSON.stringify(error),
+    );
     throw new Error(`Resend: ${JSON.stringify(error)}`);
   }
   console.log(`[sendEmail] OK → id=${data?.id} to=${to}`);

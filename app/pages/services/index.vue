@@ -46,7 +46,7 @@
                 <ClientOnly>
                   <LottieIcon
                     v-if="lottieAnimations[service.slug]"
-                    :animation-data="lottieAnimations[service.slug]"
+                    :animation-data="lottieAnimations[service.slug]!"
                     class="w-20 h-20"
                   />
                   <span v-else class="text-5xl">{{ service.icon ?? "✨" }}</span>
@@ -119,7 +119,7 @@
                   <ClientOnly>
                     <LottieIcon
                       v-if="modal.service && lottieAnimations[modal.service.slug]"
-                      :animation-data="lottieAnimations[modal.service.slug]"
+                      :animation-data="lottieAnimations[modal.service.slug]!"
                       class="w-14 h-14 shrink-0"
                     />
                     <span v-else class="text-4xl">{{ modal.service.icon ?? "✨" }}</span>

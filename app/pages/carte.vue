@@ -153,7 +153,7 @@
               <img :src="selectedPlace.photo_main" class="w-full h-52 object-cover transition-opacity group-hover:opacity-90" />
             </button>
             <div v-else class="w-full h-20 bg-stone-100 flex items-center justify-center text-3xl">
-              {{ getCategoryEmoji(selectedPlace.categories[0]) }}
+              {{ getCategoryEmoji(selectedPlace.categories[0] ?? "") }}
             </div>
             <button
               class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-1.5 shadow text-stone-500 hover:text-stone-800 transition-colors"
@@ -365,7 +365,7 @@
               >
                 <div class="w-12 h-12 rounded-lg overflow-hidden bg-stone-100 shrink-0 flex items-center justify-center text-xl">
                   <img v-if="place.photo_main" :src="place.photo_main" class="w-full h-full object-cover" />
-                  <span v-else>{{ getCategoryEmoji(place.categories[0]) }}</span>
+                  <span v-else>{{ getCategoryEmoji(place.categories[0] ?? "") }}</span>
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="font-medium text-stone-800 text-sm truncate">{{ place.name }}</p>
@@ -560,9 +560,9 @@ const applyFilters = (places: Place[]) => {
   if (selectedCategory.value) {
     result = result.filter((p) => p.categories.includes(selectedCategory.value!));
   } else if (selectedGroup.value) {
-    const groupCats = MAP_CATEGORY_GROUPS
+    const groupCats = (MAP_CATEGORY_GROUPS
       .find((g) => g.slug === selectedGroup.value)
-      ?.categories.map((c) => c.slug) ?? [];
+      ?.categories.map((c) => c.slug) ?? []) as string[];
     result = result.filter((p) => p.categories.some((c) => groupCats.includes(c)));
   }
   if (selectedPriceLevel.value) {
@@ -574,7 +574,7 @@ const applyFilters = (places: Place[]) => {
 const filteredPlaces = computed(() => applyFilters(allPlaces.value));
 
 const countByGroup = (groupSlug: string) => {
-  const cats = MAP_CATEGORY_GROUPS.find((g) => g.slug === groupSlug)?.categories.map((c) => c.slug) ?? [];
+  const cats = (MAP_CATEGORY_GROUPS.find((g) => g.slug === groupSlug)?.categories.map((c) => c.slug) ?? []) as string[];
   return applyFilters(allPlaces.value.filter((p) => p.categories.some((c) => cats.includes(c)))).length;
 };
 

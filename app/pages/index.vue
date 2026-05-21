@@ -484,9 +484,9 @@ function dragEnd(e: MouseEvent) {
 }
 function dragCancel() { isDragging = false; }
 
-function touchStart(e: TouchEvent) { dragStartX = e.touches[0].clientX; }
+function touchStart(e: TouchEvent) { dragStartX = e.touches[0]!.clientX; }
 function touchEnd(e: TouchEvent) {
-  const diff = dragStartX - e.changedTouches[0].clientX;
+  const diff = dragStartX - e.changedTouches[0]!.clientX;
   if (Math.abs(diff) > 50) diff > 0 ? carouselNext() : carouselPrev();
 }
 
