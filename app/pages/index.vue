@@ -17,7 +17,7 @@
         alt="Dar Baraï"
         class="w-40 mx-auto mb-6"
       />
-      <h1 class="font-serif text-5xl md:text-7xl mb-10 leading-tight">
+      <h1 class="font-serif text-3xl md:text-4xl mb-10 leading-tight">
         {{ t("home.hero_title") }}
       </h1>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
