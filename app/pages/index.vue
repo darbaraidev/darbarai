@@ -1,6 +1,13 @@
 <template>
   <!-- Hero -->
-  <section class="relative h-screen min-h-[600px] flex items-center justify-center text-white overflow-hidden">
+  <section
+    class="relative h-screen min-h-[600px] flex items-center justify-center text-white overflow-hidden select-none cursor-grab active:cursor-grabbing"
+    @mousedown="dragStart"
+    @mouseup="dragEnd"
+    @mouseleave="dragCancel"
+    @touchstart.passive="touchStart"
+    @touchend="touchEnd"
+  >
     <!-- Slides -->
     <div class="absolute inset-0">
       <div
@@ -457,6 +464,27 @@ function carouselPrev() {
 function resetCarouselTimer() {
   if (carouselTimer) clearInterval(carouselTimer);
   carouselTimer = setInterval(carouselNext, 5000);
+}
+
+let dragStartX = 0;
+let isDragging = false;
+
+function dragStart(e: MouseEvent) {
+  dragStartX = e.clientX;
+  isDragging = true;
+}
+function dragEnd(e: MouseEvent) {
+  if (!isDragging) return;
+  isDragging = false;
+  const diff = dragStartX - e.clientX;
+  if (Math.abs(diff) > 50) diff > 0 ? carouselNext() : carouselPrev();
+}
+function dragCancel() { isDragging = false; }
+
+function touchStart(e: TouchEvent) { dragStartX = e.touches[0].clientX; }
+function touchEnd(e: TouchEvent) {
+  const diff = dragStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) diff > 0 ? carouselNext() : carouselPrev();
 }
 
 onMounted(() => { carouselTimer = setInterval(carouselNext, 5000); });
