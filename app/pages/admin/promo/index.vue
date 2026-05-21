@@ -8,6 +8,43 @@
       <button class="btn-primary text-sm" @click="openAdd">+ Nouveau code</button>
     </div>
 
+    <!-- Codes newsletter automatiques -->
+    <div class="card p-5 mb-6">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="font-semibold text-stone-800">Codes newsletter automatiques</span>
+            <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium shrink-0">Automatique</span>
+          </div>
+          <p class="text-sm text-stone-500 leading-relaxed mb-3">
+            À chaque inscription à la newsletter, un code unique au format
+            <span class="font-mono text-stone-700 bg-stone-100 px-1.5 py-0.5 rounded text-xs">BIEN-XXXXXX</span>
+            est généré automatiquement et envoyé par email.
+            Il donne <strong class="text-stone-700">-10%</strong> sur la première réservation,
+            est lié à l'adresse email de l'abonné et ne peut être utilisé qu'une seule fois.
+          </p>
+          <div class="flex gap-5 text-sm">
+            <span class="text-stone-500">Codes générés : <strong class="text-stone-800">{{ nlTotal }}</strong></span>
+            <span class="text-stone-500">Utilisés : <strong class="text-stone-800">{{ nlUsed }}</strong></span>
+            <span v-if="nlTotal > 0" class="text-stone-400 text-xs self-center">
+              ({{ Math.round(nlUsed / nlTotal * 100) }}% de taux d'utilisation)
+            </span>
+          </div>
+        </div>
+        <button
+          class="shrink-0 inline-flex items-center gap-2 text-sm px-3 py-2 rounded-lg font-medium transition-colors"
+          :class="nlPromoEnabled
+            ? 'bg-green-100 text-green-700 hover:bg-green-200'
+            : 'bg-stone-100 text-stone-500 hover:bg-stone-200'"
+          :disabled="nlPromoLoading"
+          @click="toggleNlPromo"
+        >
+          <span class="w-2 h-2 rounded-full" :class="nlPromoEnabled ? 'bg-green-500' : 'bg-stone-400'"></span>
+          {{ nlPromoEnabled ? 'Actif' : 'Désactivé' }}
+        </button>
+      </div>
+    </div>
+
     <div v-if="loading" class="text-stone-400 text-sm">{{ t("common.loading") }}</div>
 
     <div v-else class="card p-0 overflow-hidden">
@@ -191,6 +228,7 @@ definePageMeta({ layout: "admin", middleware: "admin" });
 const { t } = useI18n();
 const { formatPrice } = useRiad();
 const supabase = useSupabaseClient();
+const { fetchNewsletterPromoEnabled, setNewsletterPromoEnabled } = useSiteSettings();
 
 type PromoCode = {
   id: string;
@@ -206,6 +244,10 @@ type PromoCode = {
 
 const loading = ref(true);
 const rows = ref<PromoCode[]>([]);
+const nlTotal = ref(0);
+const nlUsed = ref(0);
+const nlPromoEnabled = ref(true);
+const nlPromoLoading = ref(false);
 const modalOpen = ref(false);
 const deleteModal = ref(false);
 const saving = ref(false);
@@ -246,7 +288,27 @@ const fetchRows = async () => {
   }
 };
 
-onMounted(fetchRows);
+async function fetchNlData() {
+  const [{ data: nlData }, enabled] = await Promise.all([
+    (supabase as any).from("newsletter_subscribers").select("promo_used"),
+    fetchNewsletterPromoEnabled(),
+  ]);
+  nlTotal.value = nlData?.length ?? 0;
+  nlUsed.value = nlData?.filter((s: any) => s.promo_used).length ?? 0;
+  nlPromoEnabled.value = enabled;
+}
+
+async function toggleNlPromo() {
+  nlPromoLoading.value = true;
+  const { error } = await setNewsletterPromoEnabled(!nlPromoEnabled.value);
+  if (!error) nlPromoEnabled.value = !nlPromoEnabled.value;
+  nlPromoLoading.value = false;
+}
+
+onMounted(() => {
+  fetchRows();
+  fetchNlData();
+});
 
 const openAdd = () => {
   editingId.value = null;

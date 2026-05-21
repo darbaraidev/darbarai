@@ -67,6 +67,7 @@ const STORAGE_KEY = "nl_popup_shown";
 
 const { t } = useI18n();
 const user = useSupabaseUser();
+const supabase = useSupabaseClient() as any;
 
 const visible = ref(false);
 const success = ref(false);
@@ -74,9 +75,23 @@ const email = ref("");
 const loading = ref(false);
 const error = ref("");
 
-onMounted(() => {
-  if (user.value) return;
+onMounted(async () => {
   if (localStorage.getItem(STORAGE_KEY)) return;
+
+  if (user.value) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("newsletter_subscribed")
+      .eq("id", user.value.id)
+      .single();
+
+    if (profile?.newsletter_subscribed) {
+      localStorage.setItem(STORAGE_KEY, "1");
+      return;
+    }
+    email.value = user.value.email ?? "";
+  }
+
   setTimeout(() => { visible.value = true; }, 2000);
 });
 
@@ -95,7 +110,11 @@ async function onSubmit() {
   } catch (e: any) {
     const status = e?.response?.status ?? e?.statusCode;
     if (status === 409) {
-      error.value = t("newsletter_popup.already");
+      if (user.value) {
+        dismiss();
+      } else {
+        error.value = t("newsletter_popup.already");
+      }
     } else {
       error.value = t("newsletter_popup.error");
     }

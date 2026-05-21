@@ -15,10 +15,10 @@ export default defineEventHandler(async (event) => {
   }
 
   const supabase = serverSupabaseServiceRole(event);
-  await (supabase as any)
-    .from("profiles")
-    .update({ newsletter_subscribed: false })
-    .eq("email", email);
+  await Promise.all([
+    (supabase as any).from("profiles").update({ newsletter_subscribed: false }).eq("email", email),
+    (supabase as any).from("newsletter_subscribers").delete().eq("email", email),
+  ]);
 
   const siteUrl = config.public.siteUrl ?? "https://www.darbarai.com";
   return sendRedirect(event, `${siteUrl}/?unsubscribed=1`);
