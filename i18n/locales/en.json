@@ -196,7 +196,11 @@
     "promo_placeholder": "Promo code",
     "promo_apply": "Apply",
     "promo_discount": "Discount",
-    "confirm_payment": "Confirm payment"
+    "confirm_payment": "Confirm payment",
+    "blocked_title": "Bookings temporarily unavailable",
+    "blocked_subtitle": "To book, please visit our partner platforms directly.",
+    "book_on_booking": "Book on Booking.com",
+    "book_on_airbnb": "Book on Airbnb"
   },
   "auth": {
     "login_title": "Sign in",
@@ -275,6 +279,11 @@
     "or_paste_url": "Or paste a URL...",
     "seo_riads_title": "Riads – Admin",
     "seo_title": "Administration – Dar Baraï",
+    "booking_toggle_title": "Online bookings",
+    "booking_toggle_description": "Disable to redirect visitors to Booking.com and Airbnb",
+    "booking_toggle_on": "Enabled",
+    "booking_toggle_off": "Disabled",
+    "booking_toggle_saving": "Saving...",
     "seo_reservations_title": "Reservations – Admin",
     "seo_newsletter_title": "Newsletter – Admin",
     "services": "Services",

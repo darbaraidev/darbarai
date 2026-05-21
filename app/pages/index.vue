@@ -214,9 +214,19 @@
 
     <div class="relative z-10">
       <div class="text-center mb-16 py-10 px-4">
-        <h2 class="section-title mb-3 text-stone-800">
-          {{ t("home.services_section_title") }}
-        </h2>
+        <div class="flex items-center justify-center gap-4 mb-3">
+          <svg viewBox="0 0 40 40" class="w-7 h-10 text-terracotta-400 shrink-0" fill="currentColor" aria-hidden="true">
+            <path d="M20 0 l2.9 8.9 L31.6 3.8 l-3.8 8.9 L37.3 14 l-9.4 1.2 L30.9 25 l-7.6-5.9 L20 28.1 l-3.3-9 L9.1 25 l2-9.8 L1.7 14 l9.8-1.3 L7.6 3.8 l9 5.1z"/>
+            <circle cx="20" cy="20" r="3.5"/>
+          </svg>
+          <h2 class="section-title text-stone-800">
+            {{ t("home.services_section_title") }}
+          </h2>
+          <svg viewBox="0 0 40 40" class="w-7 h-10 text-terracotta-400 shrink-0" fill="currentColor" aria-hidden="true">
+            <path d="M20 0 l2.9 8.9 L31.6 3.8 l-3.8 8.9 L37.3 14 l-9.4 1.2 L30.9 25 l-7.6-5.9 L20 28.1 l-3.3-9 L9.1 25 l2-9.8 L1.7 14 l9.8-1.3 L7.6 3.8 l9 5.1z"/>
+            <circle cx="20" cy="20" r="3.5"/>
+          </svg>
+        </div>
         <p class="text-stone-500 text-lg">
           {{ t("home.services_section_subtitle") }}
         </p>
@@ -557,7 +567,7 @@ const highlights = computed(() => [
     image: getCardImage("meals"),
     title: t("home.hl_meals_title"),
     desc: t("home.hl_meals_desc"),
-    action: () => navigateTo(localePath("/riads")),
+    action: () => navigateTo({ path: localePath("/riads"), hash: "#repas" }),
   },
   {
     key: "activities",
@@ -573,7 +583,7 @@ const highlights = computed(() => [
     image: getCardImage("breakfast"),
     title: t("home.hl_breakfast_title"),
     desc: t("home.hl_breakfast_desc"),
-    action: () => navigateTo(localePath("/riads") + "#petit-dejeuner"),
+    action: () => navigateTo({ path: localePath("/riads"), hash: "#petit-dejeuner" }),
   },
   {
     key: "visits",

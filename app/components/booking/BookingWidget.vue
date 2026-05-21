@@ -4,7 +4,30 @@
       {{ t("booking.title") }}
     </h2>
 
-    <form @submit.prevent="onSubmit" class="space-y-4">
+    <!-- Réservations désactivées -->
+    <div v-if="bookingEnabled === false" class="space-y-4 text-center py-2">
+      <p class="text-stone-600 text-sm leading-relaxed">
+        {{ t("booking.blocked_subtitle") }}
+      </p>
+      <a
+        :href="externalLinks[riad.slug]?.booking"
+        target="_blank"
+        rel="noopener"
+        class="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-colors"
+      >
+        {{ t("booking.book_on_booking") }}
+      </a>
+      <a
+        :href="externalLinks[riad.slug]?.airbnb"
+        target="_blank"
+        rel="noopener"
+        class="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-[#FF5A5F] text-white font-medium text-sm hover:bg-[#e04e53] transition-colors"
+      >
+        {{ t("booking.book_on_airbnb") }}
+      </a>
+    </div>
+
+    <form v-else @submit.prevent="onSubmit" class="space-y-4">
       <!-- Dates -->
       <ClientOnly>
         <BookingCalendarPicker
@@ -100,7 +123,7 @@
       </button>
     </form>
 
-    <p class="text-center text-xs text-stone-400 mt-3">
+    <p v-if="bookingEnabled !== false" class="text-center text-xs text-stone-400 mt-3">
       {{ t("booking.no_charge_yet") }}
     </p>
   </div>
@@ -114,8 +137,22 @@ const props = defineProps<{ riad: Riad }>();
 const { t } = useI18n();
 const { formatPrice } = useRiad();
 const { calcNights, calcTotal, checkAvailability } = useBooking();
+const { fetchBookingEnabled } = useSiteSettings();
 const user = useSupabaseUser();
 const localePath = useLocalePath();
+
+const { data: bookingEnabled } = await useAsyncData("booking-enabled", () => fetchBookingEnabled());
+
+const externalLinks: Record<string, { booking: string; airbnb: string }> = {
+  "dar-barai": {
+    booking: "https://www.booking.com/Share-2zvPug",
+    airbnb: "https://www.airbnb.fr/rooms/1273853042034870506",
+  },
+  "dar-tanawi": {
+    booking: "https://www.booking.com/Share-l7mC1lJ",
+    airbnb: "https://www.airbnb.fr/rooms/1587127201884285790",
+  },
+};
 
 const today = format(new Date(), "yyyy-MM-dd");
 const form = reactive({

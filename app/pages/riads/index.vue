@@ -10,10 +10,10 @@
     </div>
 
     <!-- Gouvernante -->
-    <div class="bg-sand-50 py-12 pl-8 md:pl-20 lg:pl-32 pr-4">
+    <div ref="gouvRef" class="reveal-section bg-sand-50 py-12 pl-8 md:pl-20 lg:pl-32 pr-4" :class="{ 'is-visible': gouvVisible }">
       <div class="max-w-4xl flex items-center gap-10">
         <div class="flex-1">
-          <h2 class="font-serif text-2xl text-stone-800 mb-3">{{ t("riads.gouvernante_title") }}</h2>
+          <h2 class="font-serif text-2xl mb-3 bg-gradient-to-r from-terracotta-700 to-amber-600 bg-clip-text text-transparent">{{ t("riads.gouvernante_title") }}</h2>
           <p class="text-stone-500 leading-relaxed mb-6">{{ t("riads.gouvernante_text") }}</p>
         </div>
         <img
@@ -25,7 +25,7 @@
     </div>
 
     <!-- Petit-déjeuner -->
-    <div id="petit-dejeuner" class="bg-sand-50 py-12 pr-8 md:pr-20 lg:pr-32 pl-4 mt-12">
+    <div id="petit-dejeuner" ref="petitDejRef" class="reveal-section bg-sand-50 py-12 pr-8 md:pr-20 lg:pr-32 pl-4 mt-12" :class="{ 'is-visible': petitDejVisible }">
       <div class="max-w-4xl ml-auto flex items-start gap-10">
         <div class="w-96 shrink-0 grid grid-cols-3 gap-2">
           <img
@@ -38,7 +38,7 @@
           />
         </div>
         <div class="flex-1">
-          <h2 class="font-serif text-2xl text-stone-800 mb-3">{{ t("riads.breakfast_title") }}</h2>
+          <h2 class="font-serif text-2xl mb-3 bg-gradient-to-r from-terracotta-700 to-amber-600 bg-clip-text text-transparent">{{ t("riads.breakfast_title") }}</h2>
           <p class="text-stone-500 leading-relaxed mb-4">{{ t("riads.breakfast_subtitle") }}</p>
           <p class="text-stone-700 font-medium mb-2">{{ t("riads.breakfast_menu_title") }}</p>
           <ul class="text-stone-500 space-y-1.5 text-sm">
@@ -55,10 +55,10 @@
     </div>
 
     <!-- Repas -->
-    <div id="repas" class="bg-sand-50 py-12 pl-8 md:pl-20 lg:pl-32 pr-4 mt-12 mb-12">
+    <div id="repas" ref="repasRef" class="reveal-section bg-sand-50 py-12 pl-8 md:pl-20 lg:pl-32 pr-4 mt-12 mb-12" :class="{ 'is-visible': repasVisible }">
       <div class="max-w-4xl flex items-start gap-10">
         <div class="flex-1">
-          <h2 class="font-serif text-2xl text-stone-800 mb-3">{{ t("riads.meals_title") }}</h2>
+          <h2 class="font-serif text-2xl mb-3 bg-gradient-to-r from-terracotta-700 to-amber-600 bg-clip-text text-transparent">{{ t("riads.meals_title") }}</h2>
           <p class="text-stone-500 leading-relaxed mb-6">{{ t("riads.meals_subtitle") }}</p>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
@@ -221,18 +221,49 @@ function handleLbKey(e: KeyboardEvent) {
   }
 }
 
-onMounted(() => window.addEventListener("keydown", handleLbKey));
+onMounted(() => {
+  window.addEventListener("keydown", handleLbKey);
+  const hash = useRoute().hash;
+  if (hash) {
+    nextTick(() => {
+      setTimeout(() => {
+        document.querySelector(hash)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 150);
+    });
+  }
+});
 onUnmounted(() => window.removeEventListener("keydown", handleLbKey));
 
 const { t } = useI18n();
-const localePath = useLocalePath();
+
 const { riads, fetchRiads } = useRiad();
 await useAsyncData("riads-list", () => fetchRiads());
+
+const gouvRef = ref<HTMLElement | null>(null);
+const petitDejRef = ref<HTMLElement | null>(null);
+const repasRef = ref<HTMLElement | null>(null);
+const gouvVisible = ref(false);
+const petitDejVisible = ref(false);
+const repasVisible = ref(false);
+
+useIntersectionObserver(gouvRef, ([e]) => { if (e?.isIntersecting) gouvVisible.value = true; }, { threshold: 0.12 });
+useIntersectionObserver(petitDejRef, ([e]) => { if (e?.isIntersecting) petitDejVisible.value = true; }, { threshold: 0.12 });
+useIntersectionObserver(repasRef, ([e]) => { if (e?.isIntersecting) repasVisible.value = true; }, { threshold: 0.12 });
 
 useSeoMeta({ title: t("seo.riads_title") });
 </script>
 
 <style scoped>
+.reveal-section {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .lb-fade-enter-active,
 .lb-fade-leave-active {
   transition: opacity 0.2s ease;
