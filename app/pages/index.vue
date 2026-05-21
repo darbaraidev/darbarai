@@ -301,7 +301,7 @@
 
   <!-- Parallax avis -->
   <div
-    class="relative h-[480px] bg-cover bg-center flex items-center justify-center"
+    class="relative bg-cover bg-center flex items-center justify-center py-20"
     :style="{
       backgroundImage: `url('${homeBg2}')`,
       backgroundAttachment: 'fixed',
@@ -318,18 +318,18 @@
 
       <div class="flex justify-center gap-6 flex-wrap">
         <!-- Airbnb -->
-        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-8 py-5 text-white min-w-[200px]">
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-6 py-4 text-white min-w-[180px]">
           <p class="text-white/50 text-xs uppercase tracking-widest mb-2">Airbnb</p>
-          <p class="font-serif text-4xl font-light mb-1">5,0 <span class="text-2xl">/ 5</span></p>
-          <p class="text-amber-400 text-base mb-2">★★★★★</p>
+          <p class="font-serif text-3xl font-light mb-1">5,0 <span class="text-xl">/ 5</span></p>
+          <p class="text-amber-400 text-sm mb-2">★★★★★</p>
           <p class="text-white/70 text-sm">{{ t("home.trust_airbnb_reviews") }}</p>
           <p class="text-white/50 text-xs mt-1 italic">{{ t("home.trust_airbnb_badge") }}</p>
         </div>
 
         <!-- Booking -->
-        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-8 py-5 text-white min-w-[200px]">
+        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-6 py-4 text-white min-w-[180px]">
           <p class="text-white/50 text-xs uppercase tracking-widest mb-2">Booking.com</p>
-          <p class="font-serif text-4xl font-light mb-1">9,7 <span class="text-2xl">/ 10</span></p>
+          <p class="font-serif text-3xl font-light mb-1">9,7 <span class="text-xl">/ 10</span></p>
           <p class="text-white/70 text-sm mb-1">{{ t("home.trust_booking_reviews") }}</p>
           <p class="text-white/50 text-xs mt-1 italic">{{ t("home.trust_booking_label") }}</p>
         </div>
