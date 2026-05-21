@@ -1,4 +1,4 @@
-import { serverSupabaseServiceRole, serverSupabaseUser } from "#supabase/server";
+import { serverSupabaseClient, serverSupabaseServiceRole } from "#supabase/server";
 import { v2 as cloudinary } from "cloudinary";
 
 async function migrateUrl(url: string, folder: string, cloudName: string, apiKey: string, apiSecret: string): Promise<string> {
@@ -24,8 +24,11 @@ async function migrateUrl(url: string, folder: string, cloudName: string, apiKey
 }
 
 export default defineEventHandler(async (event) => {
-  const user = await serverSupabaseUser(event);
-  if (!user) throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
+  const supabaseClient = await serverSupabaseClient(event);
+  const token = getHeader(event, "authorization")?.replace(/^Bearer\s+/i, "");
+  if (!token) throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
+  const { data: { user } } = await supabaseClient.auth.getUser(token);
+  if (!user?.id) throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
 
   const supabase = serverSupabaseServiceRole(event);
   const { data: profile } = await (supabase as any).from("profiles").select("role").eq("id", user.id).single();
