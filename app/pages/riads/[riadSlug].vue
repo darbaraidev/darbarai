@@ -140,7 +140,20 @@
 
         <!-- Services -->
         <section v-if="riad.services?.length">
-          <h2 class="section-title mb-6">{{ t("riads.services_title") }}</h2>
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="section-title">{{ t("riads.services_title") }}</h2>
+            <a
+              :href="localePath('/services')"
+              target="_blank"
+              rel="noopener"
+              class="text-sm font-medium text-terracotta-600 hover:text-terracotta-800 transition-colors flex items-center gap-1 shrink-0"
+            >
+              {{ t("riads.services_see_all") }}
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
           <div
             class="divide-y divide-stone-100 border border-stone-100 rounded-xl overflow-hidden"
           >
@@ -384,6 +397,7 @@ import { mdiBedKingOutline } from "@mdi/js";
 
 const route = useRoute();
 const { t, locale } = useI18n();
+const localePath = useLocalePath();
 const { getRiadBySlug, formatPrice } = useRiad();
 
 const riad = (await getRiadBySlug(route.params.riadSlug as string)) as Riad;
