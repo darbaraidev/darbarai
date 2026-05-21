@@ -24,11 +24,9 @@
           :key="cat.category"
           class="mb-20"
         >
-          <div class="w-full bg-terracotta-700 px-8 py-8 mb-8">
-            <div class="max-w-7xl mx-auto">
-              <h2 class="font-serif text-3xl text-white mb-1">{{ cat.name }}</h2>
-              <p v-if="cat.description" class="text-terracotta-200 text-base max-w-xl">{{ cat.description }}</p>
-            </div>
+          <div class="w-full bg-terracotta-100 px-8 py-8 mb-8 text-center">
+            <h2 class="font-serif text-3xl text-terracotta-800 mb-1">{{ cat.name }}</h2>
+            <p v-if="cat.description" class="text-terracotta-700 text-base max-w-xl mx-auto">{{ cat.description }}</p>
           </div>
           <div class="max-w-7xl mx-auto px-4">
           <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
