@@ -535,5 +535,10 @@
     "cat3_a3": "Les ruelles de la médina ne sont pas accessibles en voiture. Votre chauffeur vous déposera à proximité du quartier. Si besoin, notre gouvernante peut venir vous guider jusqu'au riad.",
     "cat3_q4": "Comment réserver ?",
     "cat3_a4": "Vous pouvez réserver directement depuis notre site ou nous contacter par téléphone et par e-mail. Nous serons ravis de répondre à toutes vos questions avant votre arrivée."
+  },
+  "unsubscribe": {
+    "title": "Vous êtes désabonné",
+    "message": "Votre adresse email a bien été retirée de notre newsletter. Vous ne recevrez plus de communications de notre part.",
+    "back_home": "Retour à l'accueil"
   }
 }

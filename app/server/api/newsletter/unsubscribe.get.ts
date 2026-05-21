@@ -21,5 +21,5 @@ export default defineEventHandler(async (event) => {
   ]);
 
   const siteUrl = config.public.siteUrl ?? "https://www.darbarai.com";
-  return sendRedirect(event, `${siteUrl}/?unsubscribed=1`);
+  return sendRedirect(event, `${siteUrl}/unsubscribe`);
 });

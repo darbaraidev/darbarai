@@ -40,6 +40,7 @@
           {{ t("nav.riads") }}
         </NuxtLink>
         <NuxtLink
+          v-if="ps?.page_services_enabled !== false"
           :to="localePath('/services')"
           class="flex items-center gap-1.5 text-sm font-medium transition-colors"
           :class="
@@ -54,6 +55,7 @@
           {{ t("nav.services") }}
         </NuxtLink>
         <NuxtLink
+          v-if="ps?.page_gallery_enabled !== false"
           :to="localePath('/gallery')"
           class="flex items-center gap-1.5 text-sm font-medium transition-colors"
           :class="
@@ -68,6 +70,7 @@
           {{ t("nav.gallery") }}
         </NuxtLink>
         <NuxtLink
+          v-if="ps?.page_boutique_enabled !== false"
           :to="localePath('/boutique')"
           class="flex items-center gap-1.5 text-sm font-medium transition-colors"
           :class="
@@ -82,6 +85,7 @@
           {{ t("nav.boutique") }}
         </NuxtLink>
         <NuxtLink
+          v-if="ps?.page_contact_enabled !== false"
           :to="localePath('/contact')"
           class="flex items-center gap-1.5 text-sm font-medium transition-colors"
           :class="
@@ -224,7 +228,7 @@
                   <svg viewBox="0 0 24 24" class="w-4 h-4 text-stone-400" fill="currentColor">
                     <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
                   </svg>
-                  Mon profil
+                  {{ t("account.profile") }}
                 </NuxtLink>
                 <NuxtLink
                   :to="{ path: localePath('/account'), query: { tab: 'reservations' } }"
@@ -234,7 +238,7 @@
                   <svg viewBox="0 0 24 24" class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                   </svg>
-                  Mes réservations
+                  {{ t("account.my_reservations") }}
                 </NuxtLink>
                 <NuxtLink
                   v-if="isAdmin"
@@ -245,7 +249,7 @@
                   <svg viewBox="0 0 24 24" class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/>
                   </svg>
-                  Administration
+                  {{ t("nav.admin") }}
                 </NuxtLink>
                 <div class="border-t border-stone-100" />
                 <button
@@ -255,7 +259,7 @@
                   <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                   </svg>
-                  Déconnexion
+                  {{ t("nav.logout") }}
                 </button>
               </template>
               <template v-else>
@@ -267,7 +271,7 @@
                   <svg viewBox="0 0 24 24" class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                   </svg>
-                  Se connecter
+                  {{ t("nav.login") }}
                 </NuxtLink>
                 <NuxtLink
                   :to="localePath('/auth/register')"
@@ -277,7 +281,7 @@
                   <svg viewBox="0 0 24 24" class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                   </svg>
-                  S'inscrire
+                  {{ t("nav.register") }}
                 </NuxtLink>
               </template>
             </div>
@@ -348,6 +352,7 @@
             {{ t("nav.riads") }}
           </NuxtLink>
           <NuxtLink
+            v-if="ps?.page_services_enabled !== false"
             :to="localePath('/services')"
             class="flex items-center gap-2 text-stone-700 font-medium"
             @click="mobileOpen = false"
@@ -358,6 +363,7 @@
             {{ t("nav.services") }}
           </NuxtLink>
           <NuxtLink
+            v-if="ps?.page_gallery_enabled !== false"
             :to="localePath('/gallery')"
             class="flex items-center gap-2 text-stone-700 font-medium"
             @click="mobileOpen = false"
@@ -368,6 +374,7 @@
             {{ t("nav.gallery") }}
           </NuxtLink>
           <NuxtLink
+            v-if="ps?.page_boutique_enabled !== false"
             :to="localePath('/boutique')"
             class="flex items-center gap-2 text-stone-700 font-medium"
             @click="mobileOpen = false"
@@ -378,6 +385,7 @@
             {{ t("nav.boutique") }}
           </NuxtLink>
           <NuxtLink
+            v-if="ps?.page_contact_enabled !== false"
             :to="localePath('/contact')"
             class="flex items-center gap-2 text-stone-700 font-medium"
             @click="mobileOpen = false"
@@ -438,6 +446,9 @@ const { t, locale, availableLocales, setLocale } = useI18n();
 const localeFlagCodes: Record<string, string> = { fr: "fr", en: "gb" };
 const localePath = useLocalePath();
 const { user, isAdmin, signOut } = useAuth();
+
+const { data: pageSettings } = useFetch("/api/site-settings", { key: "site-settings" });
+const ps = computed(() => pageSettings.value as Record<string, boolean> | null);
 
 const scrolled = ref(false);
 const mobileOpen = ref(false);

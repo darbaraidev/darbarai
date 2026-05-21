@@ -534,5 +534,10 @@
     "cat3_a3": "The medina's alleyways are not accessible by car. Your driver will drop you nearby. If needed, our housekeeper can come and guide you to the riad.",
     "cat3_q4": "How do we book?",
     "cat3_a4": "You can book directly on our website or contact us by phone or email. We'll be happy to answer all your questions before your arrival."
+  },
+  "unsubscribe": {
+    "title": "You've been unsubscribed",
+    "message": "Your email address has been removed from our newsletter. You will no longer receive communications from us.",
+    "back_home": "Back to home"
   }
 }
