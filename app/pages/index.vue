@@ -208,7 +208,7 @@
   </section>
 
   <!-- Services -->
-  <section class="relative py-20">
+  <section class="relative pt-20 pb-10">
     <!-- Fond terracotta pleine largeur couvrant titre + moitié supérieure des images -->
     <div class="absolute inset-x-0 top-0 bg-terracotta-100 h-[540px]" />
 
@@ -239,10 +239,11 @@
           <div
             v-for="(card, i) in serviceCards"
             :key="card.key"
-            class="flex flex-col group"
+            class="flex flex-col group cursor-pointer"
             :class="i === 1 ? 'md:mt-16' : ''"
             @mouseenter="hoveredService = i"
             @mouseleave="hoveredService = null"
+            @click="navigateTo({ path: localePath('/services'), hash: '#' + card.key })"
           >
             <!-- Image portrait -->
             <div
@@ -280,23 +281,12 @@
           </div>
         </div>
 
-        <div class="text-center mt-5">
-          <NuxtLink
-            :to="localePath('/services')"
-            class="btn-primary px-8 py-3 text-sm inline-flex items-center gap-2"
-          >
-            <svg class="w-4 h-4" viewBox="0 0 24 24">
-              <path fill="currentColor" :d="mdiPlus" />
-            </svg>
-            {{ t("home.services_cta") }}
-          </NuxtLink>
-        </div>
       </div>
     </div>
   </section>
 
   <!-- Localisation -->
-  <section id="localisation" class="py-20 px-4 max-w-6xl mx-auto">
+  <section id="localisation" class="pt-10 pb-20 px-4 max-w-6xl mx-auto">
     <h2 class="section-title text-center mb-3">
       {{ t("home.location_title") }}
     </h2>

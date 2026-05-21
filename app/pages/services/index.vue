@@ -17,6 +17,7 @@
         <div
           v-for="cat in servicesByCategory"
           :key="cat.category"
+          :id="cat.category"
           class="mb-20"
         >
           <div class="w-full bg-terracotta-100 px-8 py-8 mb-8 text-center">
@@ -423,7 +424,17 @@ const onKeydown = (e: KeyboardEvent) => {
     modal.open = false;
   }
 };
-onMounted(() => window.addEventListener("keydown", onKeydown));
+onMounted(() => {
+  window.addEventListener("keydown", onKeydown);
+  const hash = useRoute().hash;
+  if (hash) {
+    nextTick(() => {
+      setTimeout(() => {
+        document.querySelector(hash)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 150);
+    });
+  }
+});
 onUnmounted(() => window.removeEventListener("keydown", onKeydown));
 
 useSeoMeta({
