@@ -24,11 +24,11 @@
             <p v-if="cat.description" class="text-terracotta-700 text-base max-w-xl mx-auto">{{ cat.description }}</p>
           </div>
           <div class="max-w-7xl mx-auto px-4">
-          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div class="flex flex-wrap justify-center gap-5">
             <div
               v-for="service in cat.items"
               :key="service.id"
-              class="relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group"
+              class="relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group w-full sm:w-[calc(50%-0.625rem)] lg:w-[calc(33.333%-0.834rem)]"
               @click="openModal(service)"
             >
               <!-- Photo -->
