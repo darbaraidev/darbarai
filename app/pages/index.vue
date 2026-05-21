@@ -12,12 +12,14 @@
     />
     <div class="absolute inset-0 bg-black/40" />
     <div class="relative z-10 text-center px-4 max-w-3xl mx-auto">
-      <h1 class="font-serif text-5xl md:text-7xl mb-6 leading-tight">
+      <img
+        src="/images/logo_dar_barai_transparent.png"
+        alt="Dar Baraï"
+        class="w-40 mx-auto mb-6"
+      />
+      <h1 class="font-serif text-5xl md:text-7xl mb-10 leading-tight">
         {{ t("home.hero_title") }}
       </h1>
-      <p class="text-xl md:text-2xl text-white/90 mb-10 font-light">
-        {{ t("home.hero_subtitle") }}
-      </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <NuxtLink
           :to="localePath('/riads')"
