@@ -50,7 +50,7 @@
       </div>
 
       <!-- Photos -->
-      <div class="grid grid-cols-2 gap-6 h-[400px]">
+      <div class="grid grid-cols-2 grid-rows-1 gap-6 h-[360px]">
         <img
           :src="homePresentation1"
           alt="Dar Baraï"
@@ -59,7 +59,7 @@
         <img
           :src="homePresentation2"
           alt="Dar Baraï"
-          class="w-full h-full object-cover rounded-2xl mt-8"
+          class="w-full object-cover rounded-2xl mt-8"
           style="height: calc(100% - 2rem)"
         />
       </div>
