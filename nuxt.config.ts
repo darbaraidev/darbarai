@@ -40,6 +40,12 @@ export default defineNuxtConfig({
     defaultLocale: "fr",
     langDir: "../i18n/locales/",
     strategy: "prefix_except_default",
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: "i18n_redirected",
+      redirectOn: "root",
+      fallbackLocale: "fr",
+    },
   },
 
   // Variables d'environnement runtime
