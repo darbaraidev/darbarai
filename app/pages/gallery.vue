@@ -225,7 +225,7 @@ function preloadImages(photos: FlatPhoto[]) {
   });
 }
 
-watch(filteredPhotos, (photos) => preloadImages(photos), { immediate: true });
+watch(filteredPhotos, (photos) => preloadImages(photos));
 
 watch(activeFilter, () => {
   lightboxOpen.value = false;
@@ -256,7 +256,10 @@ function handleKey(e: KeyboardEvent) {
   if (e.key === "Escape") closeLightbox();
 }
 
-onMounted(() => window.addEventListener("keydown", handleKey));
+onMounted(() => {
+  preloadImages(filteredPhotos.value);
+  window.addEventListener("keydown", handleKey);
+});
 onUnmounted(() => window.removeEventListener("keydown", handleKey));
 </script>
 
