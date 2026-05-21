@@ -414,8 +414,8 @@
     "already": "This email is already subscribed to our newsletter.",
     "error": "Something went wrong, please try again.",
     "success_title": "Welcome!",
-    "success_text": "Your 10% discount code:",
-    "success_note": "Valid on your first booking, enter it at checkout.",
+    "success_text": "Your -10% code has been sent to your email.",
+    "success_note": "Valid on your first booking only, enter it at checkout.",
     "close": "Close"
   },
   "contact": {

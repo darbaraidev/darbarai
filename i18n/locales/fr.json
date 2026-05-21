@@ -415,8 +415,8 @@
     "already": "Cet email est déjà inscrit à notre newsletter.",
     "error": "Une erreur est survenue, veuillez réessayer.",
     "success_title": "Bienvenue !",
-    "success_text": "Votre code de réduction de 10% :",
-    "success_note": "Valable sur votre première réservation, à saisir lors du paiement.",
+    "success_text": "Votre code de -10% vous a été envoyé par email.",
+    "success_note": "Valable sur votre première réservation uniquement, à saisir lors du paiement.",
     "close": "Fermer"
   },
   "contact": {

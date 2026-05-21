@@ -114,13 +114,15 @@ export default defineEventHandler(async (event) => {
   let finalPrice = total_price;
   let discountAmount = 0;
   let promoCodeId: string | null = null;
+  let newsletterSubscriberId: string | null = null;
 
   if (promo_code) {
+    const normalizedCode = promo_code.trim().toUpperCase();
     const today = new Date().toISOString().slice(0, 10);
     const { data: promo } = await (admin as any)
       .from("promo_codes")
       .select("*")
-      .eq("code", promo_code.trim().toUpperCase())
+      .eq("code", normalizedCode)
       .eq("active", true)
       .single();
 
@@ -135,6 +137,19 @@ export default defineEventHandler(async (event) => {
         : Math.min(promo.value, total_price);
       finalPrice = total_price - discountAmount;
       promoCodeId = promo.id;
+    } else {
+      // Check newsletter subscriber personal code
+      const { data: subscriber } = await (admin as any)
+        .from("newsletter_subscribers")
+        .select("id, email, promo_used")
+        .eq("promo_code", normalizedCode)
+        .maybeSingle();
+
+      if (subscriber && !subscriber.promo_used && subscriber.email === user.email) {
+        discountAmount = Math.round(total_price * 10 / 100);
+        finalPrice = total_price - discountAmount;
+        newsletterSubscriberId = subscriber.id;
+      }
     }
   }
 
@@ -169,6 +184,9 @@ export default defineEventHandler(async (event) => {
   // Incrémenter uses_count du code promo
   if (promoCodeId) {
     await (admin as any).rpc("increment_promo_uses", { promo_id: promoCodeId });
+  }
+  if (newsletterSubscriberId) {
+    await (admin as any).from("newsletter_subscribers").update({ promo_used: true }).eq("id", newsletterSubscriberId);
   }
 
   // 8. Stripe PaymentIntent (si clé configurée)

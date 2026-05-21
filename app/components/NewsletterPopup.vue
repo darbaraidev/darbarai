@@ -19,19 +19,10 @@
           </button>
 
           <!-- Succès -->
-          <div v-if="success" class="text-center">
-            <div class="text-2xl mb-2">🎉</div>
-            <h2 class="font-serif text-lg text-stone-800 mb-1">{{ t("newsletter_popup.success_title") }}</h2>
-            <p class="text-stone-500 text-xs mb-3">{{ t("newsletter_popup.success_text") }}</p>
-            <div class="bg-terracotta-50 border border-terracotta-200 rounded-lg px-4 py-2.5 flex items-center justify-between gap-3 mb-2">
-              <span class="font-mono font-bold text-base text-terracotta-700 tracking-widest">{{ PROMO_CODE }}</span>
-              <button
-                class="text-xs text-terracotta-600 hover:text-terracotta-800 font-medium transition-colors shrink-0"
-                @click="copyCode"
-              >
-                {{ copied ? "✓ Copié" : "Copier" }}
-              </button>
-            </div>
+          <div v-if="success" class="text-center py-2">
+            <div class="text-3xl mb-3">🎉</div>
+            <h2 class="font-serif text-lg text-stone-800 mb-2">{{ t("newsletter_popup.success_title") }}</h2>
+            <p class="text-stone-600 text-sm leading-relaxed mb-3">{{ t("newsletter_popup.success_text") }}</p>
             <p class="text-xs text-stone-400">{{ t("newsletter_popup.success_note") }}</p>
           </div>
 
@@ -72,7 +63,6 @@
 </template>
 
 <script setup lang="ts">
-const PROMO_CODE = "BIENVENUE10";
 const STORAGE_KEY = "nl_popup_shown";
 
 const { t } = useI18n();
@@ -83,7 +73,6 @@ const success = ref(false);
 const email = ref("");
 const loading = ref(false);
 const error = ref("");
-const copied = ref(false);
 
 onMounted(() => {
   if (user.value) return;
@@ -115,11 +104,6 @@ async function onSubmit() {
   }
 }
 
-async function copyCode() {
-  await navigator.clipboard.writeText(PROMO_CODE);
-  copied.value = true;
-  setTimeout(() => { copied.value = false; }, 2000);
-}
 </script>
 
 <style scoped>
