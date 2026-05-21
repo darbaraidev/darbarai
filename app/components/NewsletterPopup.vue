@@ -1,77 +1,70 @@
 <template>
   <Teleport to="body">
-    <Transition name="popup-fade">
+    <Transition name="popup-slide">
       <div
         v-if="visible"
-        class="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4"
-        @click.self="dismiss"
+        class="fixed bottom-5 right-5 z-[200] w-80 bg-white rounded-2xl shadow-2xl overflow-hidden pointer-events-auto"
       >
-        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden">
-          <!-- Image décorative -->
-          <div class="h-2 bg-gradient-to-r from-terracotta-500 to-amber-400" />
+        <div class="h-1.5 bg-gradient-to-r from-terracotta-500 to-amber-400" />
 
-          <div class="p-8">
-            <!-- Close -->
+        <div class="p-5">
+          <!-- Close -->
+          <button
+            class="absolute top-3 right-3 text-stone-400 hover:text-stone-600 transition-colors"
+            @click="dismiss"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <!-- Succès -->
+          <div v-if="success" class="text-center">
+            <div class="text-2xl mb-2">🎉</div>
+            <h2 class="font-serif text-lg text-stone-800 mb-1">{{ t("newsletter_popup.success_title") }}</h2>
+            <p class="text-stone-500 text-xs mb-3">{{ t("newsletter_popup.success_text") }}</p>
+            <div class="bg-terracotta-50 border border-terracotta-200 rounded-lg px-4 py-2.5 flex items-center justify-between gap-3 mb-2">
+              <span class="font-mono font-bold text-base text-terracotta-700 tracking-widest">{{ PROMO_CODE }}</span>
+              <button
+                class="text-xs text-terracotta-600 hover:text-terracotta-800 font-medium transition-colors shrink-0"
+                @click="copyCode"
+              >
+                {{ copied ? "✓ Copié" : "Copier" }}
+              </button>
+            </div>
+            <p class="text-xs text-stone-400">{{ t("newsletter_popup.success_note") }}</p>
+          </div>
+
+          <!-- Formulaire -->
+          <template v-else>
+            <span class="inline-block bg-terracotta-100 text-terracotta-700 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-2">
+              {{ t("newsletter_popup.badge") }}
+            </span>
+            <h2 class="font-serif text-lg text-stone-800 mb-1 leading-snug">{{ t("newsletter_popup.title") }}</h2>
+            <p class="text-stone-500 text-xs leading-relaxed mb-3">{{ t("newsletter_popup.subtitle") }}</p>
+
+            <form @submit.prevent="onSubmit" class="space-y-2">
+              <input
+                v-model="email"
+                type="email"
+                required
+                :placeholder="t('newsletter_popup.placeholder')"
+                class="input-field w-full text-sm py-2"
+                :disabled="loading"
+              />
+              <p v-if="error" class="text-red-500 text-xs">{{ error }}</p>
+              <button type="submit" class="btn-primary w-full text-sm py-2" :disabled="loading">
+                {{ loading ? t("common.loading") : t("newsletter_popup.cta") }}
+              </button>
+            </form>
+
             <button
-              class="absolute top-4 right-4 text-stone-400 hover:text-stone-600 transition-colors"
+              class="w-full text-center text-xs text-stone-400 hover:text-stone-600 transition-colors mt-2"
               @click="dismiss"
             >
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              {{ t("newsletter_popup.no_thanks") }}
             </button>
-
-            <!-- Succès -->
-            <div v-if="success" class="text-center py-2">
-              <div class="text-4xl mb-4">🎉</div>
-              <h2 class="font-serif text-2xl text-stone-800 mb-2">{{ t("newsletter_popup.success_title") }}</h2>
-              <p class="text-stone-500 text-sm mb-6">{{ t("newsletter_popup.success_text") }}</p>
-              <div class="bg-terracotta-50 border border-terracotta-200 rounded-xl px-6 py-4 flex items-center justify-between gap-4">
-                <span class="font-mono font-bold text-xl text-terracotta-700 tracking-widest">{{ PROMO_CODE }}</span>
-                <button
-                  class="text-xs text-terracotta-600 hover:text-terracotta-800 font-medium transition-colors"
-                  @click="copyCode"
-                >
-                  {{ copied ? "✓ Copié" : "Copier" }}
-                </button>
-              </div>
-              <p class="text-xs text-stone-400 mt-3">{{ t("newsletter_popup.success_note") }}</p>
-              <button class="btn-primary w-full mt-6" @click="dismiss">{{ t("newsletter_popup.close") }}</button>
-            </div>
-
-            <!-- Formulaire -->
-            <template v-else>
-              <div class="text-center mb-6">
-                <span class="inline-block bg-terracotta-100 text-terracotta-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">
-                  {{ t("newsletter_popup.badge") }}
-                </span>
-                <h2 class="font-serif text-2xl text-stone-800 mb-2">{{ t("newsletter_popup.title") }}</h2>
-                <p class="text-stone-500 text-sm leading-relaxed">{{ t("newsletter_popup.subtitle") }}</p>
-              </div>
-
-              <form @submit.prevent="onSubmit" class="space-y-3">
-                <input
-                  v-model="email"
-                  type="email"
-                  required
-                  :placeholder="t('newsletter_popup.placeholder')"
-                  class="input-field w-full"
-                  :disabled="loading"
-                />
-                <p v-if="error" class="text-red-500 text-xs">{{ error }}</p>
-                <button type="submit" class="btn-primary w-full" :disabled="loading">
-                  {{ loading ? t("common.loading") : t("newsletter_popup.cta") }}
-                </button>
-              </form>
-
-              <button
-                class="w-full text-center text-xs text-stone-400 hover:text-stone-600 transition-colors mt-4"
-                @click="dismiss"
-              >
-                {{ t("newsletter_popup.no_thanks") }}
-              </button>
-            </template>
-          </div>
+          </template>
         </div>
       </div>
     </Transition>
@@ -95,7 +88,7 @@ const copied = ref(false);
 onMounted(() => {
   if (user.value) return;
   if (localStorage.getItem(STORAGE_KEY)) return;
-  setTimeout(() => { visible.value = true; }, 5000);
+  setTimeout(() => { visible.value = true; }, 2000);
 });
 
 function dismiss() {
@@ -130,12 +123,15 @@ async function copyCode() {
 </script>
 
 <style scoped>
-.popup-fade-enter-active,
-.popup-fade-leave-active {
-  transition: opacity 0.25s ease;
+.popup-slide-enter-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
-.popup-fade-enter-from,
-.popup-fade-leave-to {
+.popup-slide-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.popup-slide-enter-from,
+.popup-slide-leave-to {
   opacity: 0;
+  transform: translateY(12px);
 }
 </style>
