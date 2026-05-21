@@ -17,16 +17,20 @@
     </div>
 
     <!-- Contenu -->
-    <div class="max-w-7xl mx-auto px-4 py-12">
+    <div class="py-12">
       <template v-if="servicesByCategory.length">
         <div
           v-for="cat in servicesByCategory"
           :key="cat.category"
           class="mb-20"
         >
-          <h2 class="font-serif text-3xl text-stone-800 mb-1">{{ cat.name }}</h2>
-          <p v-if="cat.description" class="text-stone-500 text-base mb-8 max-w-xl">{{ cat.description }}</p>
-          <div v-else class="mb-8" />
+          <div class="w-full bg-terracotta-700 px-8 py-8 mb-8">
+            <div class="max-w-7xl mx-auto">
+              <h2 class="font-serif text-3xl text-white mb-1">{{ cat.name }}</h2>
+              <p v-if="cat.description" class="text-terracotta-200 text-base max-w-xl">{{ cat.description }}</p>
+            </div>
+          </div>
+          <div class="max-w-7xl mx-auto px-4">
           <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <div
               v-for="service in cat.items"
@@ -84,6 +88,7 @@
                 </p>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </template>
