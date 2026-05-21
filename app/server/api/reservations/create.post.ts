@@ -141,11 +141,12 @@ export default defineEventHandler(async (event) => {
       // Check newsletter subscriber personal code
       const { data: subscriber } = await (admin as any)
         .from("newsletter_subscribers")
-        .select("id, email, promo_used")
+        .select("id, email, promo_used, promo_expires_at")
         .eq("promo_code", normalizedCode)
         .maybeSingle();
 
-      if (subscriber && !subscriber.promo_used && subscriber.email === user.email) {
+      const notExpired = !subscriber?.promo_expires_at || new Date(subscriber.promo_expires_at) >= new Date();
+      if (subscriber && !subscriber.promo_used && notExpired && subscriber.email === user.email) {
         discountAmount = Math.round(total_price * 10 / 100);
         finalPrice = total_price - discountAmount;
         newsletterSubscriberId = subscriber.id;

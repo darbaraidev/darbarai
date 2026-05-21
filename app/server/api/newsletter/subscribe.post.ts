@@ -47,6 +47,7 @@ export default defineEventHandler(async (event) => {
 
   // Génère un code unique si les promos sont activées
   let promoCode: string | null = null;
+  let promoExpiresAt: Date | null = null;
   if (promoEnabled) {
     promoCode = generatePromoCode();
     let attempts = 0;
@@ -60,23 +61,29 @@ export default defineEventHandler(async (event) => {
       promoCode = generatePromoCode();
       attempts++;
     }
+    promoExpiresAt = new Date();
+    promoExpiresAt.setDate(promoExpiresAt.getDate() + 14);
   }
 
   // Insère l'abonné
   const { error } = await (supabase as any)
     .from("newsletter_subscribers")
-    .insert({ email: clean, source: "popup", promo_code: promoCode });
+    .insert({ email: clean, source: "popup", promo_code: promoCode, promo_expires_at: promoExpiresAt?.toISOString() ?? null });
 
   if (error) throw createError({ statusCode: 500, statusMessage: error.message });
 
   // Envoie l'email de bienvenue
   if (config.resendApiKey) {
     const unsub = unsubscribeUrl(clean, config.resendApiKey);
-    const promoBlock = promoCode
+    const expiryLabel = promoExpiresAt
+      ? promoExpiresAt.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
+      : null;
+    const promoBlock = promoCode && expiryLabel
       ? `
         <div style="background:#fdf6f0;border:1.5px solid #e07040;border-radius:12px;padding:24px;text-align:center;margin:24px 0">
           <p style="font-size:13px;color:#a16207;margin:0 0 8px 0;text-transform:uppercase;letter-spacing:.08em">Votre code exclusif</p>
-          <p style="font-family:monospace;font-size:28px;font-weight:700;color:#c2410c;letter-spacing:.15em;margin:0">${promoCode}</p>
+          <p style="font-family:monospace;font-size:28px;font-weight:700;color:#c2410c;letter-spacing:.15em;margin:0 0 12px">${promoCode}</p>
+          <p style="font-size:12px;color:#92400e;margin:0">Valable jusqu'au <strong>${expiryLabel}</strong></p>
         </div>
         <p style="color:#78716c;font-size:13px;line-height:1.6">
           Ce code est personnel et utilisable une seule fois. Saisissez-le lors de votre réservation sur

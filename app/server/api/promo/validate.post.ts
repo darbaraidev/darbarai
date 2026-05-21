@@ -31,12 +31,15 @@ export default defineEventHandler(async (event) => {
   // Fallback: newsletter subscriber personal code
   const { data: subscriber } = await (admin as any)
     .from("newsletter_subscribers")
-    .select("id, email, promo_used")
+    .select("id, email, promo_used, promo_expires_at")
     .eq("promo_code", normalizedCode)
     .maybeSingle();
 
   if (!subscriber) throw createError({ statusCode: 404, statusMessage: "Code invalide" });
   if (subscriber.promo_used) throw createError({ statusCode: 400, statusMessage: "Code déjà utilisé" });
+  if (subscriber.promo_expires_at && new Date(subscriber.promo_expires_at) < new Date()) {
+    throw createError({ statusCode: 400, statusMessage: "Code expiré" });
+  }
   if (email && subscriber.email !== email.toLowerCase().trim()) {
     throw createError({ statusCode: 403, statusMessage: "Ce code est lié à un autre email" });
   }
