@@ -1,33 +1,57 @@
 <template>
   <!-- Hero -->
-  <section
-    class="relative h-screen min-h-[600px] flex items-center justify-center text-white"
-  >
-    <div
-      class="absolute inset-0 bg-cover bg-center"
-      :style="{
-        backgroundImage: `url('${heroBg}')`,
-        backgroundAttachment: 'fixed',
-      }"
-    />
-    <div class="absolute inset-0 bg-black/40" />
-    <div class="relative z-10 text-center px-4 max-w-3xl mx-auto">
-      <img
-        src="/images/logo_app.png"
-        alt="Dar Baraï"
-        class="w-20 mx-auto mb-0 rounded-xl"
+  <section class="relative h-screen min-h-[600px] flex items-center justify-center text-white overflow-hidden">
+    <!-- Slides -->
+    <div class="absolute inset-0">
+      <div
+        v-for="(img, i) in carouselImages"
+        :key="i"
+        class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+        :style="{ backgroundImage: `url('${img}')`, opacity: i === carouselIndex ? 1 : 0 }"
       />
+    </div>
+    <div class="absolute inset-0 bg-black/40" />
+
+    <!-- Contenu -->
+    <div class="relative z-10 text-center px-4 max-w-3xl mx-auto">
+      <img src="/images/logo_app.png" alt="Dar Baraï" class="w-20 mx-auto mb-0 rounded-xl" />
       <h1 class="font-serif text-3xl md:text-4xl mb-10 leading-tight">
         {{ t("home.hero_title") }}
       </h1>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <NuxtLink
-          :to="localePath('/riads')"
-          class="btn-primary text-lg px-8 py-4 border-white text-white hover:bg-white/10"
-        >
+        <NuxtLink :to="localePath('/riads')" class="btn-primary text-lg px-8 py-4 border-white text-white hover:bg-white/10">
           {{ t("home.cta_book") }}
         </NuxtLink>
       </div>
+    </div>
+
+    <!-- Flèches -->
+    <button
+      class="absolute left-4 top-1/2 -translate-y-1/2 z-20 text-white/70 hover:text-white p-2 transition-colors"
+      @click="carouselPrev"
+    >
+      <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <button
+      class="absolute right-4 top-1/2 -translate-y-1/2 z-20 text-white/70 hover:text-white p-2 transition-colors"
+      @click="carouselNext"
+    >
+      <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+
+    <!-- Dots -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+      <button
+        v-for="(_, i) in carouselImages"
+        :key="i"
+        class="w-2 h-2 rounded-full transition-colors"
+        :class="i === carouselIndex ? 'bg-white' : 'bg-white/40'"
+        @click="carouselIndex = i; resetCarouselTimer()"
+      />
     </div>
   </section>
 
@@ -413,7 +437,32 @@ function getCardImage(key: string): string | undefined {
   }
   return undefined;
 }
-import heroBg from "~/assets/images/home_bg.jpg";
+const carouselRaw = import.meta.glob<{ default: string }>(
+  "../assets/images/home_carroussel/*.{jpg,jpeg,png,webp}",
+  { eager: true }
+);
+const carouselImages = Object.values(carouselRaw).map((m) => m.default);
+
+const carouselIndex = ref(0);
+let carouselTimer: ReturnType<typeof setInterval> | null = null;
+
+function carouselNext() {
+  carouselIndex.value = (carouselIndex.value + 1) % carouselImages.length;
+  resetCarouselTimer();
+}
+function carouselPrev() {
+  carouselIndex.value = (carouselIndex.value - 1 + carouselImages.length) % carouselImages.length;
+  resetCarouselTimer();
+}
+function resetCarouselTimer() {
+  if (carouselTimer) clearInterval(carouselTimer);
+  carouselTimer = setInterval(carouselNext, 5000);
+}
+
+onMounted(() => { carouselTimer = setInterval(carouselNext, 5000); });
+onUnmounted(() => { if (carouselTimer) clearInterval(carouselTimer); });
+
+import homeBg1 from "~/assets/images/home_bg_1.jpg";
 import homeBg1 from "~/assets/images/home_bg_1.jpg";
 import homeBg2 from "~/assets/images/home_bg_2.jpg";
 import homePresentation1 from "~/assets/images/home_presentation_1.jpg";
