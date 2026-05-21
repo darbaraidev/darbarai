@@ -428,11 +428,16 @@ onMounted(() => {
   window.addEventListener("keydown", onKeydown);
   const hash = useRoute().hash;
   if (hash) {
-    nextTick(() => {
-      setTimeout(() => {
-        document.querySelector(hash)?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 150);
-    });
+    const unwatch = watch(servicesByCategory, (val) => {
+      if (val.length > 0) {
+        unwatch();
+        nextTick(() => {
+          setTimeout(() => {
+            document.querySelector(hash)?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 100);
+        });
+      }
+    }, { immediate: true });
   }
 });
 onUnmounted(() => window.removeEventListener("keydown", onKeydown));
