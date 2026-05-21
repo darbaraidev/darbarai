@@ -1,7 +1,12 @@
 import { serverSupabaseServiceRole } from "#supabase/server";
 
 const BOT_RE = /bot|crawler|spider|slurp|mediapartners|headless|python|curl|wget|scrapy|phantom|selenium|monitor|uptimerobot|pingdom|facebookexternalhit|whatsapp/i;
-const SKIP_PREFIXES = ["/api/", "/_nuxt/", "/__nuxt/", "/_ipx/", "/favicon", "/admin"];
+const SKIP_PREFIXES = ["/api/", "/_nuxt/", "/__nuxt/", "/_ipx/", "/_i18n/", "/favicon", "/admin"];
+const SKIP_PATTERNS = [
+  /\.(php|xml|txt|env|sql|bak|zip|gz|asp|aspx|jsp|cgi)$/i,
+  /wp-admin|wp-login|wordpress|xmlrpc/i,
+  /^\/__(nuxt_error|error)/,
+];
 
 const geoCache = new Map<string, { country: string | null; countryCode: string | null; city: string | null; ts: number }>();
 const GEO_TTL = 3_600_000;
@@ -26,10 +31,15 @@ async function getGeo(ip: string) {
 async function trackVisit(event: any) {
   const path = getRequestURL(event).pathname;
   if (SKIP_PREFIXES.some((p) => path.startsWith(p))) return;
-  if (getMethod(event) !== "GET") return;
+  if (SKIP_PATTERNS.some((r) => r.test(path))) return;
+  if (event.method !== "GET") return;
 
   const ua = getRequestHeader(event, "user-agent") ?? "";
   if (!ua || BOT_RE.test(ua)) return;
+
+  // Seuls les vrais navigateurs envoient sec-fetch-dest: document lors d'une navigation
+  const fetchDest = getRequestHeader(event, "sec-fetch-dest");
+  if (fetchDest && fetchDest !== "document") return;
 
   // Visitor ID cookie — anonymous, no personal data
   let visitorId = getCookie(event, "vid");
