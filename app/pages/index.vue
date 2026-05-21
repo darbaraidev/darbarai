@@ -15,7 +15,7 @@
       <img
         src="/images/logo_app.png"
         alt="Dar Baraï"
-        class="w-20 mx-auto mb-3 rounded-xl"
+        class="w-20 mx-auto mb-0 rounded-xl"
       />
       <h1 class="font-serif text-3xl md:text-4xl mb-10 leading-tight">
         {{ t("home.hero_title") }}
