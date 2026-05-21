@@ -22,84 +22,67 @@
         <div
           v-for="cat in servicesByCategory"
           :key="cat.category"
-          class="mb-16"
+          class="mb-20"
         >
-          <h2
-            class="text-sm font-semibold uppercase tracking-widest text-terracotta-600 mb-6"
-          >
+          <h2 class="text-sm font-semibold uppercase tracking-widest text-terracotta-600 mb-8">
             {{ cat.name }}
           </h2>
-          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <div
               v-for="service in cat.items"
               :key="service.id"
-              class="card p-6 flex flex-col gap-4 hover:shadow-md transition-shadow cursor-pointer"
+              class="relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group"
               @click="openModal(service)"
             >
-              <div class="flex items-center gap-4">
+              <!-- Photo -->
+              <img
+                v-if="service.photos?.length"
+                :src="service.photos[0]"
+                :alt="locale === 'fr' ? service.name : service.name_en || service.name"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <!-- Fallback sans photo -->
+              <div
+                v-else
+                class="absolute inset-0 bg-sand-100 flex items-center justify-center"
+              >
                 <ClientOnly>
                   <LottieIcon
                     v-if="lottieAnimations[service.slug]"
                     :animation-data="lottieAnimations[service.slug]"
-                    class="w-14 h-14 shrink-0"
+                    class="w-20 h-20"
                   />
-                  <img
-                    v-else-if="staticImages[service.slug]"
-                    :src="staticImages[service.slug]"
-                    :alt="service.name"
-                    class="w-14 h-14 shrink-0 object-contain"
-                  />
-                  <span v-else class="text-4xl">{{ service.icon ?? "✨" }}</span>
+                  <span v-else class="text-5xl">{{ service.icon ?? "✨" }}</span>
                   <template #fallback>
-                    <span class="text-4xl">{{ service.icon ?? "✨" }}</span>
+                    <span class="text-5xl">{{ service.icon ?? "✨" }}</span>
                   </template>
                 </ClientOnly>
-                <div>
-                  <div class="flex items-center gap-2 flex-wrap">
-                    <h3 class="font-serif text-xl text-stone-800">
-                      {{
-                        locale === "fr"
-                          ? service.name
-                          : service.name_en || service.name
-                      }}
-                    </h3>
-                    <span
-                      v-if="service.riad_slugs?.length === 1"
-                      class="text-xs px-2 py-0.5 rounded-full font-medium shrink-0"
-                      :class="service.riad_slugs[0] === 'dar-barai' ? 'bg-terracotta-50 text-terracotta-700' : 'bg-blue-50 text-blue-700'"
-                    >
-                      {{ service.riad_slugs[0] === 'dar-barai' ? 'Dar Baraï' : 'Dar Tanawi' }}
-                    </span>
-                  </div>
-                  <p class="text-sm font-medium text-terracotta-600 mt-0.5">
-                    <template v-if="!service.price_cents">
-                      {{ t("services.on_request") }}
-                    </template>
-                    <template v-else>
-                      {{ formatPrice(service.price_cents) }}
-                      {{ t("services.per_person") }}
-                    </template>
-                  </p>
-                </div>
               </div>
-              <p
-                v-if="
-                  locale === 'fr' ? service.description : service.description_en
-                "
-                class="text-stone-500 text-sm leading-relaxed flex-1 line-clamp-3"
-              >
-                {{
-                  locale === "fr"
-                    ? service.description
-                    : service.description_en || service.description
-                }}
-              </p>
-              <button
-                class="btn-secondary text-sm text-center mt-auto"
-                @click.stop="openModal(service)"
-              >
-                {{ t("services.learn_more") }}
-              </button>
+
+              <!-- Gradient overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent transition-opacity duration-300 group-hover:from-black/85" />
+
+              <!-- Contenu bas de card -->
+              <div class="absolute bottom-0 left-0 right-0 p-5">
+                <span
+                  v-if="service.riad_slugs?.length === 1"
+                  class="inline-block text-xs px-2 py-0.5 rounded-full font-medium mb-2"
+                  :class="service.riad_slugs[0] === 'dar-barai' ? 'bg-terracotta-600/80 text-white' : 'bg-blue-600/80 text-white'"
+                >
+                  {{ service.riad_slugs[0] === 'dar-barai' ? 'Dar Baraï' : 'Dar Tanawi' }}
+                </span>
+                <h3 class="font-serif text-xl text-white leading-snug">
+                  {{ locale === "fr" ? service.name : service.name_en || service.name }}
+                </h3>
+                <p class="text-white/70 text-sm mt-1">
+                  <template v-if="!service.price_cents">
+                    {{ t("services.on_request") }}
+                  </template>
+                  <template v-else>
+                    {{ formatPrice(service.price_cents) }} {{ t("services.per_person") }}
+                  </template>
+                </p>
+              </div>
             </div>
           </div>
         </div>
