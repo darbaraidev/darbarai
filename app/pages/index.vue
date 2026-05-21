@@ -50,16 +50,16 @@
       </div>
 
       <!-- Photos -->
-      <div class="grid grid-cols-2 gap-6 h-[360px]">
+      <div class="grid grid-cols-2 gap-4 items-start">
         <img
           :src="homePresentation1"
           alt="Dar Baraï"
-          class="w-full h-full object-cover rounded-2xl"
+          class="w-full h-64 object-cover rounded-2xl"
         />
         <img
           :src="homePresentation2"
           alt="Dar Baraï"
-          class="w-full h-full object-cover rounded-2xl mt-8"
+          class="w-full h-64 object-cover rounded-2xl mt-8"
         />
       </div>
     </div>
