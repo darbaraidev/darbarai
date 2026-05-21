@@ -51,7 +51,8 @@ const { fetchMyReservations } = useBooking();
 const { t } = useI18n();
 
 const reservations = ref<any[]>([]);
-const activeTab = ref("profile");
+const route = useRoute();
+const activeTab = ref((route.query.tab as string) === "reservations" ? "reservations" : "profile");
 
 const tabs = [
   { id: "profile", label: t("account.profile") },

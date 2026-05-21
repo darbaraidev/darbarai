@@ -227,7 +227,7 @@
                   Mon profil
                 </NuxtLink>
                 <NuxtLink
-                  :to="localePath('/account')"
+                  :to="{ path: localePath('/account'), query: { tab: 'reservations' } }"
                   class="flex items-center gap-2.5 px-4 py-3 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
                   @click="profileOpen = false"
                 >
