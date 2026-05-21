@@ -13,7 +13,7 @@
     <div class="absolute inset-0 bg-black/40" />
     <div class="relative z-10 text-center px-4 max-w-3xl mx-auto">
       <img
-        src="/images/logo_dar_barai_transparent.png"
+        src="/images/logo_app.png"
         alt="Dar Baraï"
         class="w-40 mx-auto mb-6"
       />
