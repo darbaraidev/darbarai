@@ -54,7 +54,7 @@
         <img
           :src="homePresentation1"
           alt="Dar Baraï"
-          class="w-full aspect-[5/3] object-cover rounded-2xl"
+          class="w-full aspect-[3/5] object-cover rounded-2xl"
         />
         <img
           :src="homePresentation2"
