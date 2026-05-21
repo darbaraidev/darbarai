@@ -9,6 +9,9 @@
       <p class="text-stone-500 text-sm max-w-xl mx-auto mt-4 border border-stone-300 rounded-xl px-5 py-3">
         {{ t("services.page_description") }}
       </p>
+      <p class="text-stone-400 text-sm max-w-xl mx-auto mt-3 italic">
+        {{ t("services.page_description_note") }}
+      </p>
     </div>
 
     <!-- Contenu -->
