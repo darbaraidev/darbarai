@@ -234,20 +234,20 @@
           {{ t("home.services_description") }}
         </p>
       </div>
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div
             v-for="(card, i) in serviceCards"
             :key="card.key"
             class="flex flex-col group cursor-pointer"
-            :class="i === 1 ? 'md:mt-16' : ''"
+            :class="i === 1 ? 'md:mt-10' : ''"
             @mouseenter="hoveredService = i"
             @mouseleave="hoveredService = null"
             @click="navigateTo(localePath('/services'))"
           >
             <!-- Image portrait -->
             <div
-              class="relative aspect-[3/4] rounded-2xl overflow-hidden mb-6 bg-stone-100"
+              class="relative aspect-[3/4] rounded-xl overflow-hidden mb-4 bg-stone-100"
             >
               <img
                 :src="card.photo"
@@ -257,10 +257,10 @@
             </div>
 
             <!-- Texte -->
-            <h3 class="font-serif text-2xl text-stone-800 mb-3 text-center">
+            <h3 class="font-serif text-xl text-stone-800 mb-2 text-center">
               {{ card.title }}
             </h3>
-            <p class="text-stone-500 leading-relaxed text-center">
+            <p class="text-stone-500 text-sm leading-relaxed text-center">
               {{ card.description }}
             </p>
 
@@ -269,14 +269,14 @@
               <LottieIcon
                 :animation-data="card.lottie"
                 :playing="hoveredService === i"
-                class="w-20 h-20 mx-auto"
+                class="w-14 h-14 mx-auto"
               />
             </ClientOnly>
             <img
               v-else-if="card.image"
               :src="card.image"
               :alt="card.title"
-              class="w-20 h-20 mx-auto mt-4 object-contain"
+              class="w-14 h-14 mx-auto mt-3 object-contain"
             />
           </div>
         </div>
