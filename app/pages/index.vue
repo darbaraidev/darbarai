@@ -463,7 +463,6 @@ onMounted(() => { carouselTimer = setInterval(carouselNext, 5000); });
 onUnmounted(() => { if (carouselTimer) clearInterval(carouselTimer); });
 
 import homeBg1 from "~/assets/images/home_bg_1.jpg";
-import homeBg1 from "~/assets/images/home_bg_1.jpg";
 import homeBg2 from "~/assets/images/home_bg_2.jpg";
 import homePresentation1 from "~/assets/images/home_presentation_1.jpg";
 import homePresentation2 from "~/assets/images/home_presentation_2.jpg";
