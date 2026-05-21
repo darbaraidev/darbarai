@@ -4,6 +4,10 @@
       {{ t("auth.login_title") }}
     </h1>
 
+    <div v-if="isBookingRedirect" class="mb-5 px-4 py-3 rounded-xl bg-terracotta-50 border border-terracotta-200 text-terracotta-700 text-sm text-center">
+      {{ t("auth.login_booking_notice") }}
+    </div>
+
     <form @submit.prevent="onSubmit" class="space-y-4">
       <div>
         <label class="block text-sm font-medium text-stone-700 mb-1">{{
@@ -89,6 +93,7 @@ const localePath = useLocalePath();
 const route = useRoute();
 
 const redirect = route.query.redirect as string | undefined;
+const isBookingRedirect = redirect?.includes("/booking");
 
 const supabase = useSupabaseClient();
 const form = reactive({ email: "", password: "" });

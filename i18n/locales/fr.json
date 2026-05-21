@@ -77,7 +77,7 @@
     "page_title": "Nos Riads",
     "page_subtitle": "Deux adresses d'exception pour vivre Marrakech autrement",
     "gouvernante_title": "Une gouvernante à votre service",
-    "gouvernante_text": "Dans chaque riad, une gouvernante est présente quotidiennement pour prendre soin de vous : Lamia à Dar Baraï et Assma à Dar Tanawi. Elle prépare de délicieux petits-déjeuners marocains, assure le ménage chaque jour, et peut également cuisiner des repas sur demande - du déjeuner au dîner, des plats traditionnels préparés avec soin.",
+    "gouvernante_text": "Dans chaque riad, une gouvernante est présente quotidiennement pour prendre soin de vous : Lamia à Dar Baraï et Assma à Dar Tanawi. Chacune prépare de délicieux petits-déjeuners marocains, assure le ménage chaque jour, et peut également cuisiner des repas sur demande - du déjeuner au dîner, des plats traditionnels préparés avec soin.",
     "gouvernante_menu_cta": "Consulter le menu",
     "up_to_guests": "Jusqu'à {n} voyageurs",
     "min_nights": "{n} nuits minimum",
@@ -206,6 +206,7 @@
   },
   "auth": {
     "login_title": "Connexion",
+    "login_booking_notice": "Vous devez vous connecter pour pouvoir effectuer une réservation sur le site.",
     "register_title": "Créer un compte",
     "email": "Adresse email",
     "password": "Mot de passe",
