@@ -21,7 +21,10 @@
 
     <!-- Contenu -->
     <div class="relative z-10 text-center px-4 max-w-3xl mx-auto">
-      <img src="/images/logo_app.png" alt="Dar Baraï" class="w-20 mx-auto mb-0 rounded-xl" />
+      <div class="flex items-center justify-center gap-3 mb-0">
+        <img src="/images/logo_app.png" alt="Dar Baraï" class="w-20 rounded-xl" />
+        <img src="/images/logo_app_1.jpg" alt="Dar Tanawi" class="w-20 rounded-xl" />
+      </div>
       <h1 class="font-serif text-3xl md:text-4xl mb-10 leading-tight">
         {{ t("home.hero_title") }}
       </h1>
