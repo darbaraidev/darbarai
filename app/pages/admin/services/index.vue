@@ -593,19 +593,15 @@ const onPhotoUpload = async (e: Event) => {
       saveError.value = "Type non autorisé (jpg, png, webp, gif uniquement)";
       continue;
     }
-    const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-    const safeName = `services/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error } = await supabaseClient.storage
-      .from("riads")
-      .upload(safeName, file, { contentType: file.type, upsert: false });
-    if (error) {
-      saveError.value = error.message;
-      continue;
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "services");
+      const data = await $fetch<{ url: string }>("/api/upload/image", { method: "POST", body: formData });
+      form.photos.push(data.url);
+    } catch (e: any) {
+      saveError.value = e?.data?.statusMessage ?? "Erreur upload";
     }
-    const { data } = supabaseClient.storage
-      .from("riads")
-      .getPublicUrl(safeName);
-    form.photos.push(data.publicUrl);
   }
   uploadingPhotos.value = false;
   if (photoFileInput.value) photoFileInput.value.value = "";

@@ -824,25 +824,21 @@ const uploadFile = async (
 
   const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
   if (!allowedTypes.includes(file.type)) {
-    uploadUploadError.value =
-      "Type de fichier non autorisé (jpg, png, webp, gif uniquement)";
+    uploadUploadError.value = "Type de fichier non autorisé (jpg, png, webp, gif uniquement)";
     return null;
   }
 
-  const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const safeName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("folder", folder);
 
-  const { error } = await supabaseClient.storage
-    .from("riads")
-    .upload(safeName, file, { contentType: file.type, upsert: false });
-
-  if (error) {
-    uploadUploadError.value = error.message;
+  try {
+    const data = await $fetch<{ url: string }>("/api/upload/image", { method: "POST", body: formData });
+    return data.url;
+  } catch (e: any) {
+    uploadUploadError.value = e?.data?.statusMessage ?? "Erreur upload";
     return null;
   }
-
-  const { data } = supabaseClient.storage.from("riads").getPublicUrl(safeName);
-  return data.publicUrl;
 };
 
 const onCoverUpload = async (e: Event) => {
