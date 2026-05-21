@@ -208,11 +208,12 @@
   </section>
 
   <!-- Services -->
-  <section class="relative pt-20 pb-10">
+  <section class="relative pb-10">
     <!-- Fond terracotta pleine largeur couvrant titre + moitié supérieure des images -->
-    <div class="absolute inset-x-0 top-0 bg-terracotta-100 h-[540px]" />
+    <div class="absolute inset-x-0 top-0 bg-terracotta-100 h-[580px]" />
 
     <div class="relative z-10">
+      <img :src="zellige" alt="" class="w-full h-28 object-cover object-center" />
       <div class="text-center mb-16 py-10 px-4">
         <div class="flex items-center justify-center gap-4 mb-3">
           <svg viewBox="0 0 40 40" class="w-7 h-10 text-terracotta-400 shrink-0" fill="currentColor" aria-hidden="true">
@@ -503,6 +504,7 @@ import homePresentation1 from "~/assets/images/home_presentation_1.jpg";
 import homePresentation2 from "~/assets/images/home_presentation_2.jpg";
 import locationImageFr from "~/assets/images/entrees.jpg";
 import locationImageEn from "~/assets/images/entrances.jpg";
+import zellige from "~/assets/images/zellige.jpg";
 import serviceHammam from "~/assets/images/service_hammam.jpg";
 import serviceExcursions from "~/assets/images/service_excursions.jpg";
 import serviceVisites from "~/assets/images/service_visites.jpg";
