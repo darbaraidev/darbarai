@@ -50,7 +50,7 @@
       </div>
 
       <!-- Photos -->
-      <div class="grid grid-cols-2 gap-6 h-[480px]">
+      <div class="grid grid-cols-2 gap-6 h-[360px]">
         <img
           :src="homePresentation1"
           alt="Dar Baraï"
