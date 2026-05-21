@@ -430,6 +430,10 @@
       </div>
     </div>
   </section>
+
+  <ClientOnly>
+    <NewsletterPopup />
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">

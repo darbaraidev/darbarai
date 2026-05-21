@@ -404,6 +404,20 @@
     "riads_title": "Our Riads – Dar Baraï & Dar Tanawi",
     "account_title": "My account – Dar Baraï"
   },
+  "newsletter_popup": {
+    "badge": "Exclusive offer",
+    "title": "10% off your first booking",
+    "subtitle": "Subscribe to our newsletter and receive your discount code instantly.",
+    "placeholder": "Your email address",
+    "cta": "Get my code",
+    "no_thanks": "No thanks",
+    "already": "This email is already subscribed to our newsletter.",
+    "error": "Something went wrong, please try again.",
+    "success_title": "Welcome!",
+    "success_text": "Your 10% discount code:",
+    "success_note": "Valid on your first booking, enter it at checkout.",
+    "close": "Close"
+  },
   "contact": {
     "seo_title": "Contact – Dar Baraï & Dar Tanawi",
     "hero_title": "Contact us",
