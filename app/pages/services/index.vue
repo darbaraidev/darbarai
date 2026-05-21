@@ -332,6 +332,8 @@ class="mb-20"
 <script setup lang="ts">
 import type { Service } from "~/types";
 import type { ServiceCategoryRecord } from "~/composables/useServiceCategories";
+const { data: _ps } = await useAsyncData("site-settings", () => $fetch("/api/site-settings"));
+if ((_ps.value as any)?.page_services_enabled === false) await navigateTo("/");
 
 const animationFiles = import.meta.glob("~/assets/animations/*.json", {
   eager: true,

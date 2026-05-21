@@ -157,6 +157,8 @@
 
 <script setup lang="ts">
 import { mdiClose, mdiChevronLeft, mdiChevronRight } from "@mdi/js";
+const { data: _ps } = await useAsyncData("site-settings", () => $fetch("/api/site-settings"));
+if ((_ps.value as any)?.page_gallery_enabled === false) await navigateTo("/");
 
 const { t, locale } = useI18n();
 const { riads, fetchRiads } = useRiad();

@@ -126,6 +126,8 @@
 
 <script setup lang="ts">
 import type { Product } from "~/types";
+const { data: _ps } = await useAsyncData("site-settings", () => $fetch("/api/site-settings"));
+if ((_ps.value as any)?.page_boutique_enabled === false) await navigateTo("/");
 
 const { t, locale } = useI18n();
 const { fetchProducts, formatProductPrice } = useProducts();

@@ -173,6 +173,8 @@
 
 <script setup lang="ts">
 import { mdiEmail, mdiPhone, mdiWhatsapp, mdiInstagram } from "@mdi/js";
+const { data: _ps } = await useAsyncData("site-settings", () => $fetch("/api/site-settings"));
+if ((_ps.value as any)?.page_contact_enabled === false) await navigateTo("/");
 import heroBg from "~/assets/images/home_bg.jpg";
 import locationImageFr from "~/assets/images/entrees.jpg";
 import locationImageEn from "~/assets/images/entrances.jpg";
