@@ -54,12 +54,12 @@
         <img
           :src="homePresentation1"
           alt="Dar Baraï"
-          class="w-full h-72 object-cover rounded-2xl"
+          class="w-full aspect-[5/3] object-cover rounded-2xl"
         />
         <img
           :src="homePresentation2"
           alt="Dar Baraï"
-          class="w-full h-72 object-cover rounded-2xl mt-10"
+          class="w-full aspect-[5/3] object-cover rounded-2xl mt-10"
         />
       </div>
     </div>
