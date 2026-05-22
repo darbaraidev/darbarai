@@ -1,9 +1,12 @@
-import { serverSupabaseServiceRole, serverSupabaseUser } from "#supabase/server";
+import { serverSupabaseClient, serverSupabaseServiceRole } from "#supabase/server";
 import { v2 as cloudinary } from "cloudinary";
 
 export default defineEventHandler(async (event) => {
-  const user = await serverSupabaseUser(event);
-  if (!user) throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
+  const client = await serverSupabaseClient(event);
+  const token = getHeader(event, "authorization")?.replace(/^Bearer\s+/i, "");
+  if (!token) throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
+  const { data: { user } } = await client.auth.getUser(token);
+  if (!user?.id) throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
 
   const supabase = serverSupabaseServiceRole(event);
   const { data: profile } = await (supabase as any)

@@ -81,7 +81,7 @@ export default defineNuxtConfig({
 
   // Images
   image: {
-    domains: ["your-supabase-project.supabase.co"],
+    domains: ["res.cloudinary.com"],
   },
 
   // Dossier server dans app/ (par défaut Nuxt 4 le cherche à la racine)

@@ -828,12 +828,17 @@ const uploadFile = async (
     return null;
   }
 
+  const { data: { session } } = await supabaseClient.auth.getSession();
   const formData = new FormData();
   formData.append("file", file);
   formData.append("folder", folder);
 
   try {
-    const data = await $fetch<{ url: string }>("/api/upload/image", { method: "POST", body: formData });
+    const data = await $fetch<{ url: string }>("/api/upload/image", {
+      method: "POST",
+      body: formData,
+      headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {},
+    });
     return data.url;
   } catch (e: any) {
     uploadUploadError.value = e?.data?.statusMessage ?? "Erreur upload";

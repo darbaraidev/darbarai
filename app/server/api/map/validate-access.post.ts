@@ -10,13 +10,13 @@ export default defineEventHandler(async (event) => {
   const admin = serverSupabaseServiceRole(event);
   const { data } = await (admin as any)
     .from("site_settings")
-    .select("value")
-    .eq("key", "map_password")
+    .select("map_password")
+    .eq("id", 1)
     .single();
 
-  if (!data?.value) {
+  if (!data?.map_password) {
     return { valid: false };
   }
 
-  return { valid: data.value === password.trim() };
+  return { valid: data.map_password === password.trim() };
 });
