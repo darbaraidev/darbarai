@@ -552,5 +552,11 @@
     "title": "Vous êtes désabonné",
     "message": "Votre adresse email a bien été retirée de notre newsletter. Vous ne recevrez plus de communications de notre part.",
     "back_home": "Retour à l'accueil"
+  },
+  "maintenance": {
+    "seo_title": "Site en maintenance – Dar Baraï",
+    "title": "Nous revenons très bientôt",
+    "subtitle": "Notre site est momentanément en maintenance. Nous faisons notre possible pour être de retour rapidement. Merci de votre patience.",
+    "contact_hint": "Besoin d'une information ? Contactez-nous directement :"
   }
 }

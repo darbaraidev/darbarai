@@ -54,5 +54,21 @@ export const useSiteSettings = () => {
     return { error };
   };
 
-  return { fetchBookingEnabled, setBookingEnabled, fetchNewsletterPromoEnabled, setNewsletterPromoEnabled, fetchPageSettings, setPageEnabled };
+  const fetchMaintenanceMode = async (): Promise<boolean> => {
+    const { data } = await supabase
+      .from("site_settings")
+      .select("maintenance_mode")
+      .eq("id", 1)
+      .single();
+    return data?.maintenance_mode ?? false;
+  };
+
+  const setMaintenanceMode = async (enabled: boolean) => {
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert({ id: 1, maintenance_mode: enabled });
+    return { error };
+  };
+
+  return { fetchBookingEnabled, setBookingEnabled, fetchNewsletterPromoEnabled, setNewsletterPromoEnabled, fetchPageSettings, setPageEnabled, fetchMaintenanceMode, setMaintenanceMode };
 };

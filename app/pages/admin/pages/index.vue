@@ -5,6 +5,44 @@
       <p class="text-sm text-stone-400 mt-0.5">Activer ou désactiver l'accès aux pages publiques du site. Une page désactivée redirige vers l'accueil.</p>
     </div>
 
+    <!-- Mode maintenance -->
+    <div
+      class="rounded-2xl border-2 mb-6 p-5 transition-colors"
+      :class="maintenanceOn ? 'border-amber-300 bg-amber-50' : 'border-stone-200 bg-white'"
+    >
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <svg class="w-4 h-4 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+            <p class="font-semibold text-stone-800">Mode maintenance</p>
+            <span v-if="maintenanceOn" class="text-xs px-2 py-0.5 rounded-full bg-amber-200 text-amber-800 font-medium">Actif</span>
+          </div>
+          <p class="text-sm text-stone-500 leading-relaxed">
+            Affiche une page de maintenance aux visiteurs. <strong>Les admins voient le site normalement.</strong>
+          </p>
+        </div>
+        <button
+          class="relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none mt-0.5"
+          :class="maintenanceOn ? 'bg-amber-500' : 'bg-stone-300'"
+          :disabled="savingMaintenance"
+          @click="toggleMaintenance"
+        >
+          <span
+            class="pointer-events-none inline-block h-6 w-6 rounded-full bg-white shadow transform transition-transform duration-200"
+            :class="maintenanceOn ? 'translate-x-5' : 'translate-x-0'"
+          />
+        </button>
+      </div>
+      <div v-if="maintenanceOn" class="mt-3 flex items-center gap-2 text-xs text-amber-700 bg-amber-100 rounded-lg px-3 py-2">
+        <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+        </svg>
+        Le site est actuellement en maintenance — seuls les admins peuvent y accéder.
+      </div>
+    </div>
+
     <div class="card divide-y divide-stone-100 mb-6">
       <div v-for="page in pages" :key="page.key" class="flex items-center justify-between px-6 py-5">
         <div>
@@ -57,7 +95,7 @@
 <script setup lang="ts">
 definePageMeta({ middleware: "admin", layout: "admin" });
 
-const { fetchPageSettings, setPageEnabled } = useSiteSettings();
+const { fetchPageSettings, setPageEnabled, fetchMaintenanceMode, setMaintenanceMode } = useSiteSettings();
 const supabase = useSupabaseClient();
 
 const pages = [
@@ -73,15 +111,27 @@ const states = ref<Record<string, boolean>>({
   boutique: true, gallery: true, services: true, contact: true,
 });
 
+const maintenanceOn = ref(false);
+const savingMaintenance = ref(false);
+
 const migrating = ref(false);
 const migrateDone = ref(false);
 const migrateLog = ref<string[]>([]);
 
 onMounted(async () => {
-  const data = await fetchPageSettings();
-  Object.assign(states.value, data);
+  const [pageData, maintenance] = await Promise.all([fetchPageSettings(), fetchMaintenanceMode()]);
+  Object.assign(states.value, pageData);
+  maintenanceOn.value = maintenance;
   loading.value = false;
 });
+
+async function toggleMaintenance() {
+  savingMaintenance.value = true;
+  const next = !maintenanceOn.value;
+  const { error } = await setMaintenanceMode(next);
+  if (!error) maintenanceOn.value = next;
+  savingMaintenance.value = false;
+}
 
 async function toggle(key: string) {
   saving.value = key;

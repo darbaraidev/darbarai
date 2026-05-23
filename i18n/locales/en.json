@@ -551,5 +551,11 @@
     "title": "You've been unsubscribed",
     "message": "Your email address has been removed from our newsletter. You will no longer receive communications from us.",
     "back_home": "Back to home"
+  },
+  "maintenance": {
+    "seo_title": "Under maintenance – Dar Baraï",
+    "title": "We'll be back soon",
+    "subtitle": "Our site is temporarily under maintenance. We're working hard to be back up quickly. Thank you for your patience.",
+    "contact_hint": "Need information? Contact us directly:"
   }
 }
