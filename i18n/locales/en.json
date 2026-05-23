@@ -11,7 +11,8 @@
     "admin": "Admin",
     "register": "Sign up",
     "gallery": "Gallery",
-    "boutique": "Shop"
+    "boutique": "Shop",
+    "carte": "Map"
   },
   "home": {
     "hero_title": "Two gems in the heart of Marrakech",
@@ -379,6 +380,7 @@
     "title": "Our favourite addresses",
     "gate_title": "Favourite addresses map",
     "gate_subtitle": "Enter the code to access our curated list of favourite spots in Marrakech.",
+    "gate_reservation_note": "Reserved for guests with a confirmed booking.",
     "gate_placeholder": "Access code",
     "gate_submit": "Access",
     "gate_error": "Incorrect code, please try again.",
@@ -433,7 +435,16 @@
     "address_label": "Address",
     "address_value": "Medina of Marrakech, Morocco",
     "cta_whatsapp": "Message on WhatsApp",
-    "cta_email": "Send an email"
+    "cta_email": "Send an email",
+    "newsletter_title": "Stay in the loop",
+    "newsletter_subtitle": "Exclusive offers, tips, and events from the riads — be the first to know.",
+    "newsletter_perk_1": "Subscriber-only offers and discounts",
+    "newsletter_perk_2": "Riad news and updates",
+    "newsletter_perk_3": "Tips for exploring Marrakech",
+    "newsletter_perk_4": "Welcome discount code as a gift",
+    "newsletter_cta": "Subscribe for free",
+    "newsletter_legal": "No spam. Unsubscribe at any time.",
+    "newsletter_already": "You are already subscribed to our newsletter!"
   },
   "about": {
     "seo_title": "About – Dar Baraï",

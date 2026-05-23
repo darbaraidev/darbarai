@@ -125,6 +125,93 @@
       </div>
     </section>
 
+    <!-- Newsletter -->
+    <section class="py-20 px-4 bg-stone-900 text-white overflow-hidden">
+      <div class="max-w-4xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <!-- Texte + perks -->
+          <div>
+            <p class="text-terracotta-400 text-xs font-semibold uppercase tracking-widest mb-4">
+              Newsletter
+            </p>
+            <h2 class="font-serif text-3xl md:text-4xl mb-5 leading-snug">
+              {{ t("contact.newsletter_title") }}
+            </h2>
+            <p class="text-stone-300 text-base leading-relaxed mb-8">
+              {{ t("contact.newsletter_subtitle") }}
+            </p>
+            <ul class="space-y-3.5">
+              <li
+                v-for="perk in newsletterPerks"
+                :key="perk"
+                class="flex items-center gap-3 text-stone-300 text-sm"
+              >
+                <span class="w-5 h-5 rounded-full bg-terracotta-500/25 flex items-center justify-center shrink-0">
+                  <svg class="w-3 h-3 text-terracotta-400" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                  </svg>
+                </span>
+                {{ perk }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- Formulaire -->
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-8">
+            <!-- Succès -->
+            <div v-if="nlSuccess" class="text-center py-4">
+              <div class="text-4xl mb-4">🎉</div>
+              <h3 class="font-serif text-xl text-white mb-2">
+                {{ t("newsletter_popup.success_title") }}
+              </h3>
+              <p class="text-stone-300 text-sm leading-relaxed">
+                {{ t("newsletter_popup.success_text") }}
+              </p>
+            </div>
+
+            <!-- Déjà abonné -->
+            <div v-else-if="nlAlready" class="text-center py-4">
+              <div class="text-4xl mb-4">✓</div>
+              <h3 class="font-serif text-xl text-white mb-2">
+                {{ t("contact.newsletter_already") }}
+              </h3>
+            </div>
+
+            <!-- Form -->
+            <template v-else>
+              <h3 class="font-serif text-xl text-white mb-1">
+                {{ t("newsletter_popup.title") }}
+              </h3>
+              <p class="text-stone-400 text-sm mb-5">
+                {{ t("newsletter_popup.subtitle") }}
+              </p>
+              <form class="space-y-3" @submit.prevent="nlSubmit">
+                <input
+                  v-model="nlEmail"
+                  type="email"
+                  required
+                  :placeholder="t('newsletter_popup.placeholder')"
+                  :disabled="nlLoading"
+                  class="w-full bg-white/10 border border-white/20 text-white placeholder-stone-500 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-terracotta-400 transition-colors"
+                />
+                <p v-if="nlError" class="text-red-400 text-xs">{{ nlError }}</p>
+                <button
+                  type="submit"
+                  class="btn-primary w-full py-3 text-sm"
+                  :disabled="nlLoading"
+                >
+                  {{ nlLoading ? t("common.loading") : t("contact.newsletter_cta") }}
+                </button>
+              </form>
+              <p class="text-stone-500 text-xs text-center mt-4">
+                {{ t("contact.newsletter_legal") }}
+              </p>
+            </template>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Adresse + carte -->
     <section class="py-16 px-4 max-w-5xl mx-auto text-center">
       <p
@@ -180,6 +267,42 @@ import locationImageFr from "~/assets/images/entrees.jpg";
 import locationImageEn from "~/assets/images/entrances.jpg";
 
 const { t, locale } = useI18n();
+const user = useSupabaseUser();
+
+const newsletterPerks = computed(() => [
+  t("contact.newsletter_perk_1"),
+  t("contact.newsletter_perk_2"),
+  t("contact.newsletter_perk_3"),
+  t("contact.newsletter_perk_4"),
+]);
+
+const nlEmail = ref("");
+const nlLoading = ref(false);
+const nlError = ref("");
+const nlSuccess = ref(false);
+const nlAlready = ref(false);
+
+onMounted(() => {
+  if (user.value) nlEmail.value = user.value.email ?? "";
+});
+
+async function nlSubmit() {
+  nlError.value = "";
+  nlLoading.value = true;
+  try {
+    await $fetch("/api/newsletter/subscribe", { method: "POST", body: { email: nlEmail.value } });
+    nlSuccess.value = true;
+  } catch (e: any) {
+    const status = e?.response?.status ?? e?.statusCode;
+    if (status === 409) {
+      nlAlready.value = true;
+    } else {
+      nlError.value = t("newsletter_popup.error");
+    }
+  } finally {
+    nlLoading.value = false;
+  }
+}
 
 useSeoMeta({
   title: t("contact.seo_title"),

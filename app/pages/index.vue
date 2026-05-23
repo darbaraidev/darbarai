@@ -244,7 +244,7 @@
             :class="i === 1 ? 'md:mt-10' : ''"
             @mouseenter="hoveredService = i"
             @mouseleave="hoveredService = null"
-            @click="navigateTo(localePath('/services'))"
+            @click="navigateTo(localePath(card.href ?? '/services'))"
           >
             <!-- Image portrait -->
             <div
@@ -587,7 +587,7 @@ const highlights = computed(() => [
     image: getCardImage("visits"),
     title: t("home.hl_visits_title"),
     desc: t("home.hl_visits_desc"),
-    action: () => navigateTo(localePath("/services")),
+    action: () => navigateTo(localePath("/carte")),
   },
 ]);
 
@@ -635,6 +635,7 @@ const serviceCards = computed(() => [
     description: t("home.service_visites_desc"),
     lottie: null,
     image: imgMontgolfiere,
+    href: "/carte",
   },
 ]);
 

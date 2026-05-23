@@ -11,7 +11,8 @@
     "admin": "Administration",
     "register": "S'inscrire",
     "gallery": "Galerie",
-    "boutique": "Boutique"
+    "boutique": "Boutique",
+    "carte": "Carte"
   },
   "home": {
     "hero_title": "Deux joyaux au cœur de Marrakech",
@@ -380,6 +381,7 @@
     "title": "Nos bonnes adresses",
     "gate_title": "Carte des bonnes adresses",
     "gate_subtitle": "Entrez le code pour accéder à notre sélection d'adresses coups de cœur à Marrakech.",
+    "gate_reservation_note": "Réservé aux clients ayant une réservation confirmée.",
     "gate_placeholder": "Code d'accès",
     "gate_submit": "Accéder",
     "gate_error": "Code incorrect, réessayez.",
@@ -434,7 +436,16 @@
     "address_label": "Adresse",
     "address_value": "Médina de Marrakech, Maroc",
     "cta_whatsapp": "Écrire sur WhatsApp",
-    "cta_email": "Envoyer un email"
+    "cta_email": "Envoyer un email",
+    "newsletter_title": "Restez dans la boucle",
+    "newsletter_subtitle": "Offres exclusives, bons plans, événements depuis les riads — soyez les premiers informés.",
+    "newsletter_perk_1": "Offres et réductions réservées aux abonnés",
+    "newsletter_perk_2": "Actualités et nouveautés des riads",
+    "newsletter_perk_3": "Conseils pour explorer Marrakech",
+    "newsletter_perk_4": "Code de réduction offert en cadeau de bienvenue",
+    "newsletter_cta": "S'abonner gratuitement",
+    "newsletter_legal": "Pas de spam. Désabonnement possible à tout moment.",
+    "newsletter_already": "Vous êtes déjà abonné à notre newsletter !"
   },
   "about": {
     "seo_title": "À propos – Dar Baraï",

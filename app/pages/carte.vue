@@ -2,12 +2,21 @@
   <div class="min-h-screen">
     <template v-if="mounted">
     <!-- Access gate -->
-    <div v-if="!hasAccess" class="min-h-screen flex items-center justify-center p-4 bg-sand-50 pt-16">
-      <div class="bg-white rounded-2xl shadow-lg p-8 max-w-sm w-full">
+    <div v-if="!hasAccess" class="min-h-screen relative flex items-center justify-center p-4 pt-16">
+      <!-- Background image -->
+      <div
+        class="absolute inset-0 bg-cover bg-center"
+        :style="{ backgroundImage: `url('${cardBg}')` }"
+      />
+      <!-- Blur overlay -->
+      <div class="absolute inset-0 backdrop-blur-sm bg-black/30" />
+      <!-- Form card -->
+      <div class="relative z-10 bg-white rounded-2xl shadow-lg p-8 max-w-sm w-full">
         <div class="text-center mb-6">
           <div class="text-5xl mb-3">🗺️</div>
           <h1 class="font-serif text-2xl text-stone-800">{{ t("carte.gate_title") }}</h1>
           <p class="text-stone-500 text-sm mt-2 leading-relaxed">{{ t("carte.gate_subtitle") }}</p>
+          <p class="text-xs text-stone-400 mt-2">{{ t("carte.gate_reservation_note") }}</p>
         </div>
         <form @submit.prevent="unlock">
           <input
@@ -473,6 +482,7 @@
 import type { Place } from "~/types";
 import { MAP_CATEGORY_GROUPS, getCategoryMeta, getGroupColor } from "~/utils/mapCategories";
 import { PLACE_HIGHLIGHTS, getHighlightMeta } from "~/utils/placeHighlights";
+import cardBg from "~/assets/images/card_bg.png";
 
 definePageMeta({ layout: "default" });
 
@@ -488,10 +498,6 @@ const accessError = ref<string | null>(null);
 
 onMounted(() => {
   mounted.value = true;
-  if (sessionStorage.getItem("map_access") === "1") {
-    hasAccess.value = true;
-    loadPlaces();
-  }
 });
 
 const unlock = async () => {
@@ -504,7 +510,6 @@ const unlock = async () => {
       body: { password: password.value.trim() },
     });
     if (res.valid) {
-      sessionStorage.setItem("map_access", "1");
       hasAccess.value = true;
       await loadPlaces();
     } else {

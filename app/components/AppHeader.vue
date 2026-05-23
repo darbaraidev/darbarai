@@ -1,6 +1,6 @@
 <template>
   <header
-    class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+    class="fixed top-0 left-0 right-0 z-[1001] transition-all duration-300"
     :class="scrolled ? 'bg-white/95 backdrop-blur shadow-sm' : 'bg-transparent'"
   >
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center gap-4">
@@ -98,6 +98,20 @@
             <path fill="currentColor" :d="mdiEmailOutline" />
           </svg>
           {{ t("nav.contact") }}
+        </NuxtLink>
+        <NuxtLink
+          :to="localePath('/carte')"
+          class="flex items-center gap-1.5 text-sm font-medium transition-colors"
+          :class="
+            scrolled
+              ? 'text-stone-700 hover:text-terracotta-600'
+              : 'text-stone-900 hover:text-terracotta-600'
+          "
+        >
+          <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0">
+            <path fill="currentColor" :d="mdiMapMarker" />
+          </svg>
+          {{ t("nav.carte") }}
         </NuxtLink>
       </nav>
 
@@ -395,6 +409,16 @@
             </svg>
             {{ t("nav.contact") }}
           </NuxtLink>
+          <NuxtLink
+            :to="localePath('/carte')"
+            class="flex items-center gap-2 text-stone-700 font-medium"
+            @click="mobileOpen = false"
+          >
+            <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0">
+              <path fill="currentColor" :d="mdiMapMarker" />
+            </svg>
+            {{ t("nav.carte") }}
+          </NuxtLink>
           <template v-if="user">
             <NuxtLink
               :to="localePath('/account')"
@@ -440,6 +464,7 @@ import {
   mdiBed,
   mdiEmailOutline,
   mdiStorefront,
+  mdiMapMarker,
 } from "@mdi/js";
 
 const { t, locale, availableLocales, setLocale } = useI18n();
