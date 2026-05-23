@@ -242,13 +242,14 @@
         <p v-if="payError" class="text-sm text-red-600">{{ payError }}</p>
         <button
           class="btn-primary w-full py-4 text-base"
-          :disabled="loading || cardPhase === 'loading'"
+          :disabled="!method || loading || cardPhase === 'loading'"
           @click="pay"
         >
           <template v-if="loading || cardPhase === 'loading'">{{ t("common.loading") }}</template>
           <template v-else-if="method === 'card' && cardPhase === 'ready'">{{ t("booking.confirm_payment") }}</template>
           <template v-else-if="method === 'card'">{{ t("booking.pay_now") }}</template>
-          <template v-else>{{ t("booking.confirm_later") }}</template>
+          <template v-else-if="method === 'later'">{{ t("booking.confirm_later") }}</template>
+          <template v-else>{{ t("booking.select_payment_method") }}</template>
         </button>
         <p v-if="method === 'card'" class="text-center text-xs text-stone-400">
           {{ t("booking.no_charge_yet") }}
@@ -348,7 +349,7 @@ const formatDate = (d: string) =>
   format(parseISO(d), locale.value === "fr" ? "EEEE d MMMM yyyy" : "EEEE, MMMM d yyyy")
 
 // Payment state
-const method = ref<"card" | "later">("card")
+const method = ref<"card" | "later" | null>(null)
 const devMode = ref(false)
 const loading = ref(false)
 const payError = ref<string | false>(false)
@@ -442,6 +443,48 @@ async function createReservation() {
   return data
 }
 
+async function initCardPayment() {
+  if (cardPhase.value !== "idle") return
+  cardPhase.value = "loading"
+  try {
+    const data = await createReservation()
+    if (!data.clientSecret) {
+      devMode.value = true
+      cardPhase.value = "ready"
+      return
+    }
+    const { loadStripe } = await import("@stripe/stripe-js")
+    stripe = await loadStripe(config.public.stripePublicKey as string)
+    if (!stripe) throw new Error("Stripe failed to load")
+    elements = stripe.elements({
+      clientSecret: data.clientSecret,
+      appearance: {
+        theme: "stripe",
+        variables: {
+          colorPrimary: "#ce4123",
+          colorBackground: "#ffffff",
+          colorText: "#1c1917",
+          colorDanger: "#dc2626",
+          fontFamily: "inherit",
+          borderRadius: "8px",
+          spacingUnit: "4px",
+        },
+      },
+    })
+    cardPhase.value = "ready"
+    await nextTick()
+    const paymentElement = elements.create("payment")
+    paymentElement.mount("#payment-element")
+  } catch (err: any) {
+    payError.value = err.data?.statusMessage || t("errors.generic")
+    cardPhase.value = "idle"
+  }
+}
+
+watch(method, (val) => {
+  if (val === "card") initCardPayment()
+})
+
 const pay = async () => {
   loading.value = true
   payError.value = false
@@ -471,79 +514,39 @@ const pay = async () => {
     return
   }
 
-  // Card phase 1: create reservation + mount Stripe
-  if (cardPhase.value === "idle") {
-    cardPhase.value = "loading"
-    try {
-      const data = await createReservation()
-
-      if (!data.clientSecret) {
-        devMode.value = true
-        cardPhase.value = "ready"
-        loading.value = false
-        return
-      }
-
-      const { loadStripe } = await import("@stripe/stripe-js")
-      stripe = await loadStripe(config.public.stripePublicKey as string)
-      if (!stripe) throw new Error("Stripe failed to load")
-
-      elements = stripe.elements({
-        clientSecret: data.clientSecret,
-        appearance: {
-          theme: "stripe",
-          variables: {
-            colorPrimary: "#ce4123",
-            colorBackground: "#ffffff",
-            colorText: "#1c1917",
-            colorDanger: "#dc2626",
-            fontFamily: "inherit",
-            borderRadius: "8px",
-            spacingUnit: "4px",
-          },
-        },
-      })
-
-      cardPhase.value = "ready"
-      await nextTick()
-      const paymentElement = elements.create("payment")
-      paymentElement.mount("#payment-element")
-    } catch (err: any) {
-      payError.value = err.data?.statusMessage || t("errors.generic")
-      cardPhase.value = "idle"
+  // Card flow: Elements already mounted via watch, just confirm
+  if (method.value === "card") {
+    if (cardPhase.value !== "ready") {
+      loading.value = false
+      return
     }
-    loading.value = false
+    if (devMode.value) {
+      reservationCompleted.value = true
+      await navigateTo(`/account?tab=reservations&payment=success&reservation=${reservationId.value}`)
+      return
+    }
+    if (!stripe || !elements) {
+      loading.value = false
+      return
+    }
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/account?tab=reservations&payment=success&reservation=${reservationId.value}`,
+      },
+      redirect: "if_required",
+    })
+    if (error) {
+      payError.value = error.message ?? t("errors.generic")
+      loading.value = false
+    } else {
+      reservationCompleted.value = true
+      await navigateTo(`/account?tab=reservations&payment=success&reservation=${reservationId.value}`)
+    }
     return
   }
 
-  // Dev mode: skip Stripe
-  if (devMode.value) {
-    reservationCompleted.value = true
-    await navigateTo(`/account?payment=success&reservation=${reservationId.value}`)
-    return
-  }
-
-  // Card phase 2: confirm payment
-  if (!stripe || !elements) {
-    loading.value = false
-    return
-  }
-
-  const { error } = await stripe.confirmPayment({
-    elements,
-    confirmParams: {
-      return_url: `${window.location.origin}/account?payment=success&reservation=${reservationId.value}`,
-    },
-    redirect: "if_required",
-  })
-
-  if (error) {
-    payError.value = error.message ?? t("errors.generic")
-    loading.value = false
-  } else {
-    reservationCompleted.value = true
-    await navigateTo(`/account?payment=success&reservation=${reservationId.value}`)
-  }
+  loading.value = false
 }
 
 useSeoMeta({ title: `${t("booking.recap_title")} – Dar Baraï` })

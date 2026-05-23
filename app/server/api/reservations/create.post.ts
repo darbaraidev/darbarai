@@ -82,6 +82,7 @@ export default defineEventHandler(async (event) => {
       const paymentIntent = await stripe.paymentIntents.create({
         amount: total_price,
         currency: "eur",
+        payment_method_types: ["card"],
         receipt_email: user!.email ?? undefined,
         metadata: { reservation_id: ownPending.id, user_id: user!.id },
         description: `${riad.name} — ${nights} nuit${nights > 1 ? "s" : ""} · ${check_in} → ${check_out}`,
@@ -200,6 +201,7 @@ export default defineEventHandler(async (event) => {
       const paymentIntent = await stripe.paymentIntents.create({
         amount: finalPrice,
         currency: "eur",
+        payment_method_types: ["card"],
         receipt_email: user.email ?? undefined,
         metadata: { reservation_id: reservation.id, user_id: user.id },
         description: `${riad.name} — ${nights} nuit${nights > 1 ? "s" : ""} · ${check_in} → ${check_out}`,

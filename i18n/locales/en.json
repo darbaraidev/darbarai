@@ -199,6 +199,7 @@
     "promo_apply": "Apply",
     "promo_discount": "Discount",
     "confirm_payment": "Confirm payment",
+    "select_payment_method": "Choose a payment method",
     "blocked_title": "Bookings temporarily unavailable",
     "blocked_subtitle": "To book, please visit our partner platforms directly.",
     "book_on_booking": "Book on Booking.com",

@@ -66,6 +66,23 @@ const onCancelled = (id: string) => {
 onMounted(async () => {
   await fetchProfile();
   reservations.value = await fetchMyReservations();
+
+  const paidId = route.query.reservation as string | undefined;
+  if (route.query.payment === "success" && paidId) {
+    const supabase = useSupabaseClient();
+    for (let i = 0; i < 10; i++) {
+      await new Promise((r) => setTimeout(r, 1000));
+      const { data } = await (supabase as any)
+        .from("reservations")
+        .select("status")
+        .eq("id", paidId)
+        .single();
+      if (data?.status === "confirmed") {
+        reservations.value = await fetchMyReservations();
+        break;
+      }
+    }
+  }
 });
 
 useSeoMeta({ title: t("seo.account_title") });

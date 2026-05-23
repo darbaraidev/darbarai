@@ -200,6 +200,7 @@
     "promo_apply": "Appliquer",
     "promo_discount": "Réduction",
     "confirm_payment": "Confirmer le paiement",
+    "select_payment_method": "Choisissez un mode de paiement",
     "blocked_title": "Réservations temporairement indisponibles",
     "blocked_subtitle": "Pour réserver, rendez-vous directement sur nos plateformes partenaires.",
     "book_on_booking": "Réserver sur Booking.com",
