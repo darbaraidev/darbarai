@@ -198,7 +198,7 @@ export default defineEventHandler(async (event) => {
       });
 
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: total_price,
+        amount: finalPrice,
         currency: "eur",
         receipt_email: user.email ?? undefined,
         metadata: { reservation_id: reservation.id, user_id: user.id },
