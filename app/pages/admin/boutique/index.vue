@@ -301,15 +301,22 @@ const onPhotoUpload = async (e: Event) => {
   const files = Array.from((e.target as HTMLInputElement).files ?? []);
   if (!files.length) return;
   uploadingPhotos.value = true;
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  const token = session?.access_token ?? "";
   for (const file of files) {
-    const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-    const path = `products/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error } = await supabaseClient.storage
-      .from("riads")
-      .upload(path, file, { contentType: file.type, upsert: false });
-    if (error) { saveError.value = error.message; continue; }
-    const { data } = supabaseClient.storage.from("riads").getPublicUrl(path);
-    form.images.push(data.publicUrl);
+    const body = new FormData();
+    body.append("file", file);
+    body.append("folder", "products");
+    try {
+      const res = await $fetch<{ url: string }>("/api/upload/image", {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body,
+      });
+      form.images.push(res.url);
+    } catch (err: any) {
+      saveError.value = err?.data?.statusMessage ?? err.message;
+    }
   }
   uploadingPhotos.value = false;
   if (photoFileInput.value) photoFileInput.value.value = "";

@@ -1,6 +1,6 @@
 import { serverSupabaseServiceRole } from "#supabase/server";
 
-const BOT_RE = /bot|crawler|spider|slurp|mediapartners|headless|python|curl|wget|scrapy|phantom|selenium|monitor|uptimerobot|pingdom|facebookexternalhit|whatsapp/i;
+const BOT_RE = /bot|crawler|spider|slurp|mediapartners|headless|python|curl|wget|scrapy|phantom|selenium|monitor|uptimerobot|pingdom|facebookexternalhit|whatsapp|googlebot|bingbot|yandex|baidu|duckduck|semrush|ahrefs|moz\.com|majestic|dotbot|rogerbot|linkdex|exabot|ia_archiver|archive\.org|petalbot|bytespider|gptbot|chatgpt|claudebot|anthropic|openai|cohere|perplexity|dataforseo|seolyze|screaming.?frog|sitebulb|netcraft|shodan|censys|masscan|nmap|zgrab|nuclei|dirbuster|sqlmap|nikto|acunetix|nessus|qualys|rapid7|tenable|zap|burpsuite|httpclient|java\/|go-http|axios|node-fetch|got\/|undici|okhttp|libwww|lwp-|http_request|wordpress/i;
 const SKIP_PREFIXES = ["/api/", "/_nuxt/", "/__nuxt/", "/_ipx/", "/_i18n/", "/favicon", "/admin"];
 const SKIP_PATTERNS = [
   /\.(php|xml|txt|env|sql|bak|zip|gz|asp|aspx|jsp|cgi)$/i,
@@ -37,9 +37,9 @@ async function trackVisit(event: any) {
   const ua = getRequestHeader(event, "user-agent") ?? "";
   if (!ua || BOT_RE.test(ua)) return;
 
-  // Seuls les vrais navigateurs envoient sec-fetch-dest: document lors d'une navigation
+  // Seuls les vrais navigateurs envoient sec-fetch-dest: document lors d'une navigation de page
   const fetchDest = getRequestHeader(event, "sec-fetch-dest");
-  if (fetchDest && fetchDest !== "document") return;
+  if (fetchDest !== "document") return;
 
   // Visitor ID cookie — anonymous, no personal data
   let visitorId = getCookie(event, "vid");
