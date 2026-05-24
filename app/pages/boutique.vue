@@ -156,5 +156,5 @@ const openModal = (product: Product) => {
   activeModalImage.value = 0;
 };
 
-useSeoMeta({ title: t("boutique.seo_title") });
+useSeoMeta({ title: t("boutique.seo_title"), description: t("seo.boutique_description"), ogTitle: t("boutique.seo_title"), ogDescription: t("seo.boutique_description") });
 </script>

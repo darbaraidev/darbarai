@@ -41,5 +41,8 @@ const { t } = useI18n();
 
 useSeoMeta({
   title: t("about.seo_title"),
+  description: t("seo.about_description"),
+  ogTitle: t("about.seo_title"),
+  ogDescription: t("seo.about_description"),
 });
 </script>

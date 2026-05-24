@@ -306,5 +306,8 @@ async function nlSubmit() {
 
 useSeoMeta({
   title: t("contact.seo_title"),
+  description: t("seo.contact_description"),
+  ogTitle: t("contact.seo_title"),
+  ogDescription: t("seo.contact_description"),
 });
 </script>

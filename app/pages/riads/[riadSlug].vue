@@ -485,6 +485,35 @@ const amenityLabel = (slug: string): string =>
 useSeoMeta({
   title: t("riads.seo_title", { name: riad.name }),
   description: riad.description,
+  ogTitle: t("riads.seo_title", { name: riad.name }),
+  ogDescription: riad.description,
   ogImage: riad.cover_image,
+  twitterImage: riad.cover_image,
+});
+
+const riadConfig = useRuntimeConfig();
+useHead({
+  script: [
+    {
+      type: "application/ld+json",
+      innerHTML: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "LodgingBusiness",
+        name: riad.name,
+        description: riad.description,
+        url: `${riadConfig.public.siteUrl}/riads/${route.params.riadSlug}`,
+        image: riad.cover_image,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Marrakech",
+          addressRegion: "Marrakech-Safi",
+          addressCountry: "MA",
+        },
+        numberOfRooms: riad.sleeping_arrangements?.length ?? undefined,
+        occupancy: { "@type": "QuantitativeValue", maxValue: riad.max_guests },
+        priceRange: "€€€",
+      }),
+    },
+  ],
 });
 </script>

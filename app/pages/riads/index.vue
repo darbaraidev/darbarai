@@ -250,7 +250,7 @@ useIntersectionObserver(gouvRef, ([e]) => { if (e?.isIntersecting) gouvVisible.v
 useIntersectionObserver(petitDejRef, ([e]) => { if (e?.isIntersecting) petitDejVisible.value = true; }, { threshold: 0.12 });
 useIntersectionObserver(repasRef, ([e]) => { if (e?.isIntersecting) repasVisible.value = true; }, { threshold: 0.12 });
 
-useSeoMeta({ title: t("seo.riads_title") });
+useSeoMeta({ title: t("seo.riads_title"), description: t("seo.riads_description"), ogTitle: t("seo.riads_title"), ogDescription: t("seo.riads_description") });
 </script>
 
 <style scoped>

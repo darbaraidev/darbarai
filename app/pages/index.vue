@@ -642,6 +642,37 @@ const serviceCards = computed(() => [
 useSeoMeta({
   title: t("seo.home_title"),
   description: t("seo.home_description"),
+  ogTitle: t("seo.home_title"),
+  ogDescription: t("seo.home_description"),
+});
+
+const config = useRuntimeConfig();
+useHead({
+  script: [
+    {
+      type: "application/ld+json",
+      innerHTML: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "LodgingBusiness",
+        name: "Dar Baraï & Dar Tanawi",
+        description: t("seo.home_description"),
+        url: config.public.siteUrl,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Marrakech",
+          addressRegion: "Marrakech-Safi",
+          addressCountry: "MA",
+        },
+        contactPoint: {
+          "@type": "ContactPoint",
+          telephone: "+33750996975",
+          contactType: "reservations",
+        },
+        priceRange: "€€€",
+        image: `${config.public.siteUrl}/images/logo_dar_barai.jpg`,
+      }),
+    },
+  ],
 });
 </script>
 

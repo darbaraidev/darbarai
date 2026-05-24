@@ -164,7 +164,7 @@ const { t, locale } = useI18n();
 const { riads, fetchRiads } = useRiad();
 await useAsyncData("gallery-riads", () => fetchRiads());
 
-useSeoMeta({ title: t("gallery.seo_title") });
+useSeoMeta({ title: t("gallery.seo_title"), description: t("seo.gallery_description"), ogTitle: t("gallery.seo_title"), ogDescription: t("seo.gallery_description") });
 
 interface FlatPhoto {
   photo: string;

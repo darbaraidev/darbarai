@@ -117,15 +117,15 @@
       <button
         type="submit"
         class="btn-primary w-full text-base py-4"
-        :disabled="unavailable || nights === 0 || (riad.min_nights > 1 && nights > 0 && nights < riad.min_nights)"
+        :disabled="
+          unavailable ||
+          nights === 0 ||
+          (riad.min_nights > 1 && nights > 0 && nights < riad.min_nights)
+        "
       >
         {{ t("common.confirm") }}
       </button>
     </form>
-
-    <p v-if="bookingEnabled !== false" class="text-center text-xs text-stone-400 mt-3">
-      {{ t("booking.no_charge_yet") }}
-    </p>
   </div>
 </template>
 
@@ -141,7 +141,9 @@ const { fetchBookingEnabled } = useSiteSettings();
 const user = useSupabaseUser();
 const localePath = useLocalePath();
 
-const { data: bookingEnabled } = await useAsyncData("booking-enabled", () => fetchBookingEnabled());
+const { data: bookingEnabled } = await useAsyncData("booking-enabled", () =>
+  fetchBookingEnabled(),
+);
 
 const externalLinks: Record<string, { booking: string; airbnb: string }> = {
   "dar-barai": {
@@ -178,7 +180,11 @@ const unavailable = ref(false);
 
 const onDateChange = async () => {
   if (!form.checkIn || !form.checkOut || nights.value <= 0) return;
-  unavailable.value = !(await checkAvailability(props.riad.id, form.checkIn, form.checkOut));
+  unavailable.value = !(await checkAvailability(
+    props.riad.id,
+    form.checkIn,
+    form.checkOut,
+  ));
 };
 
 const onPickerCheckIn = async (date: string) => {
@@ -203,7 +209,11 @@ const onSubmit = async () => {
   const bookingPath = localePath("/booking") + "?" + bookingQuery;
 
   if (!user.value) {
-    await navigateTo(localePath("/auth/login") + "?redirect=" + encodeURIComponent(bookingPath));
+    await navigateTo(
+      localePath("/auth/login") +
+        "?redirect=" +
+        encodeURIComponent(bookingPath),
+    );
     return;
   }
 

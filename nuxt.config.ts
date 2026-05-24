@@ -18,6 +18,10 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [{ rel: "icon", type: "image/png", href: "/images/logo_app.jpg" }],
+      meta: [
+        { property: "og:site_name", content: "Dar Baraï" },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
     },
   },
 

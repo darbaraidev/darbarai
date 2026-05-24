@@ -6,11 +6,10 @@
       <p class="text-stone-500 text-lg max-w-2xl mx-auto">
         {{ t("services.page_subtitle") }}
       </p>
-      <p class="text-stone-500 text-sm max-w-xl mx-auto mt-4 border border-stone-300 rounded-xl px-5 py-3">
+      <p
+        class="text-stone-500 text-sm max-w-xl mx-auto mt-4 border border-stone-300 rounded-xl px-5 py-3"
+      >
         {{ t("services.page_description") }}
-      </p>
-      <p class="text-stone-400 text-sm max-w-xl mx-auto mt-3 italic">
-        {{ t("services.page_description_note") }}
       </p>
     </div>
 
@@ -20,71 +19,99 @@
         <div
           v-for="cat in servicesByCategory"
           :key="cat.category"
-class="mb-20"
+          class="mb-20"
         >
           <div class="w-full bg-terracotta-100 px-8 py-8 mb-8 text-center">
-            <h2 class="font-serif text-3xl text-terracotta-800 mb-1">{{ cat.name }}</h2>
-            <p v-if="cat.description" class="text-terracotta-700 text-base max-w-xl mx-auto">{{ cat.description }}</p>
+            <h2 class="font-serif text-3xl text-terracotta-800 mb-1">
+              {{ cat.name }}
+            </h2>
+            <p
+              v-if="cat.description"
+              class="text-terracotta-700 text-base max-w-xl mx-auto"
+            >
+              {{ cat.description }}
+            </p>
           </div>
           <div class="max-w-7xl mx-auto px-4">
-          <div class="flex flex-wrap justify-center gap-5">
-            <div
-              v-for="service in cat.items"
-              :key="service.id"
-              class="relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group w-full sm:w-[calc(50%-0.625rem)] lg:w-[calc(33.333%-0.834rem)]"
-              @click="openModal(service)"
-            >
-              <!-- Photo -->
-              <img
-                v-if="service.photos?.length"
-                :src="service.photos[0]"
-                :alt="locale === 'fr' ? service.name : service.name_en || service.name"
-                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <!-- Fallback sans photo -->
+            <div class="flex flex-wrap justify-center gap-5">
               <div
-                v-else
-                class="absolute inset-0 bg-sand-100 flex items-center justify-center"
+                v-for="service in cat.items"
+                :key="service.id"
+                class="relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group w-full sm:w-[calc(50%-0.625rem)] lg:w-[calc(33.333%-0.834rem)]"
+                @click="openModal(service)"
               >
-                <ClientOnly>
-                  <LottieIcon
-                    v-if="lottieAnimations[service.slug]"
-                    :animation-data="lottieAnimations[service.slug]!"
-                    class="w-20 h-20"
-                  />
-                  <span v-else class="text-5xl">{{ service.icon ?? "✨" }}</span>
-                  <template #fallback>
-                    <span class="text-5xl">{{ service.icon ?? "✨" }}</span>
-                  </template>
-                </ClientOnly>
-              </div>
-
-              <!-- Gradient overlay -->
-              <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent transition-opacity duration-300 group-hover:from-black/85" />
-
-              <!-- Contenu bas de card -->
-              <div class="absolute bottom-0 left-0 right-0 p-5">
-                <span
-                  v-if="service.riad_slugs?.length === 1"
-                  class="inline-block text-xs px-2 py-0.5 rounded-full font-medium mb-2"
-                  :class="service.riad_slugs[0] === 'dar-barai' ? 'bg-terracotta-600/80 text-white' : 'bg-blue-600/80 text-white'"
+                <!-- Photo -->
+                <img
+                  v-if="service.photos?.length"
+                  :src="service.photos[0]"
+                  :alt="
+                    locale === 'fr'
+                      ? service.name
+                      : service.name_en || service.name
+                  "
+                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <!-- Fallback sans photo -->
+                <div
+                  v-else
+                  class="absolute inset-0 bg-sand-100 flex items-center justify-center"
                 >
-                  {{ service.riad_slugs[0] === 'dar-barai' ? 'Dar Baraï' : 'Dar Tanawi' }}
-                </span>
-                <h3 class="font-serif text-xl text-white leading-snug">
-                  {{ locale === "fr" ? service.name : service.name_en || service.name }}
-                </h3>
-                <p class="text-white/70 text-sm mt-1">
-                  <template v-if="!service.price_cents">
-                    {{ t("services.on_request") }}
-                  </template>
-                  <template v-else>
-                    {{ formatPrice(service.price_cents) }} {{ t("services.per_person") }}
-                  </template>
-                </p>
+                  <ClientOnly>
+                    <LottieIcon
+                      v-if="lottieAnimations[service.slug]"
+                      :animation-data="lottieAnimations[service.slug]!"
+                      class="w-20 h-20"
+                    />
+                    <span v-else class="text-5xl">{{
+                      service.icon ?? "✨"
+                    }}</span>
+                    <template #fallback>
+                      <span class="text-5xl">{{ service.icon ?? "✨" }}</span>
+                    </template>
+                  </ClientOnly>
+                </div>
+
+                <!-- Gradient overlay -->
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent transition-opacity duration-300 group-hover:from-black/85"
+                />
+
+                <!-- Contenu bas de card -->
+                <div class="absolute bottom-0 left-0 right-0 p-5">
+                  <span
+                    v-if="service.riad_slugs?.length === 1"
+                    class="inline-block text-xs px-2 py-0.5 rounded-full font-medium mb-2"
+                    :class="
+                      service.riad_slugs[0] === 'dar-barai'
+                        ? 'bg-terracotta-600/80 text-white'
+                        : 'bg-blue-600/80 text-white'
+                    "
+                  >
+                    {{
+                      service.riad_slugs[0] === "dar-barai"
+                        ? "Dar Baraï"
+                        : "Dar Tanawi"
+                    }}
+                  </span>
+                  <h3 class="font-serif text-xl text-white leading-snug">
+                    {{
+                      locale === "fr"
+                        ? service.name
+                        : service.name_en || service.name
+                    }}
+                  </h3>
+                  <p class="text-white/70 text-sm mt-1">
+                    <template v-if="!service.price_cents">
+                      {{ t("services.on_request") }}
+                    </template>
+                    <template v-else>
+                      {{ formatPrice(service.price_cents) }}
+                      {{ t("services.per_person") }}
+                    </template>
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
           </div>
         </div>
       </template>
@@ -121,13 +148,19 @@ class="mb-20"
                 <div class="flex items-center gap-3">
                   <ClientOnly>
                     <LottieIcon
-                      v-if="modal.service && lottieAnimations[modal.service.slug]"
+                      v-if="
+                        modal.service && lottieAnimations[modal.service.slug]
+                      "
                       :animation-data="lottieAnimations[modal.service.slug]!"
                       class="w-14 h-14 shrink-0"
                     />
-                    <span v-else class="text-4xl">{{ modal.service.icon ?? "✨" }}</span>
+                    <span v-else class="text-4xl">{{
+                      modal.service.icon ?? "✨"
+                    }}</span>
                     <template #fallback>
-                      <span class="text-4xl">{{ modal.service.icon ?? "✨" }}</span>
+                      <span class="text-4xl">{{
+                        modal.service.icon ?? "✨"
+                      }}</span>
                     </template>
                   </ClientOnly>
                   <div>
@@ -332,7 +365,9 @@ class="mb-20"
 <script setup lang="ts">
 import type { Service } from "~/types";
 import type { ServiceCategoryRecord } from "~/composables/useServiceCategories";
-const { data: _ps } = await useAsyncData("site-settings", () => $fetch("/api/site-settings"));
+const { data: _ps } = await useAsyncData("site-settings", () =>
+  $fetch("/api/site-settings"),
+);
 if ((_ps.value as any)?.page_services_enabled === false) await navigateTo("/");
 
 const animationFiles = import.meta.glob("~/assets/animations/*.json", {
@@ -352,7 +387,11 @@ const staticImageFiles = import.meta.glob(
 );
 const staticImages: Record<string, string> = Object.fromEntries(
   Object.entries(staticImageFiles).map(([path, url]) => {
-    const slug = path.split("/").pop()?.replace(/\.[^.]+$/, "") ?? "";
+    const slug =
+      path
+        .split("/")
+        .pop()
+        ?.replace(/\.[^.]+$/, "") ?? "";
     return [slug, url as string];
   }),
 );
@@ -379,7 +418,10 @@ const servicesByCategory = computed(() => {
     .map((cat: ServiceCategoryRecord) => ({
       category: cat.slug,
       name: locale.value === "fr" ? cat.name : cat.name_en || cat.name,
-      description: locale.value === "fr" ? cat.description : cat.description_en || cat.description,
+      description:
+        locale.value === "fr"
+          ? cat.description
+          : cat.description_en || cat.description,
       items: list.filter((s: Service) => s.category === cat.slug),
     }))
     .filter((g) => g.items.length > 0);
@@ -433,6 +475,8 @@ onUnmounted(() => window.removeEventListener("keydown", onKeydown));
 
 useSeoMeta({
   title: t("services.seo_title"),
-  description: t("services.page_subtitle"),
+  description: t("seo.services_description"),
+  ogTitle: t("services.seo_title"),
+  ogDescription: t("seo.services_description"),
 });
 </script>
