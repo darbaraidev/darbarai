@@ -176,7 +176,6 @@
     "confirm": "Confirmer et payer",
     "unavailable": "Ces dates ne sont pas disponibles",
     "min_stay": "Séjour minimum : {n} nuits",
-    "no_charge_yet": "Vous ne serez débité qu'après confirmation.",
     "calendar_available": "Disponible",
     "calendar_unavailable": "Indisponible",
     "hint_pick_arrival": "Cliquez pour choisir votre date d'arrivée",

@@ -175,7 +175,6 @@
     "confirm": "Confirm & pay",
     "unavailable": "These dates are not available",
     "min_stay": "Minimum stay: {n} nights",
-    "no_charge_yet": "You will only be charged after confirmation.",
     "calendar_available": "Available",
     "calendar_unavailable": "Unavailable",
     "hint_pick_arrival": "Click to select your arrival date",

@@ -266,9 +266,6 @@
           <template v-else-if="method === 'later'">{{ t("booking.confirm_later") }}</template>
           <template v-else>{{ t("booking.select_payment_method") }}</template>
         </button>
-        <p v-if="paymentsEnabled && method === 'card'" class="text-center text-xs text-stone-400">
-          {{ t("booking.no_charge_yet") }}
-        </p>
       </div>
     </div>
   </div>
