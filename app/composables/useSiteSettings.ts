@@ -54,6 +54,22 @@ export const useSiteSettings = () => {
     return { error };
   };
 
+  const fetchPaymentsEnabled = async (): Promise<boolean> => {
+    const { data } = await supabase
+      .from("site_settings")
+      .select("payments_enabled")
+      .eq("id", 1)
+      .single();
+    return data?.payments_enabled ?? true;
+  };
+
+  const setPaymentsEnabled = async (enabled: boolean) => {
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert({ id: 1, payments_enabled: enabled });
+    return { error };
+  };
+
   const fetchMaintenanceMode = async (): Promise<boolean> => {
     const { data } = await supabase
       .from("site_settings")
@@ -70,5 +86,5 @@ export const useSiteSettings = () => {
     return { error };
   };
 
-  return { fetchBookingEnabled, setBookingEnabled, fetchNewsletterPromoEnabled, setNewsletterPromoEnabled, fetchPageSettings, setPageEnabled, fetchMaintenanceMode, setMaintenanceMode };
+  return { fetchBookingEnabled, setBookingEnabled, fetchNewsletterPromoEnabled, setNewsletterPromoEnabled, fetchPageSettings, setPageEnabled, fetchPaymentsEnabled, setPaymentsEnabled, fetchMaintenanceMode, setMaintenanceMode };
 };

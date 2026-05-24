@@ -176,49 +176,63 @@
 
       <!-- Choix du mode de paiement -->
       <div class="p-6 border-b border-stone-100">
-        <p class="text-xs font-medium text-stone-500 uppercase tracking-wide mb-4">
-          {{ t("booking.payment_method") }}
-        </p>
-        <div class="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            :class="[
-              'rounded-xl border-2 p-4 text-left space-y-1 transition-colors',
-              method === 'card'
-                ? 'border-terracotta-500 bg-terracotta-50'
-                : 'border-stone-200 hover:border-stone-300',
-            ]"
-            @click="method = 'card'"
-          >
-            <span class="text-xl">💳</span>
-            <p class="font-medium text-sm text-stone-800">{{ t("booking.method_card") }}</p>
-            <p class="text-xs text-stone-500">{{ t("booking.method_card_desc") }}</p>
-            <p class="text-xs font-medium text-green-600 flex items-center gap-1 pt-1">
-              <span>✓</span> {{ t("booking.method_card_status") }}
-            </p>
-          </button>
-          <button
-            type="button"
-            :class="[
-              'rounded-xl border-2 p-4 text-left space-y-1 transition-colors',
-              method === 'later'
-                ? 'border-terracotta-500 bg-terracotta-50'
-                : 'border-stone-200 hover:border-stone-300',
-            ]"
-            @click="method = 'later'"
-          >
-            <span class="text-xl">💬</span>
-            <p class="font-medium text-sm text-stone-800">{{ t("booking.method_later") }}</p>
-            <p class="text-xs text-stone-500">{{ t("booking.method_later_desc") }}</p>
-            <p class="text-xs font-medium text-amber-600 flex items-center gap-1 pt-1">
-              <span>⏳</span> {{ t("booking.method_later_status") }}
-            </p>
-          </button>
+        <!-- Paiements désactivés : message + auto-contact -->
+        <div v-if="!paymentsEnabled" class="rounded-xl border border-amber-200 bg-amber-50 p-4 flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          <div>
+            <p class="text-sm font-medium text-amber-800">{{ t("booking.payments_disabled_title") }}</p>
+            <p class="text-xs text-amber-700 mt-0.5 leading-relaxed">{{ t("booking.payments_disabled_desc") }}</p>
+          </div>
         </div>
+
+        <!-- Paiements actifs : choix normal -->
+        <template v-else>
+          <p class="text-xs font-medium text-stone-500 uppercase tracking-wide mb-4">
+            {{ t("booking.payment_method") }}
+          </p>
+          <div class="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              :class="[
+                'rounded-xl border-2 p-4 text-left space-y-1 transition-colors',
+                method === 'card'
+                  ? 'border-terracotta-500 bg-terracotta-50'
+                  : 'border-stone-200 hover:border-stone-300',
+              ]"
+              @click="method = 'card'"
+            >
+              <span class="text-xl">💳</span>
+              <p class="font-medium text-sm text-stone-800">{{ t("booking.method_card") }}</p>
+              <p class="text-xs text-stone-500">{{ t("booking.method_card_desc") }}</p>
+              <p class="text-xs font-medium text-green-600 flex items-center gap-1 pt-1">
+                <span>✓</span> {{ t("booking.method_card_status") }}
+              </p>
+            </button>
+            <button
+              type="button"
+              :class="[
+                'rounded-xl border-2 p-4 text-left space-y-1 transition-colors',
+                method === 'later'
+                  ? 'border-terracotta-500 bg-terracotta-50'
+                  : 'border-stone-200 hover:border-stone-300',
+              ]"
+              @click="method = 'later'"
+            >
+              <span class="text-xl">💬</span>
+              <p class="font-medium text-sm text-stone-800">{{ t("booking.method_later") }}</p>
+              <p class="text-xs text-stone-500">{{ t("booking.method_later_desc") }}</p>
+              <p class="text-xs font-medium text-amber-600 flex items-center gap-1 pt-1">
+                <span>⏳</span> {{ t("booking.method_later_status") }}
+              </p>
+            </button>
+          </div>
+        </template>
       </div>
 
       <!-- Stripe Elements -->
-      <div v-show="method === 'card'" class="p-6 border-b border-stone-100">
+      <div v-show="paymentsEnabled && method === 'card'" class="p-6 border-b border-stone-100">
         <div v-if="cardPhase === 'loading'" class="space-y-3">
           <div class="h-10 bg-stone-100 rounded-lg animate-pulse"></div>
           <div class="grid grid-cols-2 gap-3">
@@ -233,7 +247,7 @@
       </div>
 
       <!-- Info "payer plus tard" -->
-      <div v-if="method === 'later'" class="p-6 border-b border-stone-100">
+      <div v-if="!paymentsEnabled || method === 'later'" class="p-6 border-b border-stone-100">
         <p class="text-sm text-stone-600 leading-relaxed">{{ t("booking.method_later_info") }}</p>
       </div>
 
@@ -242,16 +256,17 @@
         <p v-if="payError" class="text-sm text-red-600">{{ payError }}</p>
         <button
           class="btn-primary w-full py-4 text-base"
-          :disabled="!method || loading || cardPhase === 'loading'"
+          :disabled="(paymentsEnabled && (!method || cardPhase === 'loading')) || loading"
           @click="pay"
         >
           <template v-if="loading || cardPhase === 'loading'">{{ t("common.loading") }}</template>
+          <template v-else-if="!paymentsEnabled">{{ t("booking.confirm_later") }}</template>
           <template v-else-if="method === 'card' && cardPhase === 'ready'">{{ t("booking.confirm_payment") }}</template>
           <template v-else-if="method === 'card'">{{ t("booking.pay_now") }}</template>
           <template v-else-if="method === 'later'">{{ t("booking.confirm_later") }}</template>
           <template v-else>{{ t("booking.select_payment_method") }}</template>
         </button>
-        <p v-if="method === 'card'" class="text-center text-xs text-stone-400">
+        <p v-if="paymentsEnabled && method === 'card'" class="text-center text-xs text-stone-400">
           {{ t("booking.no_charge_yet") }}
         </p>
       </div>
@@ -286,6 +301,9 @@ const specialRequests = (route.query.specialRequests as string) || ""
 if (!riadId || !checkIn || !checkOut) {
   await navigateTo(localePath("/"))
 }
+
+const { data: siteSettings } = await useFetch("/api/site-settings", { key: "site-settings" });
+const paymentsEnabled = computed(() => (siteSettings.value as any)?.payments_enabled !== false);
 
 const { data: riad } = await useAsyncData("recap-riad:" + riadId, async () => {
   const { data } = await (supabase as any)
@@ -489,8 +507,8 @@ const pay = async () => {
   loading.value = true
   payError.value = false
 
-  // "Pay later" flow
-  if (method.value === "later") {
+  // "Pay later" flow (also forced when payments are disabled)
+  if (method.value === "later" || !paymentsEnabled.value) {
     try {
       if (!reservationId.value) await createReservation()
       reservationCompleted.value = true

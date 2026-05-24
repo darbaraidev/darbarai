@@ -202,6 +202,8 @@
     "promo_discount": "Réduction",
     "confirm_payment": "Confirmer le paiement",
     "select_payment_method": "Choisissez un mode de paiement",
+    "payments_disabled_title": "Paiement en ligne indisponible",
+    "payments_disabled_desc": "Le paiement par carte n'est pas disponible en ce moment. Confirmez votre demande et nous vous contacterons pour convenir du règlement.",
     "blocked_title": "Réservations temporairement indisponibles",
     "blocked_subtitle": "Pour réserver, rendez-vous directement sur nos plateformes partenaires.",
     "book_on_booking": "Réserver sur Booking.com",

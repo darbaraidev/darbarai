@@ -68,6 +68,44 @@
       </div>
     </div>
 
+    <!-- Paiements en ligne -->
+    <div
+      class="rounded-2xl border-2 mb-6 p-5 transition-colors"
+      :class="!paymentsOn ? 'border-red-200 bg-red-50' : 'border-stone-200 bg-white'"
+    >
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <svg class="w-4 h-4 text-stone-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+            </svg>
+            <p class="font-semibold text-stone-800">Paiements en ligne (Stripe)</p>
+            <span v-if="!paymentsOn" class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium">Désactivé</span>
+          </div>
+          <p class="text-sm text-stone-500 leading-relaxed">
+            Désactiver pour forcer les clients à passer par contact uniquement (WhatsApp / email).
+          </p>
+        </div>
+        <button
+          class="relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none mt-0.5"
+          :class="paymentsOn ? 'bg-emerald-500' : 'bg-stone-300'"
+          :disabled="savingPayments"
+          @click="togglePayments"
+        >
+          <span
+            class="pointer-events-none inline-block h-6 w-6 rounded-full bg-white shadow transform transition-transform duration-200"
+            :class="paymentsOn ? 'translate-x-5' : 'translate-x-0'"
+          />
+        </button>
+      </div>
+      <div v-if="!paymentsOn" class="mt-3 flex items-center gap-2 text-xs text-red-700 bg-red-100 rounded-lg px-3 py-2">
+        <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+        </svg>
+        Les paiements CB sont désactivés — les clients ne peuvent réserver que par contact.
+      </div>
+    </div>
+
     <!-- Migration images Cloudinary -->
     <div class="card p-6">
       <h2 class="font-semibold text-stone-800 mb-1">Migration images → Cloudinary</h2>
@@ -95,7 +133,7 @@
 <script setup lang="ts">
 definePageMeta({ middleware: "admin", layout: "admin" });
 
-const { fetchPageSettings, setPageEnabled, fetchMaintenanceMode, setMaintenanceMode } = useSiteSettings();
+const { fetchPageSettings, setPageEnabled, fetchPaymentsEnabled, setPaymentsEnabled, fetchMaintenanceMode, setMaintenanceMode } = useSiteSettings();
 const supabase = useSupabaseClient();
 
 const pages = [
@@ -113,17 +151,28 @@ const states = ref<Record<string, boolean>>({
 
 const maintenanceOn = ref(false);
 const savingMaintenance = ref(false);
+const paymentsOn = ref(true);
+const savingPayments = ref(false);
 
 const migrating = ref(false);
 const migrateDone = ref(false);
 const migrateLog = ref<string[]>([]);
 
 onMounted(async () => {
-  const [pageData, maintenance] = await Promise.all([fetchPageSettings(), fetchMaintenanceMode()]);
+  const [pageData, maintenance, payments] = await Promise.all([fetchPageSettings(), fetchMaintenanceMode(), fetchPaymentsEnabled()]);
   Object.assign(states.value, pageData);
   maintenanceOn.value = maintenance;
+  paymentsOn.value = payments;
   loading.value = false;
 });
+
+async function togglePayments() {
+  savingPayments.value = true;
+  const next = !paymentsOn.value;
+  const { error } = await setPaymentsEnabled(next);
+  if (!error) paymentsOn.value = next;
+  savingPayments.value = false;
+}
 
 async function toggleMaintenance() {
   savingMaintenance.value = true;

@@ -201,6 +201,8 @@
     "promo_discount": "Discount",
     "confirm_payment": "Confirm payment",
     "select_payment_method": "Choose a payment method",
+    "payments_disabled_title": "Online payment unavailable",
+    "payments_disabled_desc": "Card payment is not available at the moment. Confirm your request and we will contact you to arrange payment.",
     "blocked_title": "Bookings temporarily unavailable",
     "blocked_subtitle": "To book, please visit our partner platforms directly.",
     "book_on_booking": "Book on Booking.com",

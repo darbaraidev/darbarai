@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
   const supabase = serverSupabaseServiceRole(event);
   const { data } = await (supabase as any)
     .from("site_settings")
-    .select("page_boutique_enabled, page_gallery_enabled, page_services_enabled, page_contact_enabled, maintenance_mode")
+    .select("page_boutique_enabled, page_gallery_enabled, page_services_enabled, page_contact_enabled, maintenance_mode, payments_enabled")
     .eq("id", 1)
     .maybeSingle();
 
@@ -14,5 +14,6 @@ export default defineEventHandler(async (event) => {
     page_services_enabled: data?.page_services_enabled ?? true,
     page_contact_enabled: data?.page_contact_enabled ?? true,
     maintenance_mode: data?.maintenance_mode ?? false,
+    payments_enabled: data?.payments_enabled ?? true,
   };
 });
