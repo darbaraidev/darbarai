@@ -43,7 +43,7 @@
         contact@darbarai.com
       </a>
       <a
-        href="https://wa.me/33676847685"
+        :href="whatsappLink"
         target="_blank"
         rel="noopener"
         class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-stone-200 text-stone-600 text-sm hover:bg-white hover:shadow-sm transition-all"
@@ -60,5 +60,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: false });
 const { t } = useI18n();
+const { whatsappLink } = useContactPhone();
 useSeoMeta({ title: t("maintenance.seo_title") });
 </script>

@@ -1,5 +1,5 @@
 import { serverSupabaseClient, serverSupabaseServiceRole } from "#supabase/server";
-import { templates, sendEmail, sendToAdmins } from "~/server/utils/emailTemplates";
+import { templates, sendEmail, sendToAdmins, getContactPhone } from "~/server/utils/emailTemplates";
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -57,10 +57,12 @@ export default defineEventHandler(async (event) => {
       const nights = Math.round(
         (new Date(reservation.check_out).getTime() - new Date(reservation.check_in).getTime()) / 86400000
       );
+      const contactPhone = await getContactPhone(admin);
       const emailData = {
         clientName: profile.full_name ?? "",
         clientEmail,
         clientPhone: profile.phone ?? null,
+        contactPhone,
         riadName: riad.name,
         checkIn: reservation.check_in,
         checkOut: reservation.check_out,

@@ -248,7 +248,7 @@
 
       <!-- Info "payer plus tard" -->
       <div v-if="!paymentsEnabled || method === 'later'" class="p-6 border-b border-stone-100">
-        <p class="text-sm text-stone-600 leading-relaxed">{{ t("booking.method_later_info") }}</p>
+        <p class="text-sm text-stone-600 leading-relaxed">{{ t("booking.method_later_info", { phone: contactPhone }) }}</p>
       </div>
 
       <!-- CTA -->
@@ -374,13 +374,13 @@ const reservationId = ref((route.query.reservationId as string) || "")
 const laterSuccess = computed(() => route.query.done === "true" && !!reservationId.value)
 
 const contactEmail = (config.public as any).contactEmail || "contact@darbarai.com"
+const { phone: contactPhone, whatsappLink: baseWhatsapp } = useContactPhone()
 const whatsappLink = computed(() => {
-  const phone = (config.public as any).contactWhatsapp as string
-  if (!phone || !reservationId.value) return ""
+  if (!baseWhatsapp.value || !reservationId.value) return ""
   const msg = encodeURIComponent(
     `Bonjour, j'ai fait une demande de réservation (réf. ${reservationId.value.slice(0, 8).toUpperCase()}) au ${riadName.value} du ${checkIn} au ${checkOut}. Je souhaite convenir du règlement.`
   )
-  return `https://wa.me/${phone}?text=${msg}`
+  return `${baseWhatsapp.value}?text=${msg}`
 })
 
 let stripe: Stripe | null = null

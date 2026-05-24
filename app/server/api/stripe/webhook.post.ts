@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { serverSupabaseServiceRole } from "#supabase/server";
-import { templates, sendEmail, sendToAdmins } from "~/server/utils/emailTemplates";
+import { templates, sendEmail, sendToAdmins, getContactPhone } from "~/server/utils/emailTemplates";
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -68,9 +68,11 @@ export default defineEventHandler(async (event) => {
         const nights = Math.round(
           (new Date(reservation.check_out).getTime() - new Date(reservation.check_in).getTime()) / 86400000,
         );
+        const contactPhone = await getContactPhone(supabase);
         const emailData = {
           clientName: full_name ?? "",
           clientEmail: email,
+          contactPhone,
           riadName: riad.name,
           checkIn: reservation.check_in,
           checkOut: reservation.check_out,

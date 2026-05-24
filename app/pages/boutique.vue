@@ -11,7 +11,7 @@
           <p>{{ t("boutique.info_riad") }}</p>
           <p class="mt-1">
             {{ t("boutique.info_contact") }}
-            <a href="tel:+33750996975" class="font-semibold text-terracotta-700 hover:underline">+33 7 50 99 69 75</a>
+            <a :href="telLink" class="font-semibold text-terracotta-700 hover:underline">{{ phone }}</a>
           </p>
         </div>
       </div>
@@ -130,6 +130,7 @@ const { data: _ps } = await useAsyncData("site-settings", () => $fetch("/api/sit
 if ((_ps.value as any)?.page_boutique_enabled === false) await navigateTo("/");
 
 const { t, locale } = useI18n();
+const { phone, telLink } = useContactPhone();
 const { fetchProducts, formatProductPrice } = useProducts();
 
 const { data: products } = await useAsyncData("boutique", async () => {

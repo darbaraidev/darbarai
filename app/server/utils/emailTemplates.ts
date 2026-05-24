@@ -43,6 +43,7 @@ export interface ReservationEmailData {
   clientName: string;
   clientEmail: string;
   clientPhone?: string | null;
+  contactPhone?: string;
   riadName: string;
   checkIn: string;
   checkOut: string;
@@ -57,11 +58,28 @@ export interface ReservationEmailData {
 const FROM = `${process.env.RESEND_FROM_NAME ?? "Dar Barai"} <${process.env.RESEND_FROM_EMAIL ?? "contact@darbarai.com"}>`;
 const SITE_URL = process.env.NUXT_PUBLIC_SITE_URL ?? "https://www.darbarai.com";
 const LOGO_URL = `${SITE_URL}/images/logo_app.jpg`;
-const WHATSAPP_NUMBER = process.env.NUXT_PUBLIC_CONTACT_WHATSAPP ?? "";
-const WHATSAPP_LINK = WHATSAPP_NUMBER
-  ? `https://wa.me/${WHATSAPP_NUMBER}`
-  : null;
-const WHATSAPP_DISPLAY = WHATSAPP_NUMBER ? `+${WHATSAPP_NUMBER}` : null;
+const WHATSAPP_FALLBACK = process.env.NUXT_PUBLIC_CONTACT_WHATSAPP ?? "";
+
+const resolveWhatsapp = (phone?: string | null) => {
+  const num = phone ?? WHATSAPP_FALLBACK;
+  if (!num) return { link: null, display: null };
+  const digits = num.replace(/[^0-9]/g, "");
+  const display = num.startsWith("+") ? num : `+${num}`;
+  return { link: `https://wa.me/${digits}`, display };
+};
+
+export const getContactPhone = async (supabase: SupabaseClient): Promise<string> => {
+  try {
+    const { data } = await (supabase as any)
+      .from("site_settings")
+      .select("contact_phone")
+      .eq("id", 1)
+      .maybeSingle();
+    return data?.contact_phone ?? WHATSAPP_FALLBACK ?? "+33750996975";
+  } catch {
+    return WHATSAPP_FALLBACK ?? "+33750996975";
+  }
+};
 
 // Token HMAC pour unsubscribe sans connexion
 export const unsubscribeToken = (email: string, secret: string) =>
@@ -81,7 +99,9 @@ const reservationTable = (d: ReservationEmailData) => `
   </table>
 `;
 
-const layout = (content: string, opts?: { unsubscribeUrl?: string }) => `
+const layout = (content: string, opts?: { unsubscribeUrl?: string; contactPhone?: string }) => {
+  const wa = resolveWhatsapp(opts?.contactPhone);
+  return `
   <!DOCTYPE html>
   <html lang="fr">
   <head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/></head>
@@ -108,7 +128,7 @@ const layout = (content: string, opts?: { unsubscribeUrl?: string }) => `
         <p style="margin:0 0 6px;font-size:12px;color:#a8a29e;text-align:center">
           Dar Baraï · Marrakech, Maroc ·
           <a href="mailto:contact@darbarai.com" style="color:#a8a29e;text-decoration:none">contact@darbarai.com</a>
-          ${WHATSAPP_LINK ? `· <a href="${WHATSAPP_LINK}" style="color:#a8a29e;text-decoration:none">WhatsApp ${WHATSAPP_DISPLAY}</a>` : ""}
+          ${wa.link ? `· <a href="${wa.link}" style="color:#a8a29e;text-decoration:none">WhatsApp ${wa.display}</a>` : ""}
         </p>
         <p style="margin:0 0 6px;font-size:11px;color:#c7c3be;text-align:center">
           Cet email est envoyé automatiquement, merci de ne pas y répondre directement.
@@ -127,32 +147,39 @@ const layout = (content: string, opts?: { unsubscribeUrl?: string }) => `
   </body>
   </html>
 `;
+};
 
 // ─── Templates ────────────────────────────────────────────────────────────────
 
 export const templates = {
-  reservationConfirmed: (d: ReservationEmailData) => ({
-    subject: `Réservation confirmée – ${d.riadName}`,
-    html: layout(`
+  reservationConfirmed: (d: ReservationEmailData) => {
+    const wa = resolveWhatsapp(d.contactPhone);
+    return {
+      subject: `Réservation confirmée – ${d.riadName}`,
+      html: layout(`
       <h1 style="margin:0 0 8px;font-size:24px;color:#15803d">Réservation confirmée ✓</h1>
       <p>Bonjour ${d.clientName},</p>
       <p>Votre paiement a bien été reçu. Votre réservation au <strong>${d.riadName}</strong> est confirmée.</p>
       ${reservationTable(d)}
-      <p>Nous avons hâte de vous accueillir à Marrakech. N'hésitez pas à nous contacter à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>${WHATSAPP_LINK ? ` ou sur <a href="${WHATSAPP_LINK}" style="color:#b45309">WhatsApp (${WHATSAPP_DISPLAY})</a>` : ""}.</p>
-    `),
-  }),
+      <p>Nous avons hâte de vous accueillir à Marrakech. N'hésitez pas à nous contacter à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>${wa.link ? ` ou sur <a href="${wa.link}" style="color:#b45309">WhatsApp (${wa.display})</a>` : ""}.</p>
+    `, { contactPhone: d.contactPhone }),
+    };
+  },
 
-  reservationRequest: (d: ReservationEmailData) => ({
-    subject: `Demande de réservation reçue – ${d.riadName}`,
-    html: layout(`
+  reservationRequest: (d: ReservationEmailData) => {
+    const wa = resolveWhatsapp(d.contactPhone);
+    return {
+      subject: `Demande de réservation reçue – ${d.riadName}`,
+      html: layout(`
       <h1 style="margin:0 0 8px;font-size:24px;color:#b45309">Demande reçue</h1>
       <p>Bonjour ${d.clientName},</p>
       <p>Nous avons bien reçu votre demande de réservation au <strong>${d.riadName}</strong>.</p>
       ${reservationTable(d)}
-      <p>Nous allons vous contacter prochainement ${WHATSAPP_LINK ? `par <a href="${WHATSAPP_LINK}" style="color:#b45309">WhatsApp (${WHATSAPP_DISPLAY})</a> ou` : "par"} email pour convenir du règlement.</p>
+      <p>Nous allons vous contacter prochainement ${wa.link ? `par <a href="${wa.link}" style="color:#b45309">WhatsApp (${wa.display})</a> ou` : "par"} email pour convenir du règlement.</p>
       <p style="font-size:13px;color:#78716c">Réf. ${d.reservationId.slice(0, 8)}</p>
-    `),
-  }),
+    `, { contactPhone: d.contactPhone }),
+    };
+  },
 
   adminNewReservation: (d: ReservationEmailData, mode: "stripe" | "later") => ({
     subject:
@@ -208,34 +235,40 @@ export const templates = {
   reservationCancelled: (
     d: Pick<
       ReservationEmailData,
-      "clientName" | "riadName" | "checkIn" | "checkOut" | "reservationId"
+      "clientName" | "riadName" | "checkIn" | "checkOut" | "reservationId" | "contactPhone"
     >,
-  ) => ({
-    subject: `Annulation de votre réservation – ${d.riadName}`,
-    html: layout(`
+  ) => {
+    const wa = resolveWhatsapp(d.contactPhone);
+    return {
+      subject: `Annulation de votre réservation – ${d.riadName}`,
+      html: layout(`
       <h1 style="margin:0 0 8px;font-size:24px;color:#dc2626">Réservation annulée</h1>
       <p>Bonjour ${d.clientName},</p>
       <p>Votre réservation au <strong>${d.riadName}</strong> (${d.checkIn} → ${d.checkOut}) a bien été annulée.</p>
-      <p>Si vous avez des questions, contactez-nous à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>${WHATSAPP_LINK ? ` ou sur <a href="${WHATSAPP_LINK}" style="color:#b45309">WhatsApp (${WHATSAPP_DISPLAY})</a>` : ""}.</p>
+      <p>Si vous avez des questions, contactez-nous à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>${wa.link ? ` ou sur <a href="${wa.link}" style="color:#b45309">WhatsApp (${wa.display})</a>` : ""}.</p>
       <p style="font-size:13px;color:#78716c">Réf. ${d.reservationId.slice(0, 8)}</p>
-    `),
-  }),
+    `, { contactPhone: d.contactPhone }),
+    };
+  },
 
   reservationCancelledByAdmin: (
     d: Pick<
       ReservationEmailData,
-      "clientName" | "riadName" | "checkIn" | "checkOut" | "reservationId"
+      "clientName" | "riadName" | "checkIn" | "checkOut" | "reservationId" | "contactPhone"
     >,
-  ) => ({
-    subject: `Annulation de votre réservation – ${d.riadName}`,
-    html: layout(`
+  ) => {
+    const wa = resolveWhatsapp(d.contactPhone);
+    return {
+      subject: `Annulation de votre réservation – ${d.riadName}`,
+      html: layout(`
       <h1 style="margin:0 0 8px;font-size:24px;color:#dc2626">Réservation annulée</h1>
       <p>Bonjour ${d.clientName},</p>
       <p><strong>${d.riadName}</strong> a annulé votre réservation du ${d.checkIn} au ${d.checkOut}.</p>
-      <p>Nous sommes désolés pour la gêne occasionnée. N'hésitez pas à nous contacter à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>${WHATSAPP_LINK ? ` ou sur <a href="${WHATSAPP_LINK}" style="color:#b45309">WhatsApp (${WHATSAPP_DISPLAY})</a>` : ""}.</p>
+      <p>Nous sommes désolés pour la gêne occasionnée. N'hésitez pas à nous contacter à <a href="mailto:contact@darbarai.com" style="color:#b45309">contact@darbarai.com</a>${wa.link ? ` ou sur <a href="${wa.link}" style="color:#b45309">WhatsApp (${wa.display})</a>` : ""}.</p>
       <p style="font-size:13px;color:#78716c">Réf. ${d.reservationId.slice(0, 8)}</p>
-    `),
-  }),
+    `, { contactPhone: d.contactPhone }),
+    };
+  },
 
   adminReservationCancelled: (d: ReservationEmailData) => ({
     subject: `Annulation – ${d.clientName} · ${d.riadName}`,

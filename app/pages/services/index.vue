@@ -9,7 +9,7 @@
       <p
         class="text-stone-500 text-sm max-w-xl mx-auto mt-4 border border-stone-300 rounded-xl px-5 py-3"
       >
-        {{ t("services.page_description") }}
+        {{ t("services.page_description", { phone: contactPhone }) }}
       </p>
     </div>
 
@@ -397,6 +397,7 @@ const staticImages: Record<string, string> = Object.fromEntries(
 );
 
 const { t, locale } = useI18n();
+const { phone: contactPhone } = useContactPhone();
 const { fetchServices } = useServices();
 const { fetchCategories } = useServiceCategories();
 const { formatPrice } = useRiad();

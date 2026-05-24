@@ -53,7 +53,7 @@
 
         <!-- WhatsApp -->
         <a
-          href="https://wa.me/33676847685"
+          :href="whatsappLink"
           target="_blank"
           rel="noopener"
           class="w-full bg-white rounded-2xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow group"
@@ -70,7 +70,7 @@
           >
             WhatsApp
           </p>
-          <p class="font-serif text-stone-800 text-lg mb-1">+33750996975</p>
+          <p class="font-serif text-stone-800 text-lg mb-1">{{ phone }}</p>
           <p class="text-stone-400 text-sm">{{ t("contact.phone_desc") }}</p>
         </a>
 
@@ -103,7 +103,7 @@
       <!-- CTA -->
       <div class="flex flex-col sm:flex-row gap-4 justify-center mt-12">
         <a
-          href="https://wa.me/33676847685"
+          :href="whatsappLink"
           target="_blank"
           rel="noopener"
           class="btn-primary px-8 py-3 inline-flex items-center gap-2 justify-center"
@@ -267,6 +267,7 @@ import locationImageFr from "~/assets/images/entrees.jpg";
 import locationImageEn from "~/assets/images/entrances.jpg";
 
 const { t, locale } = useI18n();
+const { phone, whatsappLink } = useContactPhone();
 const user = useSupabaseUser();
 
 const newsletterPerks = computed(() => [

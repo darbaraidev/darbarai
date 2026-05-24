@@ -647,11 +647,12 @@ useSeoMeta({
 });
 
 const config = useRuntimeConfig();
+const { phone } = useContactPhone();
 useHead({
   script: [
     {
       type: "application/ld+json",
-      innerHTML: JSON.stringify({
+      innerHTML: computed(() => JSON.stringify({
         "@context": "https://schema.org",
         "@type": "LodgingBusiness",
         name: "Dar Baraï & Dar Tanawi",
@@ -665,12 +666,12 @@ useHead({
         },
         contactPoint: {
           "@type": "ContactPoint",
-          telephone: "+33750996975",
+          telephone: phone.value,
           contactType: "reservations",
         },
         priceRange: "€€€",
         image: `${config.public.siteUrl}/images/logo_dar_barai.jpg`,
-      }),
+      })),
     },
   ],
 });

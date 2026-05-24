@@ -106,13 +106,36 @@
       </div>
     </div>
 
+    <!-- Numéro de téléphone / WhatsApp -->
+    <div class="card p-6">
+      <h2 class="font-semibold text-stone-800 mb-1">Numéro de contact (WhatsApp & téléphone)</h2>
+      <p class="text-sm text-stone-400 mb-4">Affiché partout sur le site et utilisé dans les emails clients. Format international recommandé : <code class="bg-stone-100 px-1 rounded">+33750996975</code></p>
+      <div class="flex items-center gap-3">
+        <input
+          v-model="contactPhoneInput"
+          type="tel"
+          class="input flex-1 max-w-xs font-mono"
+          placeholder="+33750996975"
+        />
+        <button
+          class="btn-primary text-sm"
+          :disabled="savingPhone"
+          @click="savePhone"
+        >
+          {{ savingPhone ? '...' : 'Enregistrer' }}
+        </button>
+        <span v-if="phoneSaved" class="text-sm text-emerald-600">✓ Enregistré</span>
+        <span v-if="phoneError" class="text-sm text-red-500">{{ phoneError }}</span>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
 definePageMeta({ middleware: "admin", layout: "admin" });
 
-const { fetchPageSettings, setPageEnabled, fetchPaymentsEnabled, setPaymentsEnabled, fetchMaintenanceMode, setMaintenanceMode } = useSiteSettings();
+const { fetchPageSettings, setPageEnabled, fetchPaymentsEnabled, setPaymentsEnabled, fetchMaintenanceMode, setMaintenanceMode, fetchContactPhone, setContactPhone } = useSiteSettings();
 const supabase = useSupabaseClient();
 
 const pages = [
@@ -132,13 +155,17 @@ const maintenanceOn = ref(false);
 const savingMaintenance = ref(false);
 const paymentsOn = ref(true);
 const savingPayments = ref(false);
-
+const contactPhoneInput = ref("");
+const savingPhone = ref(false);
+const phoneSaved = ref(false);
+const phoneError = ref<string | null>(null);
 
 onMounted(async () => {
-  const [pageData, maintenance, payments] = await Promise.all([fetchPageSettings(), fetchMaintenanceMode(), fetchPaymentsEnabled()]);
+  const [pageData, maintenance, payments, phone] = await Promise.all([fetchPageSettings(), fetchMaintenanceMode(), fetchPaymentsEnabled(), fetchContactPhone()]);
   Object.assign(states.value, pageData);
   maintenanceOn.value = maintenance;
   paymentsOn.value = payments;
+  contactPhoneInput.value = phone;
   loading.value = false;
 });
 
@@ -156,6 +183,21 @@ async function toggleMaintenance() {
   const { error } = await setMaintenanceMode(next);
   if (!error) maintenanceOn.value = next;
   savingMaintenance.value = false;
+}
+
+async function savePhone() {
+  savingPhone.value = true;
+  phoneSaved.value = false;
+  phoneError.value = null;
+  const { error } = await setContactPhone(contactPhoneInput.value.trim());
+  savingPhone.value = false;
+  if (error) {
+    phoneError.value = (error as any).message;
+  } else {
+    phoneSaved.value = true;
+    await refreshNuxtData("site-settings");
+    setTimeout(() => { phoneSaved.value = false; }, 3000);
+  }
 }
 
 async function toggle(key: string) {

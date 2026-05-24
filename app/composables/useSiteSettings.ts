@@ -86,5 +86,21 @@ export const useSiteSettings = () => {
     return { error };
   };
 
-  return { fetchBookingEnabled, setBookingEnabled, fetchNewsletterPromoEnabled, setNewsletterPromoEnabled, fetchPageSettings, setPageEnabled, fetchPaymentsEnabled, setPaymentsEnabled, fetchMaintenanceMode, setMaintenanceMode };
+  const fetchContactPhone = async (): Promise<string> => {
+    const { data } = await supabase
+      .from("site_settings")
+      .select("contact_phone")
+      .eq("id", 1)
+      .single();
+    return data?.contact_phone ?? "+33750996975";
+  };
+
+  const setContactPhone = async (phone: string) => {
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert({ id: 1, contact_phone: phone });
+    return { error };
+  };
+
+  return { fetchBookingEnabled, setBookingEnabled, fetchNewsletterPromoEnabled, setNewsletterPromoEnabled, fetchPageSettings, setPageEnabled, fetchPaymentsEnabled, setPaymentsEnabled, fetchMaintenanceMode, setMaintenanceMode, fetchContactPhone, setContactPhone };
 };

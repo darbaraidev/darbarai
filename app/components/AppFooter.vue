@@ -125,9 +125,9 @@
                 />
               </svg>
               <a
-                href="tel:+33750992975"
+                :href="telLink"
                 class="hover:text-terracotta-400 transition-colors"
-                >+33 7 50 99 29 75</a
+                >{{ phone }}</a
               >
             </li>
           </ul>
@@ -166,4 +166,5 @@
 <script setup lang="ts">
 const { t, locale, availableLocales, setLocale } = useI18n();
 const localePath = useLocalePath();
+const { phone, telLink } = useContactPhone();
 </script>
